@@ -216,6 +216,7 @@
 		"typescript": "^3.5.1"
 	},
 	"dependencies": {
+		"@types/request": "^2.48.3",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",

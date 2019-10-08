@@ -4,18 +4,18 @@ import * as path from 'path';
 import * as httpClient from 'request';
 
 export interface StoryType {
-	storyType?: string
-	ch?: string
+	storyType?: string;
+	ch?: string;
 }
 
 export const STORY_TYPES = [
-    { storyType: 'sport', ch: '运动'},
-    { storyType: 'science', ch: '科学'},
-    { storyType: 'fashion', ch: '时尚'},
-    { storyType: 'film', ch: '影视'},
-    { storyType: 'digital', ch: '数码'},
-    { storyType: 'total', ch: '全站'}
-]
+	{ storyType: 'sport', ch: '运动'},
+	{ storyType: 'science', ch: '科学'},
+	{ storyType: 'fashion', ch: '时尚'},
+	{ storyType: 'film', ch: '影视'},
+	{ storyType: 'digital', ch: '数码'},
+	{ storyType: 'total', ch: '全站'}
+];
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 
@@ -40,6 +40,19 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 		}
 
 		if (element) {
+			return new Promise((resolve, reject) => {
+				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.token}?desktop=true`;
+				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
+					let questions = body.data;
+					let deps: Dependency[] = questions.map(story => {
+						// new Dependency(story.target.title, 'no', vscode.TreeItemCollapsibleState.None);
+						new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
+					})
+					console.log(`${deps} + ${element.token}`)
+					resolve(deps);
+				});
+			});
+			// return Promise.resolve([new Dependency('测试', '好', vscode.TreeItemCollapsibleState.None)]);
 			return Promise.resolve(this.getDepsInPackageJson(path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')));
 		} else {
 			// const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
@@ -87,20 +100,20 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 
 	private getHotStoriesType(): Dependency[] {
 		return STORY_TYPES.map(type => {
-			return new Dependency(type.ch, 'v4', vscode.TreeItemCollapsibleState.None)
+			return new Dependency(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Expanded)
 		});
 	}
 
-	private getHotStories(storyType: StoryType): Dependency[] {
-		let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${storyType.storyType}?desktop=true`;
-		let hotQuestions;
-		httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
-			let questions = body.data;
-			hotQuestions = questions.map(story => {
-				new Dependency(story.target.title, 'v4', vscode.TreeItemCollapsibleState.None);
-			})
-		})
-	}
+	// private getHotStories(storyType: StoryType): Dependency[] {
+	// 	let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${storyType.storyType}?desktop=true`;
+	// 	let hotQuestions;
+	// 	httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
+	// 		let questions = body.data;
+	// 		hotQuestions = questions.map(story => {
+	// 			new Dependency(story.target.title, 'v4', vscode.TreeItemCollapsibleState.None);
+	// 		});
+	// 	});
+	// }
 
 	private pathExists(p: string): boolean {
 		try {
@@ -117,7 +130,7 @@ export class Dependency extends vscode.TreeItem {
 
 	constructor(
 		public readonly label: string,
-		private version: string,
+		public token: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command
 	) {
@@ -125,11 +138,11 @@ export class Dependency extends vscode.TreeItem {
 	}
 
 	get tooltip(): string {
-		return `${this.label}-${this.version}`;
+		return `${this.label}-${this.token}`;
 	}
 
 	get description(): string {
-		return this.version;
+		return this.token;
 	}
 
 	iconPath = {
