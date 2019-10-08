@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as httpClient from 'request';
+
+export interface StoryType {
+	storyType?: string
+	ch?: string
+}
 
 export const STORY_TYPES = [
     { storyType: 'sport', ch: '运动'},
@@ -83,6 +89,17 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 		return STORY_TYPES.map(type => {
 			return new Dependency(type.ch, 'v4', vscode.TreeItemCollapsibleState.None)
 		});
+	}
+
+	private getHotStories(storyType: StoryType): Dependency[] {
+		let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${storyType.storyType}?desktop=true`;
+		let hotQuestions;
+		httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
+			let questions = body.data;
+			hotQuestions = questions.map(story => {
+				new Dependency(story.target.title, 'v4', vscode.TreeItemCollapsibleState.None);
+			})
+		})
 	}
 
 	private pathExists(p: string): boolean {
