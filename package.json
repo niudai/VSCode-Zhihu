@@ -212,8 +212,8 @@
 		"@types/node": "^10.12.21",
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.36.0",
-		"typescript": "^3.5.1",
-		"tslint": "^5.12.1"
+		"tslint": "^5.20.0",
+		"typescript": "^3.5.1"
 	},
 	"dependencies": {
 		"jsonc-parser": "^0.4.2",

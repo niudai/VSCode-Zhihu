@@ -2,6 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export const STORY_TYPES = [
+    { storyType: 'sport', ch: '运动'},
+    { storyType: 'science', ch: '科学'},
+    { storyType: 'fashion', ch: '时尚'},
+    { storyType: 'film', ch: '影视'},
+    { storyType: 'digital', ch: '数码'},
+    { storyType: 'total', ch: '全站'}
+]
+
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined> = new vscode.EventEmitter<Dependency | undefined>();
@@ -27,13 +36,14 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 		if (element) {
 			return Promise.resolve(this.getDepsInPackageJson(path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')));
 		} else {
-			const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
-			if (this.pathExists(packageJsonPath)) {
-				return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));
-			} else {
-				vscode.window.showInformationMessage('Workspace has no package.json');
-				return Promise.resolve([]);
-			}
+			// const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
+			// if (this.pathExists(packageJsonPath)) {
+			// 	return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));
+			// } else {
+			// 	vscode.window.showInformationMessage('Workspace has no package.json');
+			// 	return Promise.resolve([]);
+			// }
+			return Promise.resolve(this.getHotStoriesType());
 		}
 
 	}
@@ -67,6 +77,12 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 		} else {
 			return [];
 		}
+	}
+
+	private getHotStoriesType(): Dependency[] {
+		return STORY_TYPES.map(type => {
+			return new Dependency(type.ch, 'v4', vscode.TreeItemCollapsibleState.None)
+		});
 	}
 
 	private pathExists(p: string): boolean {
