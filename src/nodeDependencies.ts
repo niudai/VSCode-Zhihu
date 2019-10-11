@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as httpClient from 'request';
+import { HotStoryPage, HotStory } from './model/hot-story.model';
 
 export interface StoryType {
 	storyType?: string;
@@ -9,12 +10,12 @@ export interface StoryType {
 }
 
 export const STORY_TYPES = [
+	{ storyType: 'total', ch: '全站'},
 	{ storyType: 'sport', ch: '运动'},
 	{ storyType: 'science', ch: '科学'},
 	{ storyType: 'fashion', ch: '时尚'},
 	{ storyType: 'film', ch: '影视'},
-	{ storyType: 'digital', ch: '数码'},
-	{ storyType: 'total', ch: '全站'}
+	{ storyType: 'digital', ch: '数码'}
 ];
 
 export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
@@ -43,12 +44,19 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 			return new Promise((resolve, reject) => {
 				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.token}?desktop=true`;
 				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
-					let questions = body.data;
+					let questions: HotStory[] = body.data;
+					questions.forEach(q => console.log(q));
 					let deps: Dependency[] = questions.map(story => {
-						// new Dependency(story.target.title, 'no', vscode.TreeItemCollapsibleState.None);
-						new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
+						return new Dependency(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
+						{
+							command: 'nodeDependencies.openWebView',
+							title: 'openWebView',
+							arguments: [story.target.excerpt]
+						});
+						// return new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
 					});
-					console.log(`${deps} + ${element.token}`);
+					// console.log(`${deps} + ${element.token}`);
+					console.log(`questions`);
 					resolve(deps);
 				});
 			});
@@ -145,10 +153,10 @@ export class Dependency extends vscode.TreeItem {
 		return this.token;
 	}
 
-	iconPath = {
-		light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-		dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-	};
+	// iconPath = {
+	// 	light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
+	// 	dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
+	// };
 
 	contextValue = 'dependency';
 

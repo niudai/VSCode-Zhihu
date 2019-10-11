@@ -69,6 +69,10 @@
 				}
 			},
 			{
+				"command": "nodeDependencies.openWebView",
+				"title": "openWebView"
+			},
+			{
 				"command": "nodeDependencies.addEntry",
 				"title": "Add"
 			},
