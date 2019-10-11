@@ -47,8 +47,8 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 					let deps: Dependency[] = questions.map(story => {
 						// new Dependency(story.target.title, 'no', vscode.TreeItemCollapsibleState.None);
 						new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
-					})
-					console.log(`${deps} + ${element.token}`)
+					});
+					console.log(`${deps} + ${element.token}`);
 					resolve(deps);
 				});
 			});
@@ -100,7 +100,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 
 	private getHotStoriesType(): Dependency[] {
 		return STORY_TYPES.map(type => {
-			return new Dependency(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Expanded)
+			return new Dependency(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Expanded);
 		});
 	}
 
