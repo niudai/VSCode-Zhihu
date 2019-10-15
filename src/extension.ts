@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 
-import { DepNodeProvider, Dependency } from "./nodeDependencies";
+import { DepNodeProvider, Dependency } from "./zhihu";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
@@ -16,9 +16,9 @@ export function activate(context: vscode.ExtensionContext) {
 	const includeContent = 'data[*].is_normal,content;';
 	let offset = 0;
 	context.subscriptions.push(
-		vscode.commands.registerCommand("nodeDependencies.openWebView", (questionId: number) => {
+		vscode.commands.registerCommand("zhihu.openWebView", (questionId: number) => {
 			const panel = vscode.window.createWebviewPanel(
-				"nodeDependencies",
+				"zhihu",
 				"node denpendencies",
 				vscode.ViewColumn.One,
 				{}
@@ -52,15 +52,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		));
 	// Samples of `window.registerTreeDataProvider`
-	const nodeDependenciesProvider = new DepNodeProvider(
+	const zhihuProvider = new DepNodeProvider(
 		vscode.workspace.rootPath
 	);
 	vscode.window.registerTreeDataProvider(
-		"nodeDependencies",
-		nodeDependenciesProvider
+		"zhihu",
+		zhihuProvider
 	);
-	vscode.commands.registerCommand("nodeDependencies.refreshEntry", () =>
-		nodeDependenciesProvider.refresh()
+	vscode.commands.registerCommand("zhihu.refreshEntry", () =>
+		zhihuProvider.refresh()
 	);
 	vscode.commands.registerCommand("extension.openPackageOnNpm", moduleName =>
 		vscode.commands.executeCommand(
@@ -68,18 +68,18 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)
 		)
 	);
-	vscode.commands.registerCommand("nodeDependencies.addEntry", () =>
+	vscode.commands.registerCommand("zhihu.addEntry", () =>
 		vscode.window.showInformationMessage(`Successfully called add entry.`)
 	);
 	vscode.commands.registerCommand(
-		"nodeDependencies.editEntry",
+		"zhihu.editEntry",
 		(node: Dependency) =>
 			vscode.window.showInformationMessage(
 				`Successfully called edit entry on ${node.label}.`
 			)
 	);
 	vscode.commands.registerCommand(
-		"nodeDependencies.deleteEntry",
+		"zhihu.deleteEntry",
 		(node: Dependency) =>
 			vscode.window.showInformationMessage(
 				`Successfully called delete entry on ${node.label}.`

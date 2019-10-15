@@ -49,7 +49,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 					let deps: Dependency[] = questions.map(story => {
 						return new Dependency(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
 						{
-							command: 'nodeDependencies.openWebView',
+							command: 'zhihu.openWebView',
 							title: 'openWebView',
 							arguments: [story.target.id]
 						});

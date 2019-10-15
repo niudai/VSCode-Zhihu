@@ -1,51 +1,30 @@
-# Views & View Containers
+# Zhihu for Visual Studio Code
 
-This sample demonstrates how to implement and contribute a tree view in VS Code. This includes:
+[![version](https://img.shields.io/vscode-marketplace/v/yzhang.markdown-all-in-one.svg?style=flat-square&label=vscode%20marketplace)](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+[![installs](https://img.shields.io/vscode-marketplace/d/yzhang.markdown-all-in-one.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)
+[![AppVeyor](https://img.shields.io/appveyor/ci/yzhang-gh/vscode-markdown.svg?style=flat-square&label=appveyor%20build)](https://ci.appveyor.com/project/yzhang-gh/vscode-markdown)
+[![GitHub stars](https://img.shields.io/github/stars/yzhang-gh/vscode-markdown.svg?style=flat-square&label=github%20stars)](https://github.com/yzhang-gh/vscode-markdown)
+[![GitHub Contributors](https://img.shields.io/github/contributors/yzhang-gh/vscode-markdown.svg?style=flat-square)](https://github.com/yzhang-gh/vscode-markdown/graphs/contributors)
 
-- Contributing views and view containers.
-- Contributing actions in various location of the view.
-- Implementing the tree data provider for the view.
-- Creating and working with the view.
+The Zhihu-VSCode extension under development.
 
-This sample provides following views
+## Features
 
-- Node dependencies view
-- Ftp file explorer view
+- **Browse Hot Stories**
 
-Following example shows Node dependencies view in Package Explorer View container.
+- **Browse your followees answer and article**
 
-![Package Explorer](./resources/package-explorer.png)
+- **Login and get your profile**
 
-## VS Code API
+- **Write and publish answer in Markdown directly in VSCode**
 
-This sample uses following contribution points, activation events and APIs
+- **Question search and browse**
 
-### Contribution Points
+## Available Commands
 
-- `views`
-- `viewContainers`
-- `menu`
-	- `view/title`
-	- `view/item/context`
-
-### Activation Events
-
-- `onView:${viewId}`
-
-### APIs
-
-- `window.createTreeView`
-- `window.registerTreeDataProvider`
-- `TreeView`
-- `TreeDataProvider`
-
-Refer to [Usage](./USAGE.md) document for more details.
-
-## Running the Sample
-
-- Open this example in VS Code Insiders
-- `npm install`
-- `npm run watch`
-- `F5` to start debugging
-- Node dependencies view is shown in Package explorer view container in Activity bar.
-- FTP file explorer view should be shown in Explorer
+- Markdown: Create Table of Contents
+- Markdown: Update Table of Contents
+- Markdown: Toggle code span
+- Markdown: Print current document to HTML
+- Markdown: Toggle math environment
+- Markdown: Toggle list

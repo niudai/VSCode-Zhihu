@@ -12,7 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:nodeDependencies",
+		"onView:zhihu",
 		"onView:ftpExplorer",
 		"onView:jsonOutline",
 		"onView:fileExplorer",
@@ -35,7 +35,7 @@
 		"views": {
 			"package-explorer": [
 				{
-					"id": "nodeDependencies",
+					"id": "zhihu",
 					"name": "Node Dependencies"
 				}
 			],
@@ -61,7 +61,7 @@
 		},
 		"commands": [
 			{
-				"command": "nodeDependencies.refreshEntry",
+				"command": "zhihu.refreshEntry",
 				"title": "Refresh",
 				"icon": {
 					"light": "resources/light/refresh.svg",
@@ -69,15 +69,15 @@
 				}
 			},
 			{
-				"command": "nodeDependencies.openWebView",
+				"command": "zhihu.openWebView",
 				"title": "openWebView"
 			},
 			{
-				"command": "nodeDependencies.addEntry",
+				"command": "zhihu.addEntry",
 				"title": "Add"
 			},
 			{
-				"command": "nodeDependencies.editEntry",
+				"command": "zhihu.editEntry",
 				"title": "Edit",
 				"icon": {
 					"light": "resources/light/edit.svg",
@@ -85,7 +85,7 @@
 				}
 			},
 			{
-				"command": "nodeDependencies.deleteEntry",
+				"command": "zhihu.deleteEntry",
 				"title": "Delete"
 			},
 			{
@@ -149,13 +149,13 @@
 			],
 			"view/title": [
 				{
-					"command": "nodeDependencies.refreshEntry",
-					"when": "view == nodeDependencies",
+					"command": "zhihu.refreshEntry",
+					"when": "view == zhihu",
 					"group": "navigation"
 				},
 				{
-					"command": "nodeDependencies.addEntry",
-					"when": "view == nodeDependencies"
+					"command": "zhihu.addEntry",
+					"when": "view == zhihu"
 				},
 				{
 					"command": "jsonOutline.refresh",
@@ -170,13 +170,13 @@
 			],
 			"view/item/context": [
 				{
-					"command": "nodeDependencies.editEntry",
-					"when": "view == nodeDependencies && viewItem == dependency",
+					"command": "zhihu.editEntry",
+					"when": "view == zhihu && viewItem == dependency",
 					"group": "inline"
 				},
 				{
-					"command": "nodeDependencies.deleteEntry",
-					"when": "view == nodeDependencies && viewItem == dependency"
+					"command": "zhihu.deleteEntry",
+					"when": "view == zhihu && viewItem == dependency"
 				},
 				{
 					"command": "jsonOutline.renameNode",
