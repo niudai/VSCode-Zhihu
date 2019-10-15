@@ -1,4 +1,4 @@
-import { IAuthor } from "./hot-story.model"
+import { IAuthor } from "./hot-story.model";
 
 export interface QuestionAnswers {
 	data: QuestionAnswer[];

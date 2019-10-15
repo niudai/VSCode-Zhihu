@@ -225,6 +225,7 @@
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
 		"node-html-parser": "^1.1.16",
+		"pug": "^2.0.4",
 		"request": "^2.88.0",
 		"rimraf": "^2.6.2"
 	}

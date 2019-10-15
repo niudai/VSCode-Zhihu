@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand("zhihu.openWebView", (questionId: number) => {
 			const panel = vscode.window.createWebviewPanel(
 				"zhihu",
-				"node denpendencies",
+				"zhihu-answer",
 				vscode.ViewColumn.One,
 				{}
 			);

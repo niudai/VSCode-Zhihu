@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h1= title
+  div
+    each answer in answers
+        | !{answer.content}
