@@ -214,13 +214,13 @@
 	"devDependencies": {
 		"@types/mkdirp": "^0.5.2",
 		"@types/node": "^10.12.21",
+		"@types/request": "^2.48.3",
 		"@types/rimraf": "^2.0.2",
 		"@types/vscode": "^1.36.0",
 		"tslint": "^5.20.0",
 		"typescript": "^3.5.1"
 	},
 	"dependencies": {
-		"@types/request": "^2.48.3",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",

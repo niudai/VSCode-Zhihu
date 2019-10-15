@@ -15,7 +15,7 @@ export interface HotStory {
 		answer_count?: number;
 		is_following?: false;
 		id?: number;
-		author?: Author;
+		author?: IAuthor;
 		url?: string; // url of current questions;
 		title?: string;
 		created?: number;
@@ -37,15 +37,22 @@ export interface HotStory {
 	id: string;
 }
 
-export interface Author {
+export interface IAuthor {
 	headline?: string;
-	avatar_url: string;
-	name: string;
-	url: string;
-	url_token: string;
-	type: string;
-	user_type: string;
-	id: string;
+	avatar_url?: string;
+	avatar_url_template?: string;
+	is_org?: boolean;
+	name?: string;
+	badge?: any;
+	gender?: number;
+	is_advertiser?: boolean;
+	is_followed?: boolean;
+	is_privacy?: boolean;
+	url?: string;
+	url_token?: string;
+	type?: string;
+	user_type?: string;
+	id?: string;
 }
 
 export interface StoryTarget {
