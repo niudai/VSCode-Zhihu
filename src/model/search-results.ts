@@ -13,9 +13,8 @@ export interface ISearchItem {
 		description?: string;
 		title?: string;
 	};
-	object?: {
-
-	}
+	object?: ISearchObject;
+	
 }
 
 export interface ISearchObject {
