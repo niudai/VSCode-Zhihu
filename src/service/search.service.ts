@@ -7,14 +7,14 @@ const ZHIHU_SEARCH_API: string = "https://www.zhihu.com/api/v4/search_v3";
 export async function getSearchResults(keyword: string): Promise<ISearchItem[]> {
 
 	const params = {
-		t: 'general',
+		t: 'question',
 		q: keyword,
 		offset: '0',
 		limit: '10'
 	};
 	const result = await httpClient(`${ZHIHU_SEARCH_API}?${toQueryString(params)}`);
-	console.log(`Get Search Result: ${result}`);
 	const jsonResult: ISearchResults = JSON.parse(result);
+	console.log(jsonResult);
 	return Promise.resolve(jsonResult.data);
 
 }

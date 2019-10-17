@@ -11,6 +11,7 @@ import * as httpClient from 'request';
 import { QuestionAnswers } from "./model/questions-answers.model";
 import * as pug from 'pug';
 import * as path from 'path';
+import { searchHandler } from './command/searchHandler';
 
 export function activate(context: vscode.ExtensionContext) {
 	const includeContent = 'data[*].is_normal,content;';
