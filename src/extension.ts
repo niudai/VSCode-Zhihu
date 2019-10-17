@@ -23,12 +23,14 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.ViewColumn.One,
 				{}
 			);
-			let answerAPI = `https://www.zhihu.com/api/v4/questions/${questionId}/answers?include=${includeContent}?offset=${offset}`
+			let answerAPI = `https://www.zhihu.com/api/v4/questions/${questionId}/answers?include=${includeContent}?offset=${offset}`;
 			httpClient(answerAPI, { json: true }, (err, _res, body: QuestionAnswers ) => {
 				console.log(answerAPI);
 				const compiledFunction = pug.compileFile(path.join(context.extensionPath, 'src', 'template', 'questions-answers.pug'));
+				console.log(body.data);
 				panel.webview.html = compiledFunction({
 					answers: body.data
+					// title: body.data[0].question.title
 				});
 			});
 		}
@@ -36,6 +38,9 @@ export function activate(context: vscode.ExtensionContext) {
 	// Samples of `window.registerTreeDataProvider`
 	const zhihuProvider = new DepNodeProvider(
 		vscode.workspace.rootPath
+	);
+	vscode.commands.registerCommand("zhihu.search", async () => 
+		await searchHandler()
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu",

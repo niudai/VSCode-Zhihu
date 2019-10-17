@@ -62,31 +62,41 @@
 		"commands": [
 			{
 				"command": "zhihu.refreshEntry",
-				"title": "Refresh",
+				"title": "Zhihu: Refresh",
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.openWebView",
-				"title": "openWebView"
+				"title": "openWebView",
+				"category": "Zhihu"
+			},
+			{
+				"command": "zhihu.search",
+				"title": "Search Items",
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.addEntry",
-				"title": "Add"
+				"title": "Add",
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.editEntry",
-				"title": "Edit",
+				"title": "Zhihu: Edit",
 				"icon": {
 					"light": "resources/light/edit.svg",
 					"dark": "resources/dark/edit.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.deleteEntry",
-				"title": "Delete"
+				"title": "Zhihu: Delete",
+				"category": "Zhihu"
 			},
 			{
 				"command": "ftpExplorer.refresh",
@@ -94,15 +104,18 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "ftpExplorer.openFtpResource",
-				"title": "Open FTP Resource"
+				"title": "Open FTP Resource",
+				"category": "Zhihu"
 			},
 			{
 				"command": "ftpExplorer.revealResource",
-				"title": "Reveal in FTP View"
+				"title": "Reveal in FTP View",
+				"category": "Zhihu"
 			},
 			{
 				"command": "jsonOutline.refresh",
@@ -110,7 +123,8 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "jsonOutline.refreshNode",
@@ -118,7 +132,8 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "jsonOutline.renameNode",
@@ -130,15 +145,18 @@
 				"icon": {
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "fileExplorer.openFile",
-				"title": "Open File"
+				"title": "Open File",
+				"category": "Zhihu"
 			},
 			{
 				"command": "testView.reveal",
-				"title": "Test View: Reveal"
+				"title": "Test View: Reveal",
+				"category": "Zhihu"
 			}
 		],
 		"menus": {
