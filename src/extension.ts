@@ -38,7 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
 		));
 	// Samples of `window.registerTreeDataProvider`
 	const zhihuProvider = new DepNodeProvider(
-		vscode.workspace.rootPath
 	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler()
