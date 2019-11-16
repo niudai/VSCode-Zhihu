@@ -47,7 +47,7 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 						{
 							command: 'zhihu.openWebView',
 							title: 'openWebView',
-							arguments: [story.target.id]
+							arguments: [story.target]
 						});
 						// return new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
 					});

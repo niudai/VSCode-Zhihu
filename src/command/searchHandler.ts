@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { ISearchItem } from "../model/search-results";
 import * as search from '../service/search.service';
-import { openWebviewHandler } from "./openQuestionHandler";
+import { openWebviewHandler } from "./openWebviewHandler";
 import { SearchTypes } from "../util/searchTypesEnum";
 
 export async function searchHandler(context: vscode.ExtensionContext): Promise<void> {
@@ -28,6 +28,6 @@ export async function searchHandler(context: vscode.ExtensionContext): Promise<v
 	
 	console.log(`Selcted Item = ${selectedItem}`);
 
-	openWebviewHandler(selectedItem.object.id, context);
+	openWebviewHandler(selectedItem.object, context);
 	
 }

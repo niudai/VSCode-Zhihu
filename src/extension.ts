@@ -2,20 +2,20 @@
 
 import * as vscode from "vscode";
 
-import { DepNodeProvider, Dependency } from "./zhihu";
+import { DepNodeProvider, Dependency } from "./hotStoryTreeView";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
 import { TestView } from "./testView";
 import { searchHandler } from './command/searchHandler';
-import { openWebviewHandler } from "./command/openQuestionHandler";
+import { openWebviewHandler } from "./command/openWebviewHandler";
 
 export function activate(context: vscode.ExtensionContext) {
 	const includeContent = 'data[*].is_normal,content;';
 	let offset = 0;
 	context.subscriptions.push(
-		vscode.commands.registerCommand("zhihu.openWebView", async (questionId: number) => {
-			await openWebviewHandler(questionId, context);
+		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
+			await openWebviewHandler(object, context);
 		}
 		));
 	// Samples of `window.registerTreeDataProvider`
