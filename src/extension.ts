@@ -8,14 +8,14 @@ import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
 import { TestView } from "./testView";
 import { searchHandler } from './command/searchHandler';
-import { openQuestionHandler } from "./command/openQuestionHandler";
+import { openWebviewHandler } from "./command/openQuestionHandler";
 
 export function activate(context: vscode.ExtensionContext) {
 	const includeContent = 'data[*].is_normal,content;';
 	let offset = 0;
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (questionId: number) => {
-			await openQuestionHandler(questionId, context);
+			await openWebviewHandler(questionId, context);
 		}
 		));
 	// Samples of `window.registerTreeDataProvider`

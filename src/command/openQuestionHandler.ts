@@ -4,7 +4,7 @@ import { QuestionAnswers } from "../model/questions-answers.model";
 import * as pug from "pug";
 import * as path from "path";
 
-export async function openQuestionHandler(
+export async function openWebviewHandler(
 	questionId: number,
 	context: vscode.ExtensionContext
 ): Promise<void> {

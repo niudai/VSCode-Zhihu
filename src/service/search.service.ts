@@ -4,10 +4,10 @@ import * as https from 'https';
 
 const ZHIHU_SEARCH_API: string = "https://www.zhihu.com/api/v4/search_v3";
 
-export async function getSearchResults(keyword: string): Promise<ISearchItem[]> {
+export async function getSearchResults(keyword: string, searchType: string): Promise<ISearchItem[]> {
 
 	const params = {
-		t: 'question',
+		t: searchType,
 		q: keyword,
 		offset: '0',
 		limit: '10'
@@ -15,7 +15,7 @@ export async function getSearchResults(keyword: string): Promise<ISearchItem[]> 
 	const result = await httpClient(`${ZHIHU_SEARCH_API}?${toQueryString(params)}`);
 	const jsonResult: ISearchResults = JSON.parse(result);
 	console.log(jsonResult);
-	return Promise.resolve(jsonResult.data);
+	return Promise.resolve(jsonResult.data.filter(o => o.type == 'search_result'));
 
 }
 
