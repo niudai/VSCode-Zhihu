@@ -18,7 +18,7 @@ export interface ISearchItem {
 }
 
 export interface ISearchObject {
-	id?: string;
+	id?: number;
 	title?: string;
 	type?: string;
 	url?: string;

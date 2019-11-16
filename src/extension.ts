@@ -7,10 +7,6 @@ import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
 import { TestView } from "./testView";
-import * as httpClient from 'request';
-import { QuestionAnswers } from "./model/questions-answers.model";
-import * as pug from 'pug';
-import * as path from 'path';
 import { searchHandler } from './command/searchHandler';
 import { openQuestionHandler } from "./command/openQuestionHandler";
 
@@ -26,7 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const zhihuProvider = new DepNodeProvider(
 	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
-		await searchHandler()
+		await searchHandler(context)
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu",
