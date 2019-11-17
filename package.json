@@ -80,6 +80,11 @@
 				"category": "Zhihu"
 			},
 			{
+				"command": "zhihu.login",
+				"title": "Login",
+				"category": "Zhihu"
+			},
+			{
 				"command": "zhihu.addEntry",
 				"title": "Add",
 				"category": "Zhihu"

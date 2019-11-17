@@ -9,6 +9,7 @@ import { FileExplorer } from "./fileExplorer";
 import { TestView } from "./testView";
 import { searchHandler } from './command/searchHandler';
 import { openWebviewHandler } from "./command/openWebviewHandler";
+import { loginHandler } from "./command/loginHandler";
 
 export function activate(context: vscode.ExtensionContext) {
 	const includeContent = 'data[*].is_normal,content;';
@@ -23,6 +24,9 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler(context)
+	);
+	vscode.commands.registerCommand("zhihu.login", () => 
+		loginHandler(context)
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu",
