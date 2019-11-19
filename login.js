@@ -457,6 +457,10 @@ var Encryption = function(e) {
 // 	'timestamp': 1574166501379, 
 // 	'signature': '7ba2e8ac57ae0087ba4fbec49d761b2d117dc7e2'}
 
+capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
+loginAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in'
+
+
 loginData = {
     'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
     'grant_type': 'password',
@@ -466,7 +470,7 @@ loginData = {
     'lang': 'en',
     'ref_source': 'homepage',
 	'utm_source': '',
-	'captcha': '',
+	'captcha': 'JF5h',
 	'timestamp': '',
 	'signature': ''
 }
@@ -476,45 +480,60 @@ headers = {
 	'Host': 'www.zhihu.com',
 	'Referer': 'https://www.zhihu.com/',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-	 '(KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
-
+	 '(KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+	 'content-type': 'application/x-www-form-urlencoded',
+	 'x-zse-83': '3_1.1',
+	 'x-xsrftoken': 'dCyt1Kb97IN7jeh5SJo92A9mw2bvv9Es'
 }
 
-console.log('Enter captcha: ');
-stdin.on('data', () => {
-})
-loginData.captcha = 'u6Kk';
-// loginData.timestamp = Math.round(new Date().getTime());
-loginData.timestamp = 598478555;
+cookies = fs.readFileSync(path.join(__dirname, 'cookie.txt'), 'utf8')
+
+console.log(cookies);
+
+// getXsrf = function () {
+	
+// }
+
+headers['Cookie'] = cookies;
+
+// Get Captcha:
+// httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
+
+//     console.log(resp.headers['set-cookie']);
+//     if(JSON.parse(resp.body)['show_captcha']) {
+//         getCaptcha({ 'Cookie': resp.headers['set-cookie']});
+//     }
+// });
+
+// function getCaptcha(headers) {
+//     httpClient(capchaAPI, { method:'put', headers}, (error, resp) => {
+//         let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
+//         // fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), Base64.atob(base64Image), 'binary');
+//         fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), base64Image, 'base64');
+// 	})
+// }
+
+
+
+loginData.timestamp = Math.round(new Date().getTime());
+// loginData.timestamp = 598478555;
 loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
 	.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
 	.digest('hex');
+
+
 console.log(loginData);
 console.log(formurlencoded(loginData));
-console.log(Encryption(formurlencoded(loginData)))
+encryptedFormData = Encryption(formurlencoded(loginData));
+console.log(encryptedFormData)
 
-capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
+httpClient(loginAPI, { method: 'post', headers, body: encryptedFormData}, (error, resp) => {
+	console.log(resp.body);
+})
 
-standard_input.on
 
-loginData.username = '+8618324748963';
-loginData.password = 'niudai123.';
 
-httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
 
-    console.log(resp.headers['set-cookie']);
-    if(JSON.parse(resp.body)['show_captcha']) {
-        getCaptcha({ 'Cookie': resp.headers['set-cookie']});
-    }
-});
-
-function getCaptcha(headers) {
-    httpClient(capchaAPI, { method:'put', headers}, (error, resp) => {
-        let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
-        // fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), Base64.atob(base64Image), 'binary');
-        fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), base64Image, 'base64');
-	})
-}
 
 
 
