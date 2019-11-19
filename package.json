@@ -246,7 +246,13 @@
 	},
 	"dependencies": {
 		"@types/request-promise": "^4.1.44",
+		"Base64": "^1.1.0",
+		"body-parser": "^1.19.0",
+		"crypto": "^1.0.1",
+		"form-urlencoded": "^4.1.0",
 		"ftp": "^0.3.10",
+		"hash.js": "^1.1.7",
+		"hmac": "^1.0.1",
 		"jsonc-parser": "^0.4.2",
 		"mkdirp": "^0.5.1",
 		"node-html-parser": "^1.1.16",
