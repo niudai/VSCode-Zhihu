@@ -14,7 +14,7 @@ class ZhiHu(object):
     def __init__(self):
         self.timestamp = int(time.time() * 1000)
         self.phone = ''  # 账号
-        self.password = 'niudai123.'  # 密码
+        self.password = ''  # 密码
         self.username = '+8618324748963'  # 用户名，用于验证登陆
         self.headers = {
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
