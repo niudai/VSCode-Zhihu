@@ -9,9 +9,13 @@ capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 // Get Captcha:
 httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
 
+    let cookieStr = '';
+    resp.headers['set-cookie'].forEach(
+        c => { cookieStr = cookieStr.concat(c, '\n') }
+    )
     console.log(resp.headers['set-cookie']);
     if(JSON.parse(resp.body)['show_captcha']) {
-		fs.writeFileSync(path.join(__dirname, 'cookie.txt'), resp.headers['set-cookie'], 'utf8')
+		fs.writeFileSync(path.join(__dirname, 'cookie.txt'), cookieStr, 'utf8')
         getCaptcha({ 'Cookie': resp.headers['set-cookie']});
     }
 });
