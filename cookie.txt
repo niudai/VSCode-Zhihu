@@ -1,4 +1,1 @@
-capsion_ticket="2|1:0|10:1579101877|14:capsion_ticket|44:MjAyYjU3NDk0MmEwNDQ5MGE2OGRmNGY1ZjNhOGRmYjA=|825800fcf9d2860cba99a076f219e97c5df7ec395fb721b231c82503bb77b83e"; Domain=zhihu.com; expires=Fri, 14 Feb 2020 15:24:37 GMT; httponly; Path=/
-_xsrf=WLJD1S3KuWgoMsE5HmcniJbTO16dTRuj; path=/; domain=zhihu.com; expires=Sun, 03-Jul-22 15:24:37 GMT
-KLBRSID=4843ceb2c0de43091e0ff7c22eadca8c|1579101877|1579101877; Path=/
-_xsrf=aae88bff-9054-4baf-9fca-104ec91cc23c; path=/; domain=.zhihu.com
+capsion_ticket="2|1:0|10:1579167659|14:capsion_ticket|44:ZGIwYzkwM2Y3ZDVjNGIxMThmMGVjOTExMjQ5MDQ4YjA=|6a933cfd11a2458b328a307ac946d3d83a65bd19b6d66d457f41999f8701f28b"; _xsrf=o09smP8Z1osf1ljamJroj6RRWrmu7KTL; KLBRSID=b33d76655747159914ef8c32323d16fd|1579167659|1579167659; 

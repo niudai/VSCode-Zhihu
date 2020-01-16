@@ -4,6 +4,7 @@ var path = require('path');
 var crypto = require('crypto');
 var formurlencoded = require('form-urlencoded').default;
 
+
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 
 // Get Captcha:
@@ -11,7 +12,9 @@ httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
 
     let cookieStr = '';
     resp.headers['set-cookie'].forEach(
-        c => { cookieStr = cookieStr.concat(c, '\n') }
+        c => { 
+            c = c.split(';')[0];
+            cookieStr = cookieStr.concat(c, '; ') }
     )
     console.log(resp.headers['set-cookie']);
     if(JSON.parse(resp.body)['show_captcha']) {

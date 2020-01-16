@@ -443,47 +443,34 @@ var Encryption = function(e) {
 /////////////////////////////////////////////
 
 
-
-// {
-// 	'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
-// 	'grant_type': 'password', 
-// 	'source': 'com.zhihu.web', 
-// 	'username': '+8618324748963', '
-// 	password': 'niudai123.', 
-// 	'lang': 'en', 
-// 	'ref_source': 'homepage', 
-// 	'utm_source': '', 
-// 	'captcha': 'RVUV', 
-// 	'timestamp': 1574166501379, 
-// 	'signature': '7ba2e8ac57ae0087ba4fbec49d761b2d117dc7e2'}
-
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 loginAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in'
 
+var captcha = 'vn7t'
 
 loginData = {
     'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
     'grant_type': 'password',
     'source': 'com.zhihu.web',
     'username': '+8618324748963',
-    'password': '',
+    'password': 'niudai123.',
     'lang': 'en',
     'ref_source': 'homepage',
 	'utm_source': '',
-	'captcha': 'JF5h',
+	'captcha': captcha,
 	'timestamp': '',
 	'signature': ''
 }
 
 headers = {
-	'accept-encoding': 'gzip, deflate, br',
+	'accept-encoding': 'gzip',
 	'Host': 'www.zhihu.com',
 	'Referer': 'https://www.zhihu.com/',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
 	 '(KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
 	 'content-type': 'application/x-www-form-urlencoded',
 	 'x-zse-83': '3_1.1',
-	 'x-xsrftoken': 'dCyt1Kb97IN7jeh5SJo92A9mw2bvv9Es'
+     'x-xsrftoken': 'dCyt1Kb97IN7jeh5SJo92A9mw2bvv9Es',
 }
 
 cookies = fs.readFileSync(path.join(__dirname, 'cookie.txt'), 'utf8')
@@ -494,29 +481,10 @@ console.log(cookies);
 	
 // }
 
-headers['Cookie'] = cookies;
-
-// Get Captcha:
-// httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
-
-//     console.log(resp.headers['set-cookie']);
-//     if(JSON.parse(resp.body)['show_captcha']) {
-//         getCaptcha({ 'Cookie': resp.headers['set-cookie']});
-//     }
-// });
-
-// function getCaptcha(headers) {
-//     httpClient(capchaAPI, { method:'put', headers}, (error, resp) => {
-//         let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
-//         // fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), Base64.atob(base64Image), 'binary');
-//         fs.writeFileSync(path.join(__dirname, 'capcha.jpg'), base64Image, 'base64');
-// 	})
-// }
-
+headers['cookie'] = cookies;
 
 
 loginData.timestamp = Math.round(new Date().getTime());
-// loginData.timestamp = 598478555;
 loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
 	.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
 	.digest('hex');
@@ -526,10 +494,41 @@ console.log(loginData);
 console.log(formurlencoded(loginData));
 encryptedFormData = Encryption(formurlencoded(loginData));
 console.log(encryptedFormData)
+console.log(headers)
 
-httpClient(loginAPI, { method: 'post', headers, body: encryptedFormData}, (error, resp) => {
-	console.log(resp.body);
-})
+
+// captcha = '------WebKitFormBoundarytc1IIDS9ErxdnVS9\r\nContent-Disposition: form-data; name=\"input_text\"\r\n\r\n'
+//  + loginData.captcha + 
+//  '\r\n------WebKitFormBoundarytc1IIDS9ErxdnVS9--\r\n'
+
+console.log(captcha)
+
+console.log(headers)
+
+var options = {
+    method: 'POST',
+    uri: capchaAPI,
+    form: {
+        // Like <input type="text" name="name">
+        input_text: captcha
+    },
+    headers: {
+        'cookie': cookies
+        /* 'content-type': 'application/x-www-form-urlencoded' */ // Is set automatically
+    }
+}
+
+httpClient(options).then((body => {
+    console.log(body)
+    postLoginData()
+}))
+
+function postLoginData() {
+    httpClient(loginAPI, { method: 'post', headers, body: encryptedFormData, gzip:true }, (error, resp) => {
+        console.log(resp.body);
+    })    
+}
+
 
 
 
