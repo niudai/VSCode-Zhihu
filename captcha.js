@@ -7,6 +7,9 @@ var formurlencoded = require('form-urlencoded').default;
 
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 
+// 2a04 5885 b845 7b78 265f 6e1a 5473 8094
+
+// 160/8 20byte 16*8 128
 // Get Captcha:
 httpClient(capchaAPI, { method: 'get'}, (error, resp) => {
 
