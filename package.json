@@ -247,6 +247,7 @@
 	"dependencies": {
 		"@types/request-promise": "^4.1.44",
 		"Base64": "^1.1.0",
+		"ali-oss": "^6.5.1",
 		"body-parser": "^1.19.0",
 		"crypto": "^1.0.1",
 		"form-urlencoded": "^4.1.0",

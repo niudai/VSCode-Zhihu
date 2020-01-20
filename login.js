@@ -446,7 +446,7 @@ var Encryption = function(e) {
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 loginAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in'
 
-var captcha = 'vn7t'
+var captcha = 'NPE3'
 
 loginData = {
     'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
@@ -525,6 +525,14 @@ httpClient(options).then((body => {
 
 function postLoginData() {
     httpClient(loginAPI, { method: 'post', headers, body: encryptedFormData, gzip:true }, (error, resp) => {
+        let cookieStr = ''
+        resp.headers['set-cookie'].forEach(
+            c => { 
+                c = c.split(';')[0];
+                cookieStr = cookieStr.concat(c, '; ') }
+        )
+        console.log(resp.headers['set-cookie']);
+        fs.appendFileSync(path.join(__dirname, 'cookie.txt'), cookieStr, { encoding: 'utf8'})
         console.log(resp.body);
     })    
 }
