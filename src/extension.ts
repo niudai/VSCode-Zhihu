@@ -6,7 +6,6 @@ import { DepNodeProvider, Dependency } from "./hotStoryTreeView";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
-import { TestView } from "./testView";
 import { searchHandler } from './command/searchHandler';
 import { openWebviewHandler } from "./command/openWebviewHandler";
 import { loginHandler } from "./command/loginHandler";
@@ -79,5 +78,4 @@ export function activate(context: vscode.ExtensionContext) {
 	new FileExplorer(context);
 
 	// Test View
-	new TestView(context);
 }
