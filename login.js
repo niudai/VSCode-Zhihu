@@ -446,7 +446,7 @@ var Encryption = function(e) {
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 loginAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in'
 
-var captcha = 'NPE3'
+var captcha = '86TG'
 
 loginData = {
     'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',

@@ -38,17 +38,10 @@ let zhihu_agent = {
 }
 
 headers = {
-	'accept-encoding': 'gzip',
-	'Host': 'www.zhihu.com',
-	'Referer': 'https://www.zhihu.com/',
-	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-	 '(KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-	 'content-type': 'application/x-www-form-urlencoded',
-	 'x-zse-83': '3_1.1',
-     'x-xsrftoken': 'dCyt1Kb97IN7jeh5SJo92A9mw2bvv9Es',
+	// 'cookie': ''
 }
 
-cookies = fs.readFileSync(path.join(__dirname, 'cookie.txt'), 'utf8')
+cookies = 
 
 headers['cookie'] = cookies;
 
@@ -57,13 +50,31 @@ image_hash = {
 	source: 'answer'
 }
 
+imageHashAPI = 'https://api.zhihu.com/images'; 
+
 console.log(md5('./captcha'))
 
-httpClient('https://api.zhihu.com/images', { method: 'post', headers, body: image_hash, json: true }, 
-(error, resp) => {
-	console.log(resp);
-	console.log(error);
-})
+var options = {
+	method: 'POST',
+	uri: imageHashAPI,
+	body: image_hash,
+	headers: {
+		cookie: fs.readFileSync(path.join(__dirname, 'cookie.txt'), 'utf8');
+	},
+	json: true
+}
+
+httpClient(options).then(
+	(body => {
+		console.log(body);
+	})
+);
+
+// httpClient(imageHashAPI, { method: 'post', headers, body: image_hash, json: true }, 
+// (error, resp) => {
+// 	console.log(resp);
+// 	console.log(error);
+// })
 
 
 let objectKey = "v2-2a045885b8457b78265f6e1a54738094";
