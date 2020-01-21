@@ -1,8 +1,6 @@
 var fs = require('fs');
 var httpClient = require('request-promise');
 var path = require('path');
-var crypto = require('crypto');
-var formurlencoded = require('form-urlencoded').default;
 
 
 capchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;

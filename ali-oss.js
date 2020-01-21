@@ -4,6 +4,8 @@ const fs = require("fs");
 var path = require("path");
 const httpClient = require("request-promise");
 
+var file = './index.html'
+
 let zhihu_agent = {
   userAgent: "aliyun-sdk-js/6.1.1 Chrome 81.0.4023.0 on Windows 10 64-bit",
   options: {
@@ -43,7 +45,7 @@ var options = {
   method: "POST",
   uri: imageHashAPI,
   body: {
-    image_hash: md5("./captcha"),
+    image_hash: md5(file),
     source: "answer"
   },
   headers: {
@@ -69,7 +71,7 @@ httpClient(options).then(body => {
 async function put() {
   try {
     // object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
-    let r1 = await client.put(fileObject.object_key, './capcha.jpg');
+    let r1 = await client.put(fileObject.object_key, file);
     console.log(r1);
     let r2 = await client.get(fileObject.object_key);
     console.log(r2);
@@ -85,8 +87,6 @@ async function put() {
 // })
 
 let objectKey = "v2-2a045885b8457b78265f6e1a54738094";
-
-let file = "./capcha.jpg"; // file to be uploaded
 
 // let client = new OSS({
 // 	accessKeyId: 'LTAI4Fs1uLCeKuacYVwZMxhm',

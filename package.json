@@ -236,31 +236,31 @@
 	},
 	"devDependencies": {
 		"@types/mkdirp": "^0.5.2",
-		"@types/node": "^10.12.21",
+		"@types/node": "^10.17.13",
 		"@types/pug": "^2.0.4",
-		"@types/request": "^2.48.3",
-		"@types/rimraf": "^2.0.2",
-		"@types/vscode": "^1.36.0",
-		"tslint": "^5.20.0",
-		"typescript": "^3.5.1"
+		"@types/request": "^2.48.4",
+		"@types/rimraf": "^2.0.3",
+		"@types/vscode": "^1.41.0",
+		"tslint": "^5.20.1",
+		"typescript": "^3.7.5"
 	},
 	"dependencies": {
-		"@types/request-promise": "^4.1.44",
+		"@types/request-promise": "^4.1.45",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
 		"body-parser": "^1.19.0",
 		"crypto": "^1.0.1",
-		"form-urlencoded": "^4.1.0",
+		"form-urlencoded": "^4.1.1",
 		"ftp": "^0.3.10",
 		"hash.js": "^1.1.7",
 		"hmac": "^1.0.1",
 		"jsonc-parser": "^0.4.2",
 		"md5": "^2.2.1",
 		"mkdirp": "^0.5.1",
-		"node-html-parser": "^1.1.16",
+		"node-html-parser": "^1.1.18",
 		"pug": "^2.0.4",
 		"request": "^2.88.0",
-		"request-promise": "^4.2.4",
-		"rimraf": "^2.6.2"
+		"request-promise": "^4.2.5",
+		"rimraf": "^2.7.1"
 	}
 }
