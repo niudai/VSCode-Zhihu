@@ -1,7 +1,12 @@
-extends layout
+doctype html
+html
+  head
+    style
+      include global.css
+    title= title
+  body
+    h1= title
+    div(class = 'container')
+      each answer in answers
+        div !{answer.content}
 
-block content
-  h1= title
-  div
-    each answer in answers
-      div !{answer.content}

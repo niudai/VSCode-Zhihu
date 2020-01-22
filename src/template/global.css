@@ -1,0 +1,20 @@
+h1 {
+	color: red;
+}
+
+p {
+	color: blue;
+}
+
+.container {
+    border-style: groove;
+    border-radius: 15px;
+    background-color: beige;
+    padding: 25px;
+    width: 700px;
+    margin: 0 auto;
+}
+
+img.origin_image.zh-lightbox-thumb.lazy {
+    display: none;
+}

@@ -41,10 +41,23 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
                 Use a content security policy to only allow loading images from https or from our extension directory,
                 and only allow scripts that have a specific nonce.
                 -->
-                <title>Cat Coding</title>
+				<title>Captcha</title>
+				<style>
+					img {
+						max-width: 100%;
+						max-height: 100%;
+						margin: 0 auto;
+						margin-top: 20%;
+						display: block;
+						border-style: ridge;
+						border-radius: 20px;
+						background-color: blanchedalmond;
+						width: 500;
+					}
+				</style>
             </head>
             <body>
-                <img src="${imgSrc}" width="300" />
+                <img src="${imgSrc}" width="500" />
             </body>
             </html>
 		`;
@@ -95,6 +108,6 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 		password: true
 	});
 
-	
+
 	vscode.window.showInformationMessage('登录成功!');
 }
