@@ -4,12 +4,38 @@ import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 import { ILogin } from "../model/login.model";
-import { CaptchaAPI } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 import { encryptLoginData } from "../util/loginEncrypt";
+import { DefaultHeader } from "../const/HTTP";
 
 export async function loginHandler(context: vscode.ExtensionContext): Promise<void> {
+
+	var headers = DefaultHeader;
+
+	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
+
+	let checkIfSignedIn;
+	try {
+		checkIfSignedIn = await httpClient({
+			uri: SignUpRedirectPage,
+			followRedirect: false,
+			followAllRedirects: false,
+			headers,
+			resolveWithFullResponse: true,
+			gzip: true,
+			simple: false
+		});			
+	} catch (err) {
+		console.error('Http error', err);
+	}
+	console.log(checkIfSignedIn.body);
+	if (checkIfSignedIn.statusCode == '302') {
+		vscode.window.showInformationMessage('你已经登录了哦~');
+		return;
+	}
+	fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), '');
 
 	httpClient(CaptchaAPI, { method: 'get' }, (error, resp) => {
 
@@ -91,7 +117,6 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 			},
 			json: true
 		});
-		vscode.window.showErrorMessage(resp.toString());
 	} while (resp.success != true);
 
 	// vscode.window.showInformationMessage(resp);
@@ -116,8 +141,8 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 		'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
 		'grant_type': 'password',
 		'source': 'com.zhihu.web',
-		'username': '+8618324748963',
-		'password': 'niudai123.',
+		'username': '+86' + phoneNumber,
+		'password': password,
 		'lang': 'en',
 		'ref_source': 'homepage',
 		'utm_source': '',
@@ -127,11 +152,33 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 	};
 
 	loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
-	.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
-	.digest('hex');
+		.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
+		.digest('hex');
 
-	let encryptedFormData = formurlencoded(loginData);
+	let encryptedFormData = encryptLoginData(formurlencoded(loginData));
 
-	vscode.window.showInformationMessage(encryptedFormData);
+	// vscode.window.showInformationMessage(encryptedFormData + formurlencoded(loginData));
 	// vscode.window.showInformationMessage('登录成功!');
+
+
+	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
+
+	var loginResp = await httpClient({ uri: LoginAPI, method: 'post', headers, body: encryptedFormData, gzip: true, resolveWithFullResponse: true }, (error, resp) => {
+		let cookieStr = '';
+		resp.headers['set-cookie'].forEach(
+			c => {
+				c = c.split(';')[0];
+				cookieStr = cookieStr.concat(c, '; ');
+			}
+		);
+		console.log(resp.headers['set-cookie']);
+		fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' })
+		console.log(resp.statusCode);
+	});
+
+	if(loginResp.statusCode == '201') {
+		vscode.window.showInformationMessage('登录成功!');
+	} else {
+		vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
+	}
 }
