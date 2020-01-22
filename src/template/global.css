@@ -1,18 +1,59 @@
+header.title {
+    position: fixed;
+    top: 0;
+    padding: 10px;
+    margin-top: px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    width: 100%;
+}
+
+svg.Icon.ZhihuLogo.ZhihuLogo--blue.Icon--logo {
+    fill: #0084ff;
+    margin-left: 5px;
+    margin-bottom: -4px;
+}
+
+img.origin_image.zh-lightbox-thumb {
+    box-shadow: 0px 0px 10px powderblue;
+}
+
+body.vscode-light {
+	background: #f6f6f6;
+	padding: 0;
+}
+
+a.internal, a.external {
+	color: black;
+	text-decoration: none;
+    background: hsla(177, 100%, 91%, 0.88);
+    padding: 6px;
+    border-radius: 10px;
+    box-shadow: 0 5px 5px wheat;
+}
+
 h1 {
-	color: red;
+    display: inline;
+    margin-left: 20px;
+    color: black;
+    padding-bottom: 10px;
 }
 
 p {
-	color: blue;
+    color: black;
+    font-weight: 500;
+    font-size: 16px;
 }
 
 .container {
-    border-style: groove;
+    /* border-style: groove; */
     border-radius: 15px;
-    background-color: beige;
+    background-color: white;
     padding: 25px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
     width: 700px;
     margin: 0 auto;
+    margin-top: 50px;
 }
 
 img.origin_image.zh-lightbox-thumb.lazy {

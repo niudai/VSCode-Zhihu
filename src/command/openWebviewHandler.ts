@@ -34,7 +34,8 @@ export async function openWebviewHandler(
 				);
 				console.log(body.data);
 				panel.webview.html = compiledFunction({
-					answers: body.data
+					answers: body.data,
+					title: body.data[0].question.title
 					// title: body.data[0].question.title
 				});
 			}
@@ -57,7 +58,6 @@ export async function openWebviewHandler(
 		);
 		panel.webview.html = compiledFunction({
 			answers: [object]
-			// title: body.data[0].question.title
 		});
 	}
 }
