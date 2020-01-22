@@ -2,12 +2,14 @@ import * as vscode from "vscode";
 import * as httpClient from "request-promise";
 import * as fs from "fs";
 import * as path from "path";
-import * as pug from "pug";
-import { type } from "os";
+import * as crypto from "crypto";
+import { ILogin } from "../model/login.model";
+import { CaptchaAPI } from "../const/URL";
+// import * as formurlencoded from "form-urlencoded";
+var formurlencoded = require('form-urlencoded').default;
+import { encryptLoginData } from "../util/loginEncrypt";
 
 export async function loginHandler(context: vscode.ExtensionContext): Promise<void> {
-
-	const CaptchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 
 	httpClient(CaptchaAPI, { method: 'get' }, (error, resp) => {
 
@@ -25,13 +27,14 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 		}
 		const panel = vscode.window.createWebviewPanel(
 			"zhihu",
-			"captcha",
+			"验证码",
 			vscode.ViewColumn.One,
 			{}
 		);
 		const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
 			path.join(context.extensionPath, './captcha.jpg')
 		));
+		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
 		panel.webview.html = `
 		<!DOCTYPE html>
             <html lang="en">
@@ -72,7 +75,7 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 
 	var resp: any;
 	do {
-		const captcha: string | undefined = await vscode.window.showInputBox({
+		var captcha: string | undefined = await vscode.window.showInputBox({
 			prompt: "输入验证码",
 			placeHolder: "",
 			ignoreFocusOut: true
@@ -101,6 +104,7 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 	if (!phoneNumber) {
 		return;
 	}
+
 	const password: string | undefined = await vscode.window.showInputBox({
 		ignoreFocusOut: true,
 		prompt: "输入密码",
@@ -108,6 +112,26 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 		password: true
 	});
 
+	let loginData: ILogin = {
+		'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
+		'grant_type': 'password',
+		'source': 'com.zhihu.web',
+		'username': '+8618324748963',
+		'password': 'niudai123.',
+		'lang': 'en',
+		'ref_source': 'homepage',
+		'utm_source': '',
+		'captcha': captcha,
+		'timestamp': Math.round(new Date().getTime()),
+		'signature': ''
+	};
 
-	vscode.window.showInformationMessage('登录成功!');
+	loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
+	.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
+	.digest('hex');
+
+	let encryptedFormData = formurlencoded(loginData);
+
+	vscode.window.showInformationMessage(encryptedFormData);
+	// vscode.window.showInformationMessage('登录成功!');
 }

@@ -245,6 +245,7 @@
 		"typescript": "^3.7.5"
 	},
 	"dependencies": {
+		"@types/form-urlencoded": "^2.0.1",
 		"@types/request-promise": "^4.1.45",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",

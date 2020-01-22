@@ -1,14 +1,15 @@
 export interface ILogin {
-	captcha: any;
-	clientId: string; // c3cef7c66a1843f8b3a9e6a1e3160e20
-	grantType: string; // password
-	lang: string; // cn
-	password: string;
-	refSource: string; // other_https://www.zhihu.com/signin?next=%2F
-	signature: string; // "f2cb75687f5c493e8bc34f7cc430e7e985250c35"
+	client_id: string; // c3cef7c66a1843f8b3a9e6a1e3160e20
+	grant_type: string; // password
 	source: string; // com.zhihu.web
-	timestamp: number; // instant.now()
 	username: string; // +86 <PHONE_NUM>
+	password: string;
+	lang: string; // cn
+	ref_source: string; // other_https://www.zhihu.com/signin?next=%2F
+	utm_source: '';
+	captcha: any;
+	timestamp: number; // instant.now()
+	signature: string; // "f2cb75687f5c493e8bc34f7cc430e7e985250c35"
 }
 
 // captcha: "{"img_size":[200,44],"input_points":[[85.36363220214844,17.875]]}"
