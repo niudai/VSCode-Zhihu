@@ -14,7 +14,7 @@ export async function openWebviewHandler(
 
 		const panel = vscode.window.createWebviewPanel(
 			"zhihu",
-			"zhihu-answer",
+			"知乎问题",
 			vscode.ViewColumn.One,
 			{}
 		);
@@ -33,6 +33,7 @@ export async function openWebviewHandler(
 					)
 				);
 				console.log(body.data);
+				panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
 				panel.webview.html = compiledFunction({
 					answers: body.data,
 					title: body.data[0].question.title
@@ -44,7 +45,7 @@ export async function openWebviewHandler(
 
 		const panel = vscode.window.createWebviewPanel(
 			"zhihu",
-			"zhihu-answer",
+			"知乎回答",
 			vscode.ViewColumn.One,
 			{}
 		);
@@ -56,6 +57,7 @@ export async function openWebviewHandler(
 				"questions-answers.pug"
 			)
 		);
+		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
 		panel.webview.html = compiledFunction({
 			answers: [object]
 		});
