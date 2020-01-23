@@ -172,7 +172,7 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 			}
 		);
 		console.log(resp.headers['set-cookie']);
-		fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' })
+		fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
 		console.log(resp.statusCode);
 	});
 

@@ -26,14 +26,14 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "package-explorer",
+					"id": "zhihu-explorer",
 					"title": "Package Explorer",
 					"icon": "media/zhihu-logo-fluent.svg"
 				}
 			]
 		},
 		"views": {
-			"package-explorer": [
+			"zhihu-explorer": [
 				{
 					"id": "zhihu",
 					"name": "Node Dependencies"

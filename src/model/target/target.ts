@@ -40,25 +40,16 @@ interface IQuestionTarget extends ITarget {
 }
 
 interface IArticleTarget extends ITarget {
-	title: "北方的“雪地代写”业务火了，南方人用“蟑螂刻字”反击";
-	excerpt_title: "";
+	title: string;
+	excerpt_title: string;
 	image_url: string;
-	comment_permission: "all";
-	created: 1574999376;
-	updated: 1574999487;
+	created: number;
+	updated: number;
 	voteup_count: 4413;
 	voting: 0;
 	comment_count: 201;
-	linkbox: {
-		"pic": "";
-		"title": "";
-		"url": "";
-		"category": ""
-	};
-	excerpt: "社会越浮躁，人们越能发现“简单的快乐”的价值。 今年冬天，随着北方各地的雪季来临，北方人引以为傲的那份简单的快乐——雪地写字，也开始被标上了价格，实现了“商业化”。 北方人的嚣张 为了给不方便体验雪天众多乐趣的南方朋友一个聊以慰藉的机会，很…";
-	excerpt_new: "社会越浮躁，人们越能发现“简单的快乐”的价值。 今年冬天，随着北方各地的雪季来临，北方人引以为傲的那份简单的快乐——雪地写字，也开始被标上了价格，实现了“商业化”。 北方人的嚣张 为了给不方便体验雪天众多乐趣的南方朋友一个聊以慰藉的机会，很…";
-	preview_type: "default";
-	preview_text: "";
+	excerpt: string;
+	excerpt_new: string;
 }
 
 export interface IFeedTarget {
@@ -68,7 +59,7 @@ export interface IFeedTarget {
 	verb: string;
 	created_time: number;
 	updated_time: number;
-	target: IQuestionAnswerTarget | IArticleTarget;
+	target: IQuestionAnswerTarget & IArticleTarget;
 }
 
 export interface IAuthorTarget extends ITarget {

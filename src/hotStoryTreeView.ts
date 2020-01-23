@@ -50,16 +50,26 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 						}
 						, this.context);
 					feedResp.forEach(f => console.log(f));
+					feedResp = feedResp.filter(f => { return f.target.type != 'feed_advert';});
 					let deps: Dependency[] = feedResp.map(feed => {
-						feed.target.
-						return new Dependency(feed.target.question.title, '', vscode.TreeItemCollapsibleState.None, 
-						{
-							command: 'zhihu.openWebView',
-							title: 'openWebView',
-							arguments: [feed.target]
-						});
+						let type = feed.target.type;
+						if(type == 'article') {
+							return new Dependency(feed.target.title, '', vscode.TreeItemCollapsibleState.None, {
+								command: 'zhihu.openWebView',
+								title: 'openWebView',
+								arguments: [feed.target]
+							});
+						} else if (type == 'answer') {
+							return new Dependency(feed.target.question.title, '', vscode.TreeItemCollapsibleState.None, {
+								command: 'zhihu.openWebView',
+								title: 'openWebView',
+								arguments: [feed.target.question]
+							});
+						} else {
+							return new Dependency('', '', vscode.TreeItemCollapsibleState.None);
+						}
 					});
-					return deps;
+					resolve(deps);
 
 				}
 				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.type}?desktop=true`;
