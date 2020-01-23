@@ -1,5 +1,5 @@
 import { Paging } from "./paging.model";
-import { IAuthor } from "./hot-story.model";
+import { ISearchTarget } from "./target/target";
 
 
 export interface ISearchResults {
@@ -13,25 +13,6 @@ export interface ISearchItem {
 		description?: string;
 		title?: string;
 	};
-	object?: ISearchObject;
+	object?: ISearchTarget;
 	
-}
-
-export interface ISearchObject {
-	id?: number;
-	title?: string;
-	type?: string;
-	url?: string;
-	excerpt?: string;
-	voteup_count?: number;
-	comment_count?: number;
-	created_time?: number;
-	updated_time?: number;
-	content?: string;
-	thumbnail_info?: any;
-	author: IAuthor;
-	voting: number;
-	relationship: any;
-	flag?: any;
-	attached_info_bytes?: string;
 }

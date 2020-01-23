@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as httpClient from "request";
-import { QuestionAnswers } from "../model/questions-answers.model";
+import { IQuestionAnswers } from "../model/questions-answers.model";
 import * as pug from "pug";
 import * as path from "path";
 
@@ -22,7 +22,7 @@ export async function openWebviewHandler(
 		httpClient(
 			answerAPI,
 			{ json: true },
-			(err, _res, body: QuestionAnswers) => {
+			(err, _res, body: IQuestionAnswers) => {
 				console.log(answerAPI);
 				const compiledFunction = pug.compileFile(
 					path.join(

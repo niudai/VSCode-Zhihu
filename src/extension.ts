@@ -11,6 +11,7 @@ import { openWebviewHandler } from "./command/openWebviewHandler";
 import { loginHandler } from "./command/loginHandler";
 
 export function activate(context: vscode.ExtensionContext) {
+
 	const includeContent = 'data[*].is_normal,content;';
 	let offset = 0;
 	context.subscriptions.push(
@@ -19,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		));
 	// Samples of `window.registerTreeDataProvider`
-	const zhihuProvider = new DepNodeProvider(
+	const zhihuProvider = new DepNodeProvider(context
 	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler(context)
