@@ -20,28 +20,28 @@ export const STORY_TYPES = [
 	{ storyType: 'digital', ch: '数码'}
 ];
 
-export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
+export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeItem> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined> = new vscode.EventEmitter<Dependency | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<ZhihuTreeItem | undefined> = new vscode.EventEmitter<ZhihuTreeItem | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<ZhihuTreeItem | undefined> = this._onDidChangeTreeData.event;
 
 	constructor(private context: vscode.ExtensionContext) {
 	}
 
-	refresh(): void {
-		this._onDidChangeTreeData.fire();
+	refresh(node?: ZhihuTreeItem): void {
+		this._onDidChangeTreeData.fire(node);
 	}
 
-	getTreeItem(element: Dependency): vscode.TreeItem {
+	getTreeItem(element: ZhihuTreeItem): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: Dependency): Thenable<Dependency[]> {
+	getChildren(element?: ZhihuTreeItem): Thenable<ZhihuTreeItem[]> {
 
 		if (element) {
 			return new Promise(async (resolve, reject) => {
 				if (element.type == 'feed') {
-					let feedAPI = `${FeedStoryAPI}?page_number=1&limit=6&action=down`;
+					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=6&action=down`;
 					let feedResp = await sendRequestWithCookie(
 						{
 							uri: feedAPI,
@@ -51,22 +51,22 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 						, this.context);
 					feedResp.forEach(f => console.log(f));
 					feedResp = feedResp.filter(f => { return f.target.type != 'feed_advert';});
-					let deps: Dependency[] = feedResp.map(feed => {
+					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;
 						if(type == 'article') {
-							return new Dependency(feed.target.title, '', vscode.TreeItemCollapsibleState.None, {
+							return new ZhihuTreeItem(feed.target.title, '', vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target]
 							});
 						} else if (type == 'answer') {
-							return new Dependency(feed.target.question.title, '', vscode.TreeItemCollapsibleState.None, {
+							return new ZhihuTreeItem(feed.target.question.title, '', vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target.question]
 							});
 						} else {
-							return new Dependency('', '', vscode.TreeItemCollapsibleState.None);
+							return new ZhihuTreeItem('', '', vscode.TreeItemCollapsibleState.None);
 						}
 					});
 					resolve(deps);
@@ -76,8 +76,8 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
 					let questions: HotStory[] = body.data;
 					questions.forEach(q => console.log(q));
-					let deps: Dependency[] = questions.map(story => {
-						return new Dependency(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
+					let deps: ZhihuTreeItem[] = questions.map(story => {
+						return new ZhihuTreeItem(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
 						{
 							command: 'zhihu.openWebView',
 							title: 'openWebView',
@@ -98,9 +98,12 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 
 	}
 
-	private getHotStoriesType(): Dependency[] {
+	private getHotStoriesType(): ZhihuTreeItem[] {
 		return STORY_TYPES.map(type => {
-			return new Dependency(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
+			if (type.storyType == 'feed') {
+				return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed, null, 0);
+			}
+			return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
 		});
 	}
 
@@ -126,13 +129,14 @@ export class DepNodeProvider implements vscode.TreeDataProvider<Dependency> {
 	}
 }
 
-export class Dependency extends vscode.TreeItem {
+export class ZhihuTreeItem extends vscode.TreeItem {
 
 	constructor(
 		public readonly label: string,
 		public type: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-		public readonly command?: vscode.Command
+		public readonly command?: vscode.Command,
+		public page?: number,
 	) {
 		super(label, collapsibleState);
 	}
@@ -150,6 +154,6 @@ export class Dependency extends vscode.TreeItem {
 	// 	dark: vscode.ThemeIcon.File
 	// };
 
-	contextValue = 'dependency';
+	contextValue =  (this.type == 'feed') ? 'feed' : 'dependency';
 
 }

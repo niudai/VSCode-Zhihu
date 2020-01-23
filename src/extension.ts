@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 
-import { DepNodeProvider, Dependency } from "./hotStoryTreeView";
+import { ZhihuTreeViewProvider, ZhihuTreeItem } from "./ZhihuTreeViewProvider";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
@@ -20,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		));
 	// Samples of `window.registerTreeDataProvider`
-	const zhihuProvider = new DepNodeProvider(context
+	const zhihuProvider = new ZhihuTreeViewProvider(context
 	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler(context)
@@ -46,14 +46,21 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.commands.registerCommand(
 		"zhihu.editEntry",
-		(node: Dependency) =>
+		(node: ZhihuTreeItem) =>
 			vscode.window.showInformationMessage(
 				`Successfully called edit entry on ${node.label}.`
 			)
 	);
 	vscode.commands.registerCommand(
+		"zhihu.nextPage",
+		(node: ZhihuTreeItem) => {
+			node.page++;
+			zhihuProvider.refresh(node);
+		}
+	)
+	vscode.commands.registerCommand(
 		"zhihu.deleteEntry",
-		(node: Dependency) =>
+		(node: ZhihuTreeItem) =>
 			vscode.window.showInformationMessage(
 				`Successfully called delete entry on ${node.label}.`
 			)

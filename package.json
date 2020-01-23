@@ -27,7 +27,7 @@
 			"activitybar": [
 				{
 					"id": "zhihu-explorer",
-					"title": "Package Explorer",
+					"title": "知乎",
 					"icon": "media/zhihu-logo-fluent.svg"
 				}
 			]
@@ -36,7 +36,7 @@
 			"zhihu-explorer": [
 				{
 					"id": "zhihu",
-					"name": "Node Dependencies"
+					"name": "推荐/热榜"
 				}
 			],
 			"explorer": [
@@ -97,6 +97,23 @@
 					"dark": "resources/dark/edit.svg"
 				},
 				"category": "Zhihu"
+			},
+			{
+				"command": "zhihu.previousPage",
+				"title": "Zhihu: PreviousPage",
+				"icon": {
+					"light": "media/left-arrow.svg",
+					"dark": "media/left-arrow.svg"
+				}
+
+			},
+			{
+				"command": "zhihu.nextPage",
+				"title": "Zhihu: NextPage",
+				"icon": {
+					"light": "media/right-arrow.svg",
+					"dark": "media/right-arrow.svg"
+				}
 			},
 			{
 				"command": "zhihu.deleteEntry",
@@ -195,6 +212,16 @@
 				{
 					"command": "zhihu.editEntry",
 					"when": "view == zhihu && viewItem == dependency",
+					"group": "inline"
+				},
+				{
+					"command": "zhihu.previousPage",
+					"when": "view == zhihu && viewItem == feed",
+					"group": "more"
+				},
+				{
+					"command": "zhihu.nextPage",
+					"when": "view == zhihu && viewItem == feed",
 					"group": "inline"
 				},
 				{
