@@ -4,13 +4,16 @@ import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 import { ILogin } from "../model/login.model";
-import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SignUpRedirectPage, SelfProfileAPI } from "../const/URL";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 import { encryptLoginData } from "../util/loginEncrypt";
 import { DefaultHeader } from "../const/HTTP";
+import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
+import { ProfileService } from "../service/profile.service";
 
-export async function loginHandler(context: vscode.ExtensionContext): Promise<void> {
+export async function loginHandler(context: vscode.ExtensionContext, 
+	profileService: ProfileService): Promise<void> {
 
 	var headers = DefaultHeader;
 
@@ -32,7 +35,7 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 	}
 	console.log(checkIfSignedIn.body);
 	if (checkIfSignedIn.statusCode == '302') {
-		vscode.window.showInformationMessage('你已经登录了哦~');
+		vscode.window.showInformationMessage(`你已经登录了哦~ ${profileService.name}`);
 		return;
 	}
 	fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), '');
@@ -177,7 +180,7 @@ export async function loginHandler(context: vscode.ExtensionContext): Promise<vo
 	});
 
 	if(loginResp.statusCode == '201') {
-		vscode.window.showInformationMessage('登录成功!');
+		vscode.window.showInformationMessage(`登录成功! ${profileService.name}`);
 	} else {
 		vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
 	}

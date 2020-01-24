@@ -41,7 +41,7 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 		if (element) {
 			return new Promise(async (resolve, reject) => {
 				if (element.type == 'feed') {
-					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=6&action=down`;
+					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
 					let feedResp = await sendRequestWithCookie(
 						{
 							uri: feedAPI,
@@ -49,8 +49,8 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 							gzip: true
 						}
 						, this.context);
-					feedResp.forEach(f => console.log(f));
-					feedResp = feedResp.filter(f => { return f.target.type != 'feed_advert';});
+					// feedResp.forEach(f => console.log(f));
+					feedResp = feedResp.data.filter(f => { return f.target.type != 'feed_advert';});
 					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;
 						if(type == 'article') {
@@ -101,7 +101,7 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 	private getHotStoriesType(): ZhihuTreeItem[] {
 		return STORY_TYPES.map(type => {
 			if (type.storyType == 'feed') {
-				return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed, null, 0);
+				return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, 0);
 			}
 			return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
 		});

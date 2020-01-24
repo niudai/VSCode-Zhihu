@@ -16,6 +16,22 @@ export interface IStoryTarget extends ITarget {
 	follower_count: number;
 }
 
+export interface IProfile {
+	id: string,
+	url_token: string,
+	name: string,
+	use_default_avatar: false,
+	avatar_url: string,
+	avatar_url_template: string,
+	is_org: false,
+	type: string,
+	url: string,
+	user_type: string,
+	headline: string,
+	gender: number,
+	uid: string,
+}
+
 export interface IQuestionAnswerTarget extends ITarget {
 	answer_type?: string;
 	question?: IQuestionTarget;

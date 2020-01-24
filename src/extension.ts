@@ -9,24 +9,27 @@ import { FileExplorer } from "./fileExplorer";
 import { searchHandler } from './command/searchHandler';
 import { openWebviewHandler } from "./command/openWebviewHandler";
 import { loginHandler } from "./command/loginHandler";
+import { ProfileService } from "./service/profile.service";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
-	const includeContent = 'data[*].is_normal,content;';
-	let offset = 0;
+
+	// Bean Initialization
+	const profileService = new ProfileService(context);
+	await profileService.fetchProfile();
+
+	const zhihuProvider = new ZhihuTreeViewProvider(context);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
 			await openWebviewHandler(object, context);
 		}
 		));
-	// Samples of `window.registerTreeDataProvider`
-	const zhihuProvider = new ZhihuTreeViewProvider(context
-	);
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler(context)
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
-		loginHandler(context)
+		loginHandler(context, profileService)
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu",

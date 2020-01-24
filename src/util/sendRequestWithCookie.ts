@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import { DefaultHeader } from "../const/HTTP";
 import { IFeedTarget } from "../model/target/target";
 
-export async function sendRequestWithCookie(options, context: vscode.ExtensionContext): Promise<IFeedTarget[]> {
+export async function sendRequestWithCookie(options, context: vscode.ExtensionContext): Promise<any> {
 
 
 	var headers = DefaultHeader;
@@ -19,6 +19,6 @@ export async function sendRequestWithCookie(options, context: vscode.ExtensionCo
 
 	// console.log(resp);
 
-	return Promise.resolve(resp.data);
+	return Promise.resolve(resp);
 
 }
