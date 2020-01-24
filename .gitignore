@@ -2,3 +2,5 @@ out
 node_modules
 # login.js
 /zhihu_login/*
+./cookie.txt
+./captcha.jpg

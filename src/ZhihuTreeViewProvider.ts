@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { FeedStoryAPI } from './const/URL';
 import { sendRequestWithCookie } from './util/sendRequestWithCookie';
 import { HotStory } from './model/hot-story.model';
+import { AccountService } from './service/account.service';
 
 export interface StoryType {
 	storyType?: string;
@@ -25,7 +26,8 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 	private _onDidChangeTreeData: vscode.EventEmitter<ZhihuTreeItem | undefined> = new vscode.EventEmitter<ZhihuTreeItem | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<ZhihuTreeItem | undefined> = this._onDidChangeTreeData.event;
 
-	constructor(private context: vscode.ExtensionContext) {
+	constructor(private context: vscode.ExtensionContext, 
+		private accountService: AccountService) {
 	}
 
 	refresh(node?: ZhihuTreeItem): void {
@@ -41,6 +43,9 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 		if (element) {
 			return new Promise(async (resolve, reject) => {
 				if (element.type == 'feed') {
+					if (!this.accountService.isAuthenticated) {
+						return [new ZhihuTreeItem('请先登录，查看个性内容', '', vscode.TreeItemCollapsibleState.None)];
+					} 
 					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
 					let feedResp = await sendRequestWithCookie(
 						{

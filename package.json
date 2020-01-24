@@ -85,6 +85,11 @@
 				"category": "Zhihu"
 			},
 			{
+				"command": "zhihu.logout",
+				"title": "Logout",
+				"category": "Zhihu"
+			},
+			{
 				"command": "zhihu.addEntry",
 				"title": "Add",
 				"category": "Zhihu"

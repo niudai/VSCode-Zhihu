@@ -1,18 +1,17 @@
-import * as vscode from "vscode";
-import * as httpClient from "request-promise";
+import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-import * as crypto from "crypto";
+import * as httpClient from "request-promise";
+import * as vscode from "vscode";
+import { DefaultHeader } from "../const/HTTP";
+import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
 import { ILogin } from "../model/login.model";
-import { CaptchaAPI, LoginAPI, SignUpRedirectPage, SelfProfileAPI } from "../const/URL";
+import { ProfileService } from "../service/profile.service";
+import { encryptLoginData } from "../util/loginEncrypt";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
-import { encryptLoginData } from "../util/loginEncrypt";
-import { DefaultHeader } from "../const/HTTP";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
-import { ProfileService } from "../service/profile.service";
 
-export async function loginHandler(context: vscode.ExtensionContext, 
+export async function loginHandler(context: vscode.ExtensionContext,
 	profileService: ProfileService): Promise<void> {
 
 	var headers = DefaultHeader;
@@ -29,7 +28,7 @@ export async function loginHandler(context: vscode.ExtensionContext,
 			resolveWithFullResponse: true,
 			gzip: true,
 			simple: false
-		});			
+		});
 	} catch (err) {
 		console.error('Http error', err);
 	}
@@ -166,20 +165,29 @@ export async function loginHandler(context: vscode.ExtensionContext,
 
 	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
 
-	var loginResp = await httpClient({ uri: LoginAPI, method: 'post', headers, body: encryptedFormData, gzip: true, resolveWithFullResponse: true }, (error, resp) => {
-		let cookieStr = '';
-		resp.headers['set-cookie'].forEach(
-			c => {
-				c = c.split(';')[0];
-				cookieStr = cookieStr.concat(c, '; ');
-			}
-		);
-		console.log(resp.headers['set-cookie']);
-		fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
-		console.log(resp.statusCode);
-	});
+	var loginResp = await httpClient(
+		{
+			uri: LoginAPI,
+			method: 'post',
+			headers,
+			body: encryptedFormData,
+			gzip: true,
+			resolveWithFullResponse: true,
+			simple: false
+		}, (error, resp) => {
+			let cookieStr = '';
+			resp.headers['set-cookie'].forEach(
+				c => {
+					c = c.split(';')[0];
+					cookieStr = cookieStr.concat(c, '; ');
+				}
+			);
+			console.log(resp.headers['set-cookie']);
+			fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
+			console.log(resp.statusCode);
+		});
 
-	if(loginResp.statusCode == '201') {
+	if (loginResp.statusCode == '201') {
 		vscode.window.showInformationMessage(`登录成功! ${profileService.name}`);
 	} else {
 		vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);

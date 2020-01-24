@@ -10,6 +10,8 @@ import { searchHandler } from './command/searchHandler';
 import { openWebviewHandler } from "./command/openWebviewHandler";
 import { loginHandler } from "./command/loginHandler";
 import { ProfileService } from "./service/profile.service";
+import { logoutHandler } from "./command/logoutHandler";
+import { AccountService } from "./service/account.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -17,8 +19,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Bean Initialization
 	const profileService = new ProfileService(context);
 	await profileService.fetchProfile();
+	const accountService = new AccountService(context);
 
-	const zhihuProvider = new ZhihuTreeViewProvider(context);
+	const zhihuProvider = new ZhihuTreeViewProvider(context,accountService);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
@@ -30,6 +33,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
 		loginHandler(context, profileService)
+	);
+	vscode.commands.registerCommand("zhihu.logout", () => 
+		logoutHandler(context)
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu",
@@ -58,6 +64,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		"zhihu.nextPage",
 		(node: ZhihuTreeItem) => {
 			node.page++;
+			zhihuProvider.refresh(node);
+		}
+	)
+	vscode.commands.registerCommand(
+		"zhihu.previousPage",
+		(node: ZhihuTreeItem) => {
+			node.page--;
 			zhihuProvider.refresh(node);
 		}
 	)
