@@ -9,9 +9,14 @@ export async function sendRequestWithCookie(options, context: vscode.ExtensionCo
 	console.log('Sending Request With Cookie...');
 	var headers = DefaultHeader;
 
-	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'), 'utf8');
+	try {
+		headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'), 'utf8');
+	} catch(error) {
+		fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), '');
+	}
 
 	options.headers = headers;
+	options.simple = false;
 
 	try {
 		var resp = await httpClient(options);	

@@ -43,8 +43,8 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 		if (element) {
 			return new Promise(async (resolve, reject) => {
 				if (element.type == 'feed') {
-					if (!this.accountService.isAuthenticated) {
-						return [new ZhihuTreeItem('请先登录，查看个性内容', '', vscode.TreeItemCollapsibleState.None)];
+					if (! await this.accountService.isAuthenticated()) {
+						return resolve([new ZhihuTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
 					} 
 					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
 					let feedResp = await sendRequestWithCookie(

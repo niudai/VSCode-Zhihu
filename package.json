@@ -82,11 +82,19 @@
 			{
 				"command": "zhihu.login",
 				"title": "Login",
+				"icon": {
+					"light": "media/login.svg",
+					"dark": "media/login.svg"
+				},
 				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.logout",
 				"title": "Logout",
+				"icon": {
+					"light": "media/logout.svg",
+					"dark": "media/logout.svg"
+				},
 				"category": "Zhihu"
 			},
 			{
@@ -197,6 +205,16 @@
 					"command": "zhihu.refreshEntry",
 					"when": "view == zhihu",
 					"group": "navigation"
+				},
+				{
+					"command": "zhihu.login",
+					"when": "view == zhihu",
+					"group": "navigation"
+				},
+				{
+					"command": "zhihu.logout",
+					"when": "view == zhihu",
+					"group": "secondary"
 				},
 				{
 					"command": "zhihu.addEntry",
