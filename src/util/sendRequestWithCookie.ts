@@ -1,23 +1,24 @@
 import * as httpClient from "request-promise";
-import { CaptchaAPI } from "../const/URL";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import { DefaultHeader } from "../const/HTTP";
-import { IFeedTarget } from "../model/target/target";
 
 export async function sendRequestWithCookie(options, context: vscode.ExtensionContext): Promise<any> {
 
-
+	console.log('Sending Request With Cookie...');
 	var headers = DefaultHeader;
 
-	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
+	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'), 'utf8');
 
 	options.headers = headers;
 
-	var resp = await httpClient(options);
-
-	// console.log(resp);
+	try {
+		var resp = await httpClient(options);	
+	} catch (error) {
+		vscode.window.showInformationMessage('请求错误');
+		console.log(error);
+	}
 
 	return Promise.resolve(resp);
 

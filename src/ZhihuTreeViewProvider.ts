@@ -54,13 +54,13 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;
 						if(type == 'article') {
-							return new ZhihuTreeItem(feed.target.title, '', vscode.TreeItemCollapsibleState.None, {
+							return new ZhihuTreeItem(feed.target.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target]
 							});
 						} else if (type == 'answer') {
-							return new ZhihuTreeItem(feed.target.question.title, '', vscode.TreeItemCollapsibleState.None, {
+							return new ZhihuTreeItem(feed.target.question.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target.question]

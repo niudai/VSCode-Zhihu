@@ -93,11 +93,8 @@ export interface IAuthorTarget extends ITarget {
 	user_type?: string;
 }
 
-export interface ISearchTarget {
-	id?: number;
+export interface ISearchTarget extends ITarget {
 	title?: string;
-	type?: string;
-	url?: string;
 	excerpt?: string;
 	voteup_count?: number;
 	comment_count?: number;
@@ -105,7 +102,6 @@ export interface ISearchTarget {
 	updated_time?: number;
 	content?: string;
 	thumbnail_info?: any;
-	author: IAuthorTarget;
 	voting: number;
 	relationship: any;
 	flag?: any;

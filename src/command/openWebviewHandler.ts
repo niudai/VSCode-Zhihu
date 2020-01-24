@@ -1,11 +1,16 @@
 import * as vscode from "vscode";
-import * as httpClient from "request";
+import * as httpClient from "request-promise";
 import * as pug from "pug";
 import * as path from "path";
-import { IQuestionAnswerTarget } from "../model/target/target";
+import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
+import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
+import { IArticle } from "../model/article/article-detail";
+import { SelfProfileAPI } from "../const/URL";
+import { DefaultHeader } from "../const/HTTP";
+import { readFileSync } from "fs";
 
 export async function openWebviewHandler(
-	object: { content?: string; type?: string; id?: number },
+	object: ITarget,
 	context: vscode.ExtensionContext
 ): Promise<void> {
 	if (object.type == 'question') {
@@ -60,6 +65,34 @@ export async function openWebviewHandler(
 		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
 		panel.webview.html = compiledFunction({
 			answers: [object]
+		});
+	} else if (object.type == 'article') {
+		
+		const panel = vscode.window.createWebviewPanel(
+			"zhihu",
+			"知乎文章",
+			vscode.ViewColumn.One,
+			{}
+		);
+		let article: IArticle = await sendRequestWithCookie({
+			uri: object.url,
+			json: true,
+			gzip: true,
+			headers: null
+		}, context);
+
+		const compiledFunction = pug.compileFile(
+			path.join(
+				context.extensionPath,
+				"src",
+				"template",
+				"article.pug"
+			)
+		)
+		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
+		panel.webview.html = compiledFunction({
+			content: article.content,
+			title: article.title
 		});
 	}
 }
