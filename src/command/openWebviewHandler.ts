@@ -1,17 +1,17 @@
-import * as vscode from "vscode";
-import * as httpClient from "request-promise";
-import * as pug from "pug";
 import * as path from "path";
+import * as pug from "pug";
+import * as httpClient from "request-promise";
+import * as vscode from "vscode";
+import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
 import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
-import { IArticle } from "../model/article/article-detail";
-import { SelfProfileAPI } from "../const/URL";
-import { DefaultHeader } from "../const/HTTP";
-import { readFileSync } from "fs";
+import { WebviewService } from "../service/webview.service";
+import { TemplatePath, IconPath } from "../const/PATH";
 
 export async function openWebviewHandler(
 	object: ITarget,
-	context: vscode.ExtensionContext
+	context: vscode.ExtensionContext,
+	webviewService: WebviewService
 ): Promise<void> {
 	if (object.type == 'question') {
 		const includeContent = "data[*].is_normal,content;";
@@ -47,27 +47,25 @@ export async function openWebviewHandler(
 			}
 		);
 	} else if (object.type == 'answer') {
-
-		const panel = vscode.window.createWebviewPanel(
-			"zhihu",
-			"知乎回答",
-			vscode.ViewColumn.One,
-			{}
-		);
-		const compiledFunction = pug.compileFile(
-			path.join(
+		webviewService.renderHtml({
+			viewType: "zhihu",
+			title: "知乎回答",
+			showOptions: vscode.ViewColumn.One,
+			pugTemplatePath: path.join(
 				context.extensionPath,
-				"src",
-				"template",
+				TemplatePath,
 				"questions-answers.pug"
-			)
-		);
-		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
-		panel.webview.html = compiledFunction({
-			answers: [object]
-		});
+			),
+			iconPath: path.join(
+				context.extensionPath,
+				IconPath,
+				'zhihu-logo-material.svg'),
+			pugObjects: {
+				answers: [object]
+			}
+		})
 	} else if (object.type == 'article') {
-		
+
 		const panel = vscode.window.createWebviewPanel(
 			"zhihu",
 			"知乎文章",

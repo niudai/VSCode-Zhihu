@@ -3,8 +3,9 @@ import { ISearchItem } from "../model/search-results";
 import * as search from '../service/search.service';
 import { openWebviewHandler } from "./openWebviewHandler";
 import { SearchTypes } from "../util/searchTypesEnum";
+import { WebviewService } from "../service/webview.service";
 
-export async function searchHandler(context: vscode.ExtensionContext): Promise<void> {
+export async function searchHandler(context: vscode.ExtensionContext, webviewService: WebviewService): Promise<void> {
 
 	const selectedSearchType: string = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: string }> (
 		SearchTypes.map(type => ({ value: type.value, label: type.ch, description: '' })),
@@ -28,6 +29,6 @@ export async function searchHandler(context: vscode.ExtensionContext): Promise<v
 	
 	console.log(`Selcted Item = ${selectedItem}`);
 
-	openWebviewHandler(selectedItem.object, context);
+	openWebviewHandler(selectedItem.object, context, webviewService);
 	
 }

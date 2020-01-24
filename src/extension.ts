@@ -12,6 +12,7 @@ import { loginHandler } from "./command/loginHandler";
 import { ProfileService } from "./service/profile.service";
 import { logoutHandler } from "./command/logoutHandler";
 import { AccountService } from "./service/account.service";
+import { WebviewService } from "./service/webview.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -20,19 +21,20 @@ export async function activate(context: vscode.ExtensionContext) {
 	const profileService = new ProfileService(context);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context);
+	const webviewService = new WebviewService(context);
 
-	const zhihuProvider = new ZhihuTreeViewProvider(context,accountService);
+	const zhihuProvider = new ZhihuTreeViewProvider(context, accountService, profileService);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
-			await openWebviewHandler(object, context);
+			await openWebviewHandler(object, context, webviewService);
 		}
 		));
 	vscode.commands.registerCommand("zhihu.search", async () => 
-		await searchHandler(context)
+		await searchHandler(context, webviewService)
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
-		loginHandler(context, profileService)
+		loginHandler(context, profileService, accountService)
 	);
 	vscode.commands.registerCommand("zhihu.logout", () => 
 		logoutHandler(context)

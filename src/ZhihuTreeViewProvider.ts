@@ -5,6 +5,7 @@ import { FeedStoryAPI } from './const/URL';
 import { sendRequestWithCookie } from './util/sendRequestWithCookie';
 import { HotStory } from './model/hot-story.model';
 import { AccountService } from './service/account.service';
+import { ProfileService } from './service/profile.service';
 
 export interface StoryType {
 	storyType?: string;
@@ -27,7 +28,8 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 	readonly onDidChangeTreeData: vscode.Event<ZhihuTreeItem | undefined> = this._onDidChangeTreeData.event;
 
 	constructor(private context: vscode.ExtensionContext, 
-		private accountService: AccountService) {
+		private accountService: AccountService,
+		private profileService: ProfileService) {
 	}
 
 	refresh(node?: ZhihuTreeItem): void {
@@ -106,7 +108,7 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 	private getHotStoriesType(): ZhihuTreeItem[] {
 		return STORY_TYPES.map(type => {
 			if (type.storyType == 'feed') {
-				return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, 0);
+				return new ZhihuTreeItem(`${type.ch} for ${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, 0);
 			}
 			return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
 		});

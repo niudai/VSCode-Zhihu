@@ -8,35 +8,25 @@ import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
 import { ILogin } from "../model/login.model";
 import { ProfileService } from "../service/profile.service";
 import { encryptLoginData } from "../util/loginEncrypt";
+import { AccountService } from "../service/account.service";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 
-export async function loginHandler(context: vscode.ExtensionContext,
-	profileService: ProfileService): Promise<void> {
+export async function loginHandler(
+	context: vscode.ExtensionContext,
+	profileService: ProfileService,
+	accountService: AccountService
+	): Promise<void> {
 
 	var headers = DefaultHeader;
 
 	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
 
-	let checkIfSignedIn;
-	try {
-		checkIfSignedIn = await httpClient({
-			uri: SignUpRedirectPage,
-			followRedirect: false,
-			followAllRedirects: false,
-			headers,
-			resolveWithFullResponse: true,
-			gzip: true,
-			simple: false
-		});
-	} catch (err) {
-		console.error('Http error', err);
-	}
-	console.log(checkIfSignedIn.body);
-	if (checkIfSignedIn.statusCode == '302') {
+	if (await accountService.isAuthenticated()) {
 		vscode.window.showInformationMessage(`你已经登录了哦~ ${profileService.name}`);
 		return;
 	}
+
 	fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), '');
 
 	httpClient(CaptchaAPI, { method: 'get' }, (error, resp) => {
