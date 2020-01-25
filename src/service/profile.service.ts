@@ -19,7 +19,8 @@ export class ProfileService {
 		console.log(this.profile);
 	}
 
-	get	name(): string {
+	get name(): string {
+		this.fetchProfile();
 		return this.profile.name;
 	}
 

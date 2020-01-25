@@ -12,6 +12,14 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:zhihu.refreshEntry",
+		"onCommand:zhihu.openWebView",
+		"onCommand:zhihu.search",
+		"onCommand:zhihu.login",
+		"onCommand:zhihu.logout",
+		"onCommand:zhihu.logout",
+		"onCommand:zhihu.previousPage",
+		"onCommand:zhihu.nextPage",
 		"onView:zhihu-explorer",
 		"onView:ftpExplorer",
 		"onView:jsonOutline",
@@ -128,7 +136,6 @@
 					"light": "media/light/left-arrow.svg",
 					"dark": "media/light/left-arrow.svg"
 				}
-
 			},
 			{
 				"command": "zhihu.nextPage",
@@ -322,6 +329,7 @@
 		"pug": "^2.0.4",
 		"request": "^2.88.0",
 		"request-promise": "^4.2.5",
-		"rimraf": "^2.7.1"
+		"rimraf": "^2.7.1",
+		"sync-request": "^6.1.0"
 	}
 }

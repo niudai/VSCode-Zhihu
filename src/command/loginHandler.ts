@@ -9,14 +9,17 @@ import { ILogin } from "../model/login.model";
 import { ProfileService } from "../service/profile.service";
 import { encryptLoginData } from "../util/loginEncrypt";
 import { AccountService } from "../service/account.service";
+import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
+import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 
 export async function loginHandler(
 	context: vscode.ExtensionContext,
 	profileService: ProfileService,
-	accountService: AccountService
-	): Promise<void> {
+	accountService: AccountService,
+	feedTreeViewProvider: FeedTreeViewProvider
+): Promise<void> {
 
 	var headers = DefaultHTTPHeader;
 
@@ -152,34 +155,31 @@ export async function loginHandler(
 	// vscode.window.showInformationMessage(encryptedFormData + formurlencoded(loginData));
 	// vscode.window.showInformationMessage('登录成功!');
 
-
-	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
-
-	var loginResp = await httpClient(
+	var loginResp = await sendRequestWithCookie(
 		{
 			uri: LoginAPI,
 			method: 'post',
-			headers,
 			body: encryptedFormData,
 			gzip: true,
 			resolveWithFullResponse: true,
 			simple: false
-		}, (error, resp) => {
-			let cookieStr = '';
-			resp.headers['set-cookie'].forEach(
-				c => {
-					c = c.split(';')[0];
-					cookieStr = cookieStr.concat(c, '; ');
-				}
-			);
-			console.log(resp.headers['set-cookie']);
-			fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
-			console.log(resp.statusCode);
-		});
+		}, context);
+	let cookieStr = '';
+	loginResp.headers['set-cookie'].forEach(
+		c => {
+			c = c.split(';')[0];
+			cookieStr = cookieStr.concat(c, '; ');
+		}
+	);
+	fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
 
-	if (loginResp.statusCode == '201') {
-		vscode.window.showInformationMessage(`你好，${profileService.name}`);
-	} else {
-		vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
-	}
+	profileService.fetchProfile().then(() => {
+		if (loginResp.statusCode == '201') {
+			vscode.window.showInformationMessage(`你好，${profileService.name }`);
+			feedTreeViewProvider.refresh();
+		} else {
+			vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
+		}
+	})
+
 }

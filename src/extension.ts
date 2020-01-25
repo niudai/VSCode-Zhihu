@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 
-import { ZhihuTreeViewProvider, ZhihuTreeItem } from "./ZhihuTreeViewProvider";
+import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { FtpExplorer } from "./ftpExplorer";
 import { FileExplorer } from "./fileExplorer";
@@ -13,6 +13,7 @@ import { ProfileService } from "./service/profile.service";
 import { logoutHandler } from "./command/logoutHandler";
 import { AccountService } from "./service/account.service";
 import { WebviewService } from "./service/webview.service";
+import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -23,7 +24,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	const accountService = new AccountService(context);
 	const webviewService = new WebviewService(context);
 
-	const zhihuProvider = new ZhihuTreeViewProvider(context, accountService, profileService);
+	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService);
+	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
@@ -34,21 +36,23 @@ export async function activate(context: vscode.ExtensionContext) {
 		await searchHandler(context, webviewService)
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
-		loginHandler(context, profileService, accountService)
+		loginHandler(context, profileService, accountService, feedTreeViewProvider)
 	);
 	vscode.commands.registerCommand("zhihu.logout", () => 
 		logoutHandler(context)
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu-feed",
-		zhihuProvider
+		feedTreeViewProvider
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu-hotStories",
-		zhihuProvider
+		hotStoryTreeViewProvider
 	);
-	vscode.commands.registerCommand("zhihu.refreshEntry", () =>
-		zhihuProvider.refresh()
+	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
+		feedTreeViewProvider.refresh();
+		hotStoryTreeViewProvider.refresh();
+	}
 	);
 	vscode.commands.registerCommand("extension.openPackageOnNpm", moduleName =>
 		vscode.commands.executeCommand(
@@ -70,14 +74,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		"zhihu.nextPage",
 		(node: ZhihuTreeItem) => {
 			node.page++;
-			zhihuProvider.refresh(node);
+			feedTreeViewProvider.refresh(node);
 		}
 	)
 	vscode.commands.registerCommand(
 		"zhihu.previousPage",
 		(node: ZhihuTreeItem) => {
 			node.page--;
-			zhihuProvider.refresh(node);
+			feedTreeViewProvider.refresh(node);
 		}
 	)
 	vscode.commands.registerCommand(

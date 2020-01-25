@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as httpClient from 'request';
 import * as vscode from 'vscode';
-import { FeedStoryAPI } from './const/URL';
-import { sendRequestWithCookie } from './util/sendRequestWithCookie';
-import { HotStory } from './model/hot-story.model';
-import { AccountService } from './service/account.service';
-import { ProfileService } from './service/profile.service';
+import { FeedStoryAPI } from '../const/URL';
+import { sendRequestWithCookie } from '../util/sendRequestWithCookie';
+import { HotStory } from '../model/hot-story.model';
+import { AccountService } from '../service/account.service';
+import { ProfileService } from '../service/profile.service';
 
 export interface StoryType {
 	storyType?: string;
@@ -14,15 +14,9 @@ export interface StoryType {
 
 export const STORY_TYPES = [
 	{ storyType: 'feed', ch: '推荐' },
-	{ storyType: 'total', ch: '全站' },
-	{ storyType: 'sport', ch: '运动' },
-	{ storyType: 'science', ch: '科学'},
-	{ storyType: 'fashion', ch: '时尚'},
-	{ storyType: 'film', ch: '影视'},
-	{ storyType: 'digital', ch: '数码'}
 ];
 
-export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeItem> {
+export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeItem> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<ZhihuTreeItem | undefined> = new vscode.EventEmitter<ZhihuTreeItem | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<ZhihuTreeItem | undefined> = this._onDidChangeTreeData.event;
@@ -56,7 +50,6 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 							gzip: true
 						}
 						, this.context);
-					// feedResp.forEach(f => console.log(f));
 					feedResp = feedResp.data.filter(f => { return f.target.type != 'feed_advert';});
 					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;
@@ -79,27 +72,8 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 					resolve(deps);
 
 				}
-				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.type}?desktop=true`;
-				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
-					let questions: HotStory[] = body.data;
-					questions.forEach(q => console.log(q));
-					let deps: ZhihuTreeItem[] = questions.map(story => {
-						return new ZhihuTreeItem(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
-						{
-							command: 'zhihu.openWebView',
-							title: 'openWebView',
-							arguments: [story.target]
-						}); 
-						// return new Dependency('apple', 'no', vscode.TreeItemCollapsibleState.None);
-					});
-					// console.log(`${deps} + ${element.token}`);
-					console.log(`questions`);
-					resolve(deps);
-				});
 			});
-			// return Promise.resolve([new Dependency('测试', '好', vscode.TreeItemCollapsibleState.None)]);
 		} else {
-			// root element is null
 			return Promise.resolve(this.getHotStoriesType());
 		}
 
@@ -114,26 +88,6 @@ export class ZhihuTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeI
 		});
 	}
 
-	// private getHotStories(storyType: StoryType): Dependency[] {
-	// 	let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${storyType.storyType}?desktop=true`;
-	// 	let hotQuestions;
-	// 	httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
-	// 		let questions = body.data;
-	// 		hotQuestions = questions.map(story => {
-	// 			new Dependency(story.target.title, 'v4', vscode.TreeItemCollapsibleState.None);
-	// 		});
-	// 	});
-	// }
-
-	private pathExists(p: string): boolean {
-		try {
-			fs.accessSync(p);
-		} catch (err) {
-			return false;
-		}
-
-		return true;
-	}
 }
 
 export class ZhihuTreeItem extends vscode.TreeItem {
@@ -149,11 +103,11 @@ export class ZhihuTreeItem extends vscode.TreeItem {
 	}
 
 	get tooltip(): string {
-		return `${this.label}-${this.type}`;
+		return `${this.label}`;
 	}
 
-	get description(): string {
-		return this.type;
+	get description(): boolean {
+		return false;
 	}
 
 	// iconPath = {
