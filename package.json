@@ -1,9 +1,9 @@
 {
-	"name": "custom-view-samples",
-	"displayName": "Custom view Samples",
-	"description": "Samples for VSCode's view API",
+	"name": "zhihu-vscode-extension",
+	"displayName": "Zhihu On VSCode",
+	"description": "Zhihu VSCode Extension",
 	"version": "0.0.1",
-	"publisher": "vscode-samples",
+	"publisher": "niudai",
 	"enableProposedApi": true,
 	"engines": {
 		"vscode": "^1.32.0"
@@ -12,14 +12,16 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:zhihu",
+		"onView:zhihu-explorer",
 		"onView:ftpExplorer",
 		"onView:jsonOutline",
 		"onView:fileExplorer",
 		"onView:testView",
 		"onLanguage:json",
 		"onLanguage:jsonc",
-		"onCommand:sample.reveal"
+		"onCommand:sample.reveal",
+		"onCommand:zhihu.login",
+		"onCommand:zhihu.logout"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -35,8 +37,12 @@
 		"views": {
 			"zhihu-explorer": [
 				{
-					"id": "zhihu",
-					"name": "推荐/热榜"
+					"id": "zhihu-feed",
+					"name": "推荐"
+				},
+				{
+					"id": "zhihu-hotStories",
+					"name": "热榜"
 				}
 			],
 			"explorer": [
@@ -65,7 +71,7 @@
 				"title": "Zhihu: Refresh",
 				"icon": {
 					"light": "media/light/refresh.svg",
-					"dark": "media/light/refresh.svg"
+					"dark": "media/dark/refresh.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -129,7 +135,7 @@
 				"title": "Zhihu: NextPage",
 				"icon": {
 					"light": "media/light/right-arrow.svg",
-					"dark": "media/light/right-arrow.svg"
+					"dark": "media/dark/right-arrow.svg"
 				}
 			},
 			{
@@ -141,8 +147,8 @@
 				"command": "ftpExplorer.refresh",
 				"title": "Refresh",
 				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
+					"light": "media/light/refresh.svg",
+					"dark": "media/dark/refresh.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -199,35 +205,30 @@
 			}
 		],
 		"menus": {
-			"commandPalette": [
-				{
-					"command": "ftpExplorer.revealResource"
-				}
-			],
 			"view/title": [
 				{
 					"command": "zhihu.refreshEntry",
-					"when": "view == zhihu",
-					"group": "navigation"
+					"when": "view == zhihu-feed",
+					"group": "navigation@0"
 				},
 				{
 					"command": "zhihu.login",
-					"when": "view == zhihu",
+					"when": "view == zhihu-feed",
 					"group": "navigation"
 				},
 				{
 					"command": "zhihu.logout",
-					"when": "view == zhihu",
+					"when": "view == zhihu-feed",
 					"group": "secondary"
 				},
 				{
 					"command": "zhihu.search",
-					"when": "view == zhihu",
+					"when": "view == zhihu-feed",
 					"group": "navigation"
 				},
 				{
 					"command": "zhihu.addEntry",
-					"when": "view == zhihu"
+					"when": "view == zhihu-feed"
 				},
 				{
 					"command": "jsonOutline.refresh",
@@ -243,22 +244,22 @@
 			"view/item/context": [
 				{
 					"command": "zhihu.editEntry",
-					"when": "view == zhihu && viewItem == dependency",
+					"when": "view == zhihu-feed && viewItem == dependency",
 					"group": "inline"
 				},
 				{
 					"command": "zhihu.previousPage",
-					"when": "view == zhihu && viewItem == feed",
+					"when": "view == zhihu-feed && viewItem == feed",
 					"group": "more"
 				},
 				{
 					"command": "zhihu.nextPage",
-					"when": "view == zhihu && viewItem == feed",
+					"when": "view == zhihu-feed && viewItem == feed",
 					"group": "inline"
 				},
 				{
 					"command": "zhihu.deleteEntry",
-					"when": "view == zhihu && viewItem == dependency"
+					"when": "view == zhihu-feed && viewItem == dependency"
 				},
 				{
 					"command": "jsonOutline.renameNode",

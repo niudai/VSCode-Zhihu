@@ -40,7 +40,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		logoutHandler(context)
 	);
 	vscode.window.registerTreeDataProvider(
-		"zhihu",
+		"zhihu-feed",
+		zhihuProvider
+	);
+	vscode.window.registerTreeDataProvider(
+		"zhihu-hotStories",
 		zhihuProvider
 	);
 	vscode.commands.registerCommand("zhihu.refreshEntry", () =>

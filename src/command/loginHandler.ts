@@ -178,7 +178,7 @@ export async function loginHandler(
 		});
 
 	if (loginResp.statusCode == '201') {
-		vscode.window.showInformationMessage(`登录成功! ${profileService.name}`);
+		vscode.window.showInformationMessage(`你好，${profileService.name}`);
 	} else {
 		vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
 	}
