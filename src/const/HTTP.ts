@@ -1,4 +1,4 @@
-export const DefaultHeader = {
+export const DefaultHTTPHeader = {
 	'accept-encoding': 'gzip',
 	// 'Host': 'www.zhihu.com',
 	'Referer': 'https://www.zhihu.com/',

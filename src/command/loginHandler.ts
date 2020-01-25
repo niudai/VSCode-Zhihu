@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as httpClient from "request-promise";
 import * as vscode from "vscode";
-import { DefaultHeader } from "../const/HTTP";
+import { DefaultHTTPHeader } from "../const/HTTP";
 import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
 import { ILogin } from "../model/login.model";
 import { ProfileService } from "../service/profile.service";
@@ -18,7 +18,7 @@ export async function loginHandler(
 	accountService: AccountService
 	): Promise<void> {
 
-	var headers = DefaultHeader;
+	var headers = DefaultHTTPHeader;
 
 	headers['cookie'] = fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'));
 

@@ -23,7 +23,7 @@ export class WebviewService {
 	/**
 	 * Create and show a webview provided by pug
 	 */
-	public renderHtml(w: IWebviewPugRender) {
+	public 	renderHtml(w: IWebviewPugRender) {
 		const panel = vscode.window.createWebviewPanel(
 			w.viewType,
 			w.title,
