@@ -21,6 +21,7 @@
 		"onCommand:zhihu.previousPage",
 		"onCommand:zhihu.nextPage",
 		"onView:zhihu-explorer",
+		"onView:zhihu-feed",
 		"onView:ftpExplorer",
 		"onView:jsonOutline",
 		"onView:fileExplorer",
@@ -76,7 +77,7 @@
 		"commands": [
 			{
 				"command": "zhihu.refreshEntry",
-				"title": "Zhihu: Refresh",
+				"title": "Refresh",
 				"icon": {
 					"light": "media/light/refresh.svg",
 					"dark": "media/dark/refresh.svg"

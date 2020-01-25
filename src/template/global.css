@@ -18,7 +18,7 @@ img.origin_image.zh-lightbox-thumb {
     box-shadow: 0px 0px 10px powderblue;
 }
 
-body.vscode-light {
+body.vscode-light, body.vscode-dark {
 	background: #f6f6f6;
 	padding: 0;
 }

@@ -12,6 +12,18 @@ export interface ILogin {
 	signature: string; // "f2cb75687f5c493e8bc34f7cc430e7e985250c35"
 }
 
+export interface ISmsData {
+	phoneNo: string; // +86...,
+	smsType: string; // text as default
+}
+
+export interface ISmsData_Decamalized {
+	phone_no: string;
+	sms_type: string;
+}
+
+// url encoded phone_no=%2B8618324748963&sms_type=text
+
 // captcha: "{"img_size":[200,44],"input_points":[[85.36363220214844,17.875]]}"
 // clientId: "c3cef7c66a1843f8b3a9e6a1e3160e20"
 // grantType: "password"
