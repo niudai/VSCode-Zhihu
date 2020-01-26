@@ -8,6 +8,6 @@ export const FeedStoryAPI = 'https://www.zhihu.com/api/v3/feed/topstory/recommen
 
 export const SelfProfileAPI = 'https://www.zhihu.com/api/v4/me';
 
-export const GetSmsMessage = 'https://www.zhihu.com/api/v3/oauth/sign_in/digits';
+export const SMSAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in/digits';
 
 // zs Encrypt

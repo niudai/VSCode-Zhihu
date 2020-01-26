@@ -16,7 +16,6 @@ export class AccountService {
 			uri: SelfProfileAPI,
 			json: true
 		}, this.context);
-		console.log(this.profile);
 	}
 
 	async isAuthenticated(): Promise<boolean> {

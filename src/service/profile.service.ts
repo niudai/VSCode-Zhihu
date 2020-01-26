@@ -16,7 +16,6 @@ export class ProfileService {
 			uri: SelfProfileAPI,
 			json: true
 		}, this.context);
-		console.log(this.profile);
 	}
 
 	get name(): string {

@@ -6,7 +6,6 @@ import { DefaultHTTPHeader } from "../const/HTTP";
 
 export async function sendRequestWithCookie(options, context: vscode.ExtensionContext): Promise<any> {
 
-	console.log('Sending Request With Cookie...');
 	var headers = DefaultHTTPHeader;
 
 	try {

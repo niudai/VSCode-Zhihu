@@ -44,7 +44,6 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.type}?desktop=true`;
 				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
 					let questions: HotStory[] = body.data;
-					questions.forEach(q => console.log(q));
 					let deps: ZhihuTreeItem[] = questions.map(story => {
 						return new ZhihuTreeItem(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
 						{
@@ -53,7 +52,6 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 							arguments: [story.target]
 						}); 
 					});
-					console.log(`questions`);
 					resolve(deps);
 				});
 			});

@@ -14,7 +14,6 @@ export async function getSearchResults(keyword: string, searchType: string): Pro
 	};
 	const result = await httpClient(`${ZHIHU_SEARCH_API}?${toQueryString(params)}`);
 	const jsonResult: ISearchResults = JSON.parse(result);
-	console.log(jsonResult);
 	return Promise.resolve(jsonResult.data.filter(o => o.type == 'search_result'));
 
 }

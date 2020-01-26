@@ -13,13 +13,8 @@ export interface ILogin {
 }
 
 export interface ISmsData {
-	phoneNo: string; // +86...,
-	smsType: string; // text as default
-}
-
-export interface ISmsData_Decamalized {
-	phone_no: string;
-	sms_type: string;
+	phone_no: string; // +86...,
+	sms_type: string; // text as default
 }
 
 // url encoded phone_no=%2B8618324748963&sms_type=text

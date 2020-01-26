@@ -4,15 +4,15 @@ import * as path from "path";
 import * as httpClient from "request-promise";
 import * as vscode from "vscode";
 import { DefaultHTTPHeader } from "../const/HTTP";
-import { CaptchaAPI, LoginAPI, SignUpRedirectPage } from "../const/URL";
-import { ILogin } from "../model/login.model";
-import { ProfileService } from "../service/profile.service";
-import { encryptLoginData } from "../util/loginEncrypt";
+import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
+import { ILogin, ISmsData } from "../model/login.model";
 import { AccountService } from "../service/account.service";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
+import { ProfileService } from "../service/profile.service";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { SearchTypes } from "../util/searchTypesEnum";
-import { LoginTypes, LoginEnum } from "../util/loginTypeEnum";
+import { encryptLoginData } from "../util/loginEncrypt";
+import { encryptSmsData } from "../util/smsEncrypt";
+import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
+import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 
@@ -34,41 +34,41 @@ export async function loginHandler(
 
 	fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), '');
 
-	const selectedLoginType: LoginEnum = await vscode.window.showQuickPick<vscode.QuickPickItem & { value : LoginEnum }> (
+	const selectedLoginType: LoginEnum = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: LoginEnum }>(
 		LoginTypes.map(type => ({ value: type.value, label: type.ch, description: '' })),
 		{ placeHolder: "选择登录方式: " }
 	).then(item => item.value);
 
 	if (selectedLoginType == LoginEnum.password) {
-		let resp = await sendRequestWithCookie({ uri: CaptchaAPI, 
-			method: 'get', resolveWithFullResponse: true, gzip: true}, context);
-		
-		
-				let cookieStr = '';
-				resp.headers['set-cookie'].forEach(
-					c => {
-						c = c.split(';')[0];
-						cookieStr = cookieStr.concat(c, '; ');
-					}
-				);
-				console.log(resp.headers['set-cookie']);
-				if (JSON.parse(resp.body)['show_captcha']) {
-					fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, 'utf8');
-					getCaptcha({ 'Cookie': resp.headers['set-cookie'] });
-				}
-				const panel = vscode.window.createWebviewPanel(
-					"zhihu",
-					"验证码",
-					{
-						viewColumn: vscode.ViewColumn.One,
-						preserveFocus: true
-					}
-				);
-				const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
-					path.join(context.extensionPath, './captcha.jpg')
-				));
-				panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
-				panel.webview.html = `
+		let resp = await sendRequestWithCookie({
+			uri: CaptchaAPI,
+			method: 'get', resolveWithFullResponse: true, gzip: true
+		}, context);
+
+		let cookieStr = '';
+		resp.headers['set-cookie'].forEach(
+			c => {
+				c = c.split(';')[0];
+				cookieStr = cookieStr.concat(c, '; ');
+			}
+		);
+		if (JSON.parse(resp.body)['show_captcha']) {
+			fs.writeFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, 'utf8');
+			getCaptcha({ 'Cookie': resp.headers['set-cookie'] });
+		}
+		const panel = vscode.window.createWebviewPanel(
+			"zhihu",
+			"验证码",
+			{
+				viewColumn: vscode.ViewColumn.One,
+				preserveFocus: true
+			}
+		);
+		const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
+			path.join(context.extensionPath, './captcha.jpg')
+		));
+		panel.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'zhihu-logo-material.svg'));
+		panel.webview.html = `
 				<!DOCTYPE html>
 					<html lang="en">
 					<head>
@@ -97,100 +97,134 @@ export async function loginHandler(
 					</body>
 					</html>
 				`;
-		
-			function getCaptcha(headers) {
-				httpClient(CaptchaAPI, { method: 'put', headers }, (error, resp) => {
-					let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
-					fs.writeFileSync(path.join(context.extensionPath, './captcha.jpg'), base64Image, 'base64');
-				});
-			}
-		
-			do {
-				var captcha: string | undefined = await vscode.window.showInputBox({
-					prompt: "输入验证码",
-					placeHolder: "",
-					ignoreFocusOut: true
-				});
-				resp = await httpClient({
-					method: 'POST',
-					uri: CaptchaAPI,
-					form: {
-						input_text: captcha
-					},
-					headers: {
-						'cookie': fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'), 'utf8')
-					},
-					json: true
-				});
-			} while (resp.success != true);	
-		
-			const phoneNumber: string | undefined = await vscode.window.showInputBox({
-				ignoreFocusOut: true,
-				prompt: "输入手机号或邮箱",
-				placeHolder: "",
+
+		function getCaptcha(headers) {
+			httpClient(CaptchaAPI, { method: 'put', headers }, (error, resp) => {
+				let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
+				fs.writeFileSync(path.join(context.extensionPath, './captcha.jpg'), base64Image, 'base64');
 			});
-			if (!phoneNumber) {
-				return;
-			}
-		
-			const password: string | undefined = await vscode.window.showInputBox({
-				ignoreFocusOut: true,
-				prompt: "输入密码",
+		}
+
+		do {
+			var captcha: string | undefined = await vscode.window.showInputBox({
+				prompt: "输入验证码",
 				placeHolder: "",
-				password: true
+				ignoreFocusOut: true
 			});
+			resp = await httpClient({
+				method: 'POST',
+				uri: CaptchaAPI,
+				form: {
+					input_text: captcha
+				},
+				headers: {
+					'cookie': fs.readFileSync(path.join(context.extensionPath, 'cookie.txt'), 'utf8')
+				},
+				json: true
+			});
+		} while (resp.success != true);
+
+		const phoneNumber: string | undefined = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入手机号或邮箱",
+			placeHolder: "",
+		});
+		if (!phoneNumber) {
+			return;
+		}
+
+		const password: string | undefined = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入密码",
+			placeHolder: "",
+			password: true
+		});
+
+		let loginData: ILogin = {
+			'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
+			'grant_type': 'password',
+			'source': 'com.zhihu.web',
+			'username': '+86' + phoneNumber,
+			'password': password,
+			'lang': 'en',
+			'ref_source': 'homepage',
+			'utm_source': '',
+			'captcha': captcha,
+			'timestamp': Math.round(new Date().getTime()),
+			'signature': ''
+		};
+
+		loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
+			.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
+			.digest('hex');
+
+		let encryptedFormData = encryptLoginData(formurlencoded(loginData));
+
+		var loginResp = await sendRequestWithCookie(
+			{
+				uri: LoginAPI,
+				method: 'post',
+				body: encryptedFormData,
+				gzip: true,
+				resolveWithFullResponse: true,
+				simple: false
+			}, context);
+		cookieStr = '';
+		loginResp.headers['set-cookie'].forEach(
+			c => {
+				c = c.split(';')[0];
+				cookieStr = cookieStr.concat(c, '; ');
+			}
+		);
+		fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
+
+		profileService.fetchProfile().then(() => {
+			if (loginResp.statusCode == '201') {
+				vscode.window.showInformationMessage(`你好，${profileService.name}`);
+				feedTreeViewProvider.refresh();
+			} else {
+				vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
+			}
+		})
+	} else if (selectedLoginType == LoginEnum.sms) {
+		const phoneNumber: string | undefined = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入手机号或邮箱",
+			placeHolder: "",
+		});
+		if (!phoneNumber) {
+			return;
+		}
+		let smsData: ISmsData = {
+			phone_no: '+86' + phoneNumber,
+			sms_type: 'text'
+		};
 		
-			let loginData: ILogin = {
-				'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
-				'grant_type': 'password',
-				'source': 'com.zhihu.web',
-				'username': '+86' + phoneNumber,
-				'password': password,
-				'lang': 'en',
-				'ref_source': 'homepage',
-				'utm_source': '',
-				'captcha': captcha,
-				'timestamp': Math.round(new Date().getTime()),
-				'signature': ''
-			};
-		
-			loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
-				.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
-				.digest('hex');
-		
-			let encryptedFormData = encryptLoginData(formurlencoded(loginData));
-		
-			var loginResp = await sendRequestWithCookie(
-				{
-					uri: LoginAPI,
-					method: 'post',
-					body: encryptedFormData,
-					gzip: true,
-					resolveWithFullResponse: true,
-					simple: false
-				}, context);
-			cookieStr = '';
-			loginResp.headers['set-cookie'].forEach(
-				c => {
-					c = c.split(';')[0];
-					cookieStr = cookieStr.concat(c, '; ');
-				}
-			);
-			fs.appendFileSync(path.join(context.extensionPath, 'cookie.txt'), cookieStr, { encoding: 'utf8' });
-		
-			profileService.fetchProfile().then(() => {
-				if (loginResp.statusCode == '201') {
-					vscode.window.showInformationMessage(`你好，${profileService.name }`);
-					feedTreeViewProvider.refresh();
-				} else {
-					vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
-				}
-			})
+		let encryptedFormData = encryptSmsData('phone_no%3D%252B8618324748963%26sms_type%3Dtext');
+
+		// phone_no%3D%252B8618324748963%26sms_type%3Dtext
+		var loginResp = await sendRequestWithCookie(
+			{
+				uri: SMSAPI,
+				method: 'post',
+				body: encryptedFormData,
+				gzip: true,
+				resolveWithFullResponse: true,
+				simple: false
+			}, context);
+		console.log(loginResp);
+		const smsCaptcha: string | undefined = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入短信验证码：",
+			placeHolder: "",
+		});
+
+
 	}
 
 
 }
 
 function passwordLoginHandler() {
-	
+
 }
