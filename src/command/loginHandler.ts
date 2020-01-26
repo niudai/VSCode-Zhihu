@@ -9,8 +9,7 @@ import { ILogin, ISmsData } from "../model/login.model";
 import { AccountService } from "../service/account.service";
 import { ProfileService } from "../service/profile.service";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { encryptLoginData } from "../util/loginEncrypt";
-import { encryptSmsData } from "../util/smsEncrypt";
+import * as zhihuEncrypt from "zhihu-encrypt";
 import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
 import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
 // import * as formurlencoded from "form-urlencoded";
@@ -158,7 +157,7 @@ export async function loginHandler(
 			.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
 			.digest('hex');
 
-		let encryptedFormData = encryptLoginData(formurlencoded(loginData));
+		let encryptedFormData = zhihuEncrypt.loginEncrypt(formurlencoded(loginData));
 
 		var loginResp = await sendRequestWithCookie(
 			{
@@ -200,7 +199,7 @@ export async function loginHandler(
 			sms_type: 'text'
 		};
 		
-		let encryptedFormData = encryptSmsData('phone_no%3D%252B8618324748963%26sms_type%3Dtext');
+		let encryptedFormData = zhihuEncrypt.smsEncrypt(formurlencoded(smsData));
 
 		// phone_no%3D%252B8618324748963%26sms_type%3Dtext
 		var loginResp = await sendRequestWithCookie(
@@ -209,6 +208,7 @@ export async function loginHandler(
 				method: 'post',
 				body: encryptedFormData,
 				gzip: true,
+				// form: true,
 				resolveWithFullResponse: true,
 				simple: false
 			}, context);

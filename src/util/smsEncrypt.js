@@ -1,15 +1,15 @@
-"use strict";
+// "use strict";
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 function t(e) {
 	return (t = "function" == typeof Symbol && "symbol" == typeof Symbol.A ? function (e) {
-		return typeof e
+		return typeof e;
 	}
 		: function (e) {
 			return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e
 		}
-	)(e)
+	)(e);
 }
 var A = "2.0"
 	, __g = {};
@@ -371,7 +371,7 @@ Q.prototype.e = function (e) {
 	}
 	,
 	G.prototype.D = function (e) {
-		for (var t = atob(e), n = t.charCodeAt(0) << 8 | t.charCodeAt(1), r = [], i = 2; i < n + 2; i += 2)
+		for (var t = Buffer.from(e, 'base64').toString('binary'), n = t.charCodeAt(0) << 8 | t.charCodeAt(1), r = [], i = 2; i < n + 2; i += 2)
 			r.push(t.charCodeAt(i) << 8 | t.charCodeAt(i + 1));
 		this.G = r;
 		for (var o = [], a = n + 2; a < t.length;) {
@@ -417,4 +417,5 @@ Q.prototype.e = function (e) {
 function encryptSmsData(e) {
 	return __g._encrypt(e);
 }
-exports.encryptSmsData = encryptSmsData;
+console.log(encryptSmsData('phone_no=%2B8618324748963&sms_type=text'));
+module.exports = encryptSmsData

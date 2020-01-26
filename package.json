@@ -331,6 +331,7 @@
 		"request": "^2.88.0",
 		"request-promise": "^4.2.5",
 		"rimraf": "^2.7.1",
-		"sync-request": "^6.1.0"
+		"sync-request": "^6.1.0",
+		"zhihu-encrypt": "^1.0.0"
 	}
 }
