@@ -12,6 +12,7 @@ import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import * as zhihuEncrypt from "zhihu-encrypt";
 import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
 import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
+import { CookieService } from "../service/cookie.service";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 
@@ -19,7 +20,7 @@ export async function loginHandler(
 	context: vscode.ExtensionContext,
 	profileService: ProfileService,
 	accountService: AccountService,
-	feedTreeViewProvider: FeedTreeViewProvider
+	feedTreeViewProvider: FeedTreeViewProvider,
 ): Promise<void> {
 
 	var headers = DefaultHTTPHeader;

@@ -21,7 +21,7 @@ export async function openWebviewHandler(
 			uri: answerAPI,
 			json: true,
 			gzip: true
-		}, context);
+		}, context, );
 
 		webviewService.renderHtml({
 			viewType: "zhihu",

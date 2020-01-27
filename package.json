@@ -313,11 +313,13 @@
 		"typescript": "^3.7.5"
 	},
 	"dependencies": {
+		"@types/cookie": "^0.3.3",
 		"@types/form-urlencoded": "^2.0.1",
 		"@types/request-promise": "^4.1.45",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
 		"body-parser": "^1.19.0",
+		"cookie": "^0.4.0",
 		"crypto": "^1.0.1",
 		"form-urlencoded": "^4.1.1",
 		"ftp": "^0.3.10",
@@ -332,6 +334,7 @@
 		"request-promise": "^4.2.5",
 		"rimraf": "^2.7.1",
 		"sync-request": "^6.1.0",
+		"tough-cookie": "^3.0.1",
 		"zhihu-encrypt": "^1.0.0"
 	}
 }

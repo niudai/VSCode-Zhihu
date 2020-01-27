@@ -13,12 +13,14 @@ import { ProfileService } from "./service/profile.service";
 import { logoutHandler } from "./command/logoutHandler";
 import { AccountService } from "./service/account.service";
 import { WebviewService } from "./service/webview.service";
+import * as CookieUtil from "tough-cookie"
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 
 export async function activate(context: vscode.ExtensionContext) {
 
 
 	// Bean Initialization
+	const CookieJar = new CookieUtil.CookieJar();
 	const profileService = new ProfileService(context);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context);
