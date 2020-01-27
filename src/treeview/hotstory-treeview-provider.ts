@@ -1,11 +1,6 @@
-import * as fs from 'fs';
 import * as httpClient from 'request';
 import * as vscode from 'vscode';
-import { FeedStoryAPI } from '../const/URL';
-import { sendRequestWithCookie } from '../util/sendRequestWithCookie';
 import { HotStory } from '../model/hot-story.model';
-import { AccountService } from '../service/account.service';
-import { ProfileService } from '../service/profile.service';
 
 export interface StoryType {
 	storyType?: string;

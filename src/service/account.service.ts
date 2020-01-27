@@ -1,35 +1,36 @@
 
 import * as vscode from "vscode";
 import { SelfProfileAPI, SignUpRedirectPage } from "../const/URL";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
 import { IProfile } from "../model/target/target";
+import { HttpService } from "./http.service";
 
 
 export class AccountService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext) {
+	constructor (protected context: vscode.ExtensionContext, 
+		protected httpService: HttpService) {
 	}
 
 	async fetchProfile() {
-		this.profile  = await sendRequestWithCookie({
+		this.profile  = await this.httpService.sendRequest({
 			uri: SelfProfileAPI,
 			json: true
-		}, this.context);
+		});
 	}
 
 	async isAuthenticated(): Promise<boolean> {
 
 		let checkIfSignedIn;
 		try {
-			checkIfSignedIn = await sendRequestWithCookie({
+			checkIfSignedIn = await this.httpService.sendRequest({
 				uri: SignUpRedirectPage,
 				followRedirect: false,
 				followAllRedirects: false,
 				resolveWithFullResponse: true,
 				gzip: true,
 				simple: false
-			}, this.context);
+			});
 		} catch (err) {
 			console.error('Http error', err);
 			return false;

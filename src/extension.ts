@@ -15,30 +15,32 @@ import { AccountService } from "./service/account.service";
 import { WebviewService } from "./service/webview.service";
 import * as CookieUtil from "tough-cookie"
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
+import { HttpService } from "./service/http.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 
 
 	// Bean Initialization
 	const CookieJar = new CookieUtil.CookieJar();
-	const profileService = new ProfileService(context);
+	const httpService = new HttpService(context);
+	const profileService = new ProfileService(context, httpService);
 	await profileService.fetchProfile();
-	const accountService = new AccountService(context);
+	const accountService = new AccountService(context, httpService);
 	const webviewService = new WebviewService(context);
 
-	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService);
+	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
-			await openWebviewHandler(object, context, webviewService);
+			await openWebviewHandler(object, context, webviewService, httpService);
 		}
 		));
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchHandler(context, webviewService)
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
-		loginHandler(context, profileService, accountService, feedTreeViewProvider)
+		loginHandler(context, profileService, accountService, feedTreeViewProvider, httpService)
 	);
 	vscode.commands.registerCommand("zhihu.logout", () => 
 		logoutHandler(context)

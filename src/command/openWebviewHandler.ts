@@ -3,13 +3,14 @@ import * as vscode from "vscode";
 import { LightIconPath, TemplatePath } from "../const/PATH";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
+import { HttpService } from "../service/http.service";
 import { WebviewService } from "../service/webview.service";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
 
 export async function openWebviewHandler(
 	object: ITarget & any,
 	context: vscode.ExtensionContext,
-	webviewService: WebviewService
+	webviewService: WebviewService,
+	httpService: HttpService
 ): Promise<void> {
 
 	if (object.type == 'question') {
@@ -17,11 +18,11 @@ export async function openWebviewHandler(
 		const includeContent = "data[*].is_normal,content;";
 		let offset = 0;
 		let answerAPI = `https://www.zhihu.com/api/v4/questions/${object.id}/answers?include=${includeContent}?offset=${offset}`;
-		let body: { data: IQuestionAnswerTarget } = await sendRequestWithCookie({
+		let body: { data: IQuestionAnswerTarget } = await httpService.sendRequest({
 			uri: answerAPI,
 			json: true,
 			gzip: true
-		}, context, );
+		});
 
 		webviewService.renderHtml({
 			viewType: "zhihu",
@@ -62,12 +63,12 @@ export async function openWebviewHandler(
 			}
 		})
 	} else if (object.type == 'article') {
-		let article: IArticle = await sendRequestWithCookie({
+		let article: IArticle = await httpService.sendRequest({
 			uri: object.url,
 			json: true,
 			gzip: true,
 			headers: null
-		}, context);
+		});
 		webviewService.renderHtml({
 			viewType: "zhihu",
 			title: "知乎文章",

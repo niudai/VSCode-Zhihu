@@ -3,16 +3,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as httpClient from "request-promise";
 import * as vscode from "vscode";
+import * as zhihuEncrypt from "zhihu-encrypt";
 import { DefaultHTTPHeader } from "../const/HTTP";
 import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { AccountService } from "../service/account.service";
+import { HttpService } from "../service/http.service";
 import { ProfileService } from "../service/profile.service";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import * as zhihuEncrypt from "zhihu-encrypt";
 import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
-import { CookieService } from "../service/cookie.service";
 // import * as formurlencoded from "form-urlencoded";
 var formurlencoded = require('form-urlencoded').default;
 
@@ -21,6 +20,7 @@ export async function loginHandler(
 	profileService: ProfileService,
 	accountService: AccountService,
 	feedTreeViewProvider: FeedTreeViewProvider,
+	httpService: HttpService
 ): Promise<void> {
 
 	var headers = DefaultHTTPHeader;
@@ -40,10 +40,10 @@ export async function loginHandler(
 	).then(item => item.value);
 
 	if (selectedLoginType == LoginEnum.password) {
-		let resp = await sendRequestWithCookie({
+		let resp = await httpService.sendRequest({
 			uri: CaptchaAPI,
 			method: 'get', resolveWithFullResponse: true, gzip: true
-		}, context);
+		});
 
 		let cookieStr = '';
 		resp.headers['set-cookie'].forEach(
@@ -160,7 +160,7 @@ export async function loginHandler(
 
 		let encryptedFormData = zhihuEncrypt.loginEncrypt(formurlencoded(loginData));
 
-		var loginResp = await sendRequestWithCookie(
+		var loginResp = await httpService.sendRequest(
 			{
 				uri: LoginAPI,
 				method: 'post',
@@ -168,7 +168,7 @@ export async function loginHandler(
 				gzip: true,
 				resolveWithFullResponse: true,
 				simple: false
-			}, context);
+			});
 		cookieStr = '';
 		loginResp.headers['set-cookie'].forEach(
 			c => {
@@ -203,7 +203,7 @@ export async function loginHandler(
 		let encryptedFormData = zhihuEncrypt.smsEncrypt(formurlencoded(smsData));
 
 		// phone_no%3D%252B8618324748963%26sms_type%3Dtext
-		var loginResp = await sendRequestWithCookie(
+		var loginResp = await httpService.sendRequest(
 			{
 				uri: SMSAPI,
 				method: 'post',
@@ -212,7 +212,7 @@ export async function loginHandler(
 				// form: true,
 				resolveWithFullResponse: true,
 				simple: false
-			}, context);
+			});
 		console.log(loginResp);
 		const smsCaptcha: string | undefined = await vscode.window.showInputBox({
 			ignoreFocusOut: true,

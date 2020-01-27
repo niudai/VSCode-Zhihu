@@ -1,10 +1,7 @@
-import * as fs from 'fs';
-import * as httpClient from 'request';
 import * as vscode from 'vscode';
 import { FeedStoryAPI } from '../const/URL';
-import { sendRequestWithCookie } from '../util/sendRequestWithCookie';
-import { HotStory } from '../model/hot-story.model';
 import { AccountService } from '../service/account.service';
+import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
 
 export interface StoryType {
@@ -23,7 +20,8 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 
 	constructor(private context: vscode.ExtensionContext, 
 		private accountService: AccountService,
-		private profileService: ProfileService) {
+		private profileService: ProfileService,
+		private httpService: HttpService) {
 	}
 
 	refresh(node?: ZhihuTreeItem): void {
@@ -43,13 +41,12 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 						return resolve([new ZhihuTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
 					} 
 					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
-					let feedResp = await sendRequestWithCookie(
+					let feedResp = await this.httpService.sendRequest(
 						{
 							uri: feedAPI,
 							json: true,
 							gzip: true
-						}
-						, this.context);
+						});
 					feedResp = feedResp.data.filter(f => { return f.target.type != 'feed_advert';});
 					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;

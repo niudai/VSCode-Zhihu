@@ -1,21 +1,21 @@
 
 import * as vscode from "vscode";
 import { SelfProfileAPI } from "../const/URL";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
 import { IProfile } from "../model/target/target";
-
+import { HttpService } from "./http.service";
 
 export class ProfileService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext) {
+	constructor (protected context: vscode.ExtensionContext, 
+		protected httpService: HttpService) {
 	}
 
 	async fetchProfile() {
-		this.profile  = await sendRequestWithCookie({
+		this.profile  = await this.httpService.sendRequest({
 			uri: SelfProfileAPI,
 			json: true
-		}, this.context);
+		});
 	}
 
 	get name(): string {

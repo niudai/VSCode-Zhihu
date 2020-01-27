@@ -1,9 +1,6 @@
 
-import * as vscode from "vscode";
-import { SelfProfileAPI } from "../const/URL";
-import { sendRequestWithCookie } from "../util/sendRequestWithCookie";
-import { IProfile } from "../model/target/target";
 import { compileFile } from "pug";
+import * as vscode from "vscode";
 
 export interface IWebviewPugRender {
 	viewType: string,
