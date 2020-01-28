@@ -27,13 +27,15 @@ export class WebviewService {
 	/**
 	 * Create and show a webview provided by pug
 	 */
-	public 	renderHtml(w: IWebviewPugRender) {
-		const panel = vscode.window.createWebviewPanel(
-			w.viewType,
-			w.title,
-			w.showOptions,
-			w.options
-		);
+	public 	renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel) {
+		if (panel == undefined) {
+			panel = vscode.window.createWebviewPanel(
+				w.viewType,
+				w.title,
+				w.showOptions,
+				w.options
+			);	
+		}
 		const compiledFunction = compileFile(
 			w.pugTemplatePath
 		);

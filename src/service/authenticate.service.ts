@@ -103,7 +103,7 @@ export class AuthenticateService {
 					title: '',
 					captchaSrc: imgSrc.toString()
 				}
-			})
+			}, panel)
 	
 			do {
 				var captcha: string | undefined = await vscode.window.showInputBox({
@@ -111,7 +111,7 @@ export class AuthenticateService {
 					placeHolder: "",
 					ignoreFocusOut: true
 				});
-				if (captcha == undefined) return
+				if (!captcha) return
 				let headers = DefaultHTTPHeader;
 				headers['cookie'] = fs.readFileSync
 				resp = await this.httpService.sendRequest({
