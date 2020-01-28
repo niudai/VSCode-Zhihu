@@ -1,49 +1,47 @@
 "use strict";
 
+import * as CookieUtil from "tough-cookie";
 import * as vscode from "vscode";
-
-import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
-import { JsonOutlineProvider } from "./jsonOutline";
-import { FtpExplorer } from "./ftpExplorer";
-import { FileExplorer } from "./fileExplorer";
-import { searchHandler } from './command/searchHandler';
-import { openWebviewHandler } from "./command/openWebviewHandler";
 import { loginHandler } from "./command/loginHandler";
-import { ProfileService } from "./service/profile.service";
-import { logoutHandler } from "./command/logoutHandler";
+import { FileExplorer } from "./fileExplorer";
+import { FtpExplorer } from "./ftpExplorer";
+import { JsonOutlineProvider } from "./jsonOutline";
 import { AccountService } from "./service/account.service";
-import { WebviewService } from "./service/webview.service";
-import * as CookieUtil from "tough-cookie"
-import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import { HttpService } from "./service/http.service";
+import { AuthenticateService } from "./service/authenticate.service";
+import { ProfileService } from "./service/profile.service";
+import { SearchService } from "./service/search.service";
+import { WebviewService } from "./service/webview.service";
+import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
+import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
+
 
 export async function activate(context: vscode.ExtensionContext) {
 
-
 	// Bean Initialization
-	const CookieJar = new CookieUtil.CookieJar();
 	const httpService = new HttpService(context);
 	const profileService = new ProfileService(context, httpService);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
-	const webviewService = new WebviewService(context);
-
+	const webviewService = new WebviewService(context, httpService);
+	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
+	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
-			await openWebviewHandler(object, context, webviewService, httpService);
+			await webviewService.openWebview(object);
 		}
 		));
 	vscode.commands.registerCommand("zhihu.search", async () => 
-		await searchHandler(context, webviewService)
+		await searchService.getSearchItems()
 	);
 	vscode.commands.registerCommand("zhihu.login", () => 
-		loginHandler(context, profileService, accountService, feedTreeViewProvider, httpService)
+		authenticateService.login()
 	);
 	vscode.commands.registerCommand("zhihu.logout", () => 
-		logoutHandler(context)
+		authenticateService.logout()
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu-feed",
