@@ -14,6 +14,7 @@ import * as crypto from "crypto";
 import * as zhihuEncrypt from "zhihu-encrypt";
 import { WebviewService } from "./webview.service";
 import { TemplatePath, LightIconPath, ZhihuIconName } from "../const/PATH";
+import { CookieJar, Store } from "tough-cookie";
 
 var formurlencoded = require('form-urlencoded').default;
 
@@ -28,7 +29,9 @@ export class AuthenticateService {
 	}
 	public logout() {
 		try {
-			fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
+			this.httpService.clearCookie();
+			this.feedTreeViewProvider.refresh();
+			// fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
 		} catch(error) {
 			console.log(error);
 		}
@@ -77,7 +80,7 @@ export class AuthenticateService {
 				let base64Image = captchaImg['img_base64'].replace('\n', '');
 				fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
 			}
-			const panel = vscode.window.createWebviewPanel("zhihu", "验证码", vscode.ViewColumn.One);
+			const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
 			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
 				path.join(this.context.extensionPath, './captcha.jpg')
 			));
@@ -226,8 +229,6 @@ export class AuthenticateService {
 				prompt: "输入短信验证码：",
 				placeHolder: "",
 			});
-	
-	
 		}		
 	}
 }

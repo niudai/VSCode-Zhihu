@@ -10,4 +10,6 @@ export const SelfProfileAPI = 'https://www.zhihu.com/api/v4/me';
 
 export const SMSAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in/digits';
 
+export const ZhihuDomain = 'zhihu.com'
+
 // zs Encrypt

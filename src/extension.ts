@@ -12,14 +12,15 @@ import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
-import { CookieJar } from "tough-cookie";
+import { CookieJar, MemoryCookieStore } from "tough-cookie";
 
 
 export async function activate(context: vscode.ExtensionContext) {
 
 	// Bean Initialization
-	const cookieJar = new CookieJar();
-	const httpService = new HttpService(context, cookieJar);
+	const store = new MemoryCookieStore();
+	const cookieJar = new CookieJar(store);
+	const httpService = new HttpService(context, cookieJar, store);
 	const profileService = new ProfileService(context, httpService);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);

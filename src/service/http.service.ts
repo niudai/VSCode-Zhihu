@@ -5,12 +5,17 @@ import { DefaultHTTPHeader } from "../const/HTTP";
 import * as fs from "fs";
 import * as path from "path";
 import * as httpClient from "request-promise";
-import { CookieJar, Cookie } from "tough-cookie";
+import { CookieJar, Cookie, Store } from "tough-cookie";
+import { ZhihuDomain } from "../const/URL";
 
 export class HttpService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext, protected cookieJar: CookieJar) {
+	constructor (
+		protected context: vscode.ExtensionContext,
+		protected cookieJar: CookieJar,
+		protected store: Store
+		) {
 	}
 	
 	public async sendRequest(options): Promise<any> {
@@ -24,10 +29,8 @@ export class HttpService {
 				// fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
 				console.log(error)
 			}
-		}
-	
+		}	
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
-	
 		var returnBody;
 		if (options.resolveWithFullResponse == undefined || options.resolveWithFullResponse == false) {
 			returnBody = true;
@@ -56,5 +59,11 @@ export class HttpService {
 			return Promise.resolve(resp);
 		}
 	
+	}
+
+	public clearCookie(domain?: string) {
+		if (domain == undefined) {
+			this.store.removeCookies(ZhihuDomain, null, err => console.log(err));
+		}
 	}
 }
