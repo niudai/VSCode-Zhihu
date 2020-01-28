@@ -10,7 +10,7 @@ import { IArticle } from "../model/article/article-detail";
 export interface IWebviewPugRender {
 	viewType: string,
 	title: string,
-	showOptions: vscode.ViewColumn,
+	showOptions: vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean},
 	options?: vscode.WebviewOptions & vscode.WebviewPanelOptions,
 	pugTemplatePath: string,
 	pugObjects?: any,

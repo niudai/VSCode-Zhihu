@@ -12,6 +12,8 @@ import * as httpClient from "request-promise";
 import { ILogin, ISmsData } from "../model/login.model";
 import * as crypto from "crypto";
 import * as zhihuEncrypt from "zhihu-encrypt";
+import { WebviewService } from "./webview.service";
+import { TemplatePath, LightIconPath, ZhihuIconName } from "../const/PATH";
 
 var formurlencoded = require('form-urlencoded').default;
 
@@ -21,7 +23,8 @@ export class AuthenticateService {
 		protected profileService: ProfileService,
 		protected accountService: AccountService,
 		protected feedTreeViewProvider: FeedTreeViewProvider,
-		protected httpService: HttpService) {
+		protected httpService: HttpService,
+		protected webviewService: WebviewService) {
 	}
 	public logout() {
 		try {
@@ -64,7 +67,14 @@ export class AuthenticateService {
 			);
 			if (JSON.parse(resp.body)['show_captcha']) {
 				fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), cookieStr, 'utf8');
-				getCaptcha({ 'Cookie': resp.headers['set-cookie'] });
+				let captchaImg = await this.httpService.sendRequest({ 
+					uri: CaptchaAPI,
+					method: 'put',
+					json: true,
+					gzip: true
+				});
+				let base64Image = captchaImg['img_base64'].replace('\n', '');
+				fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
 			}
 			const panel = vscode.window.createWebviewPanel(
 				"zhihu",
@@ -77,7 +87,30 @@ export class AuthenticateService {
 			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
 				path.join(this.context.extensionPath, './captcha.jpg')
 			));
+			
 			panel.iconPath = vscode.Uri.file(path.join(this.context.extensionPath, 'media', 'zhihu-logo-material.svg'));
+			this.webviewService.renderHtml({
+				viewType: 'zhihu',
+				title: '验证码',
+				showOptions: {
+					viewColumn: vscode.ViewColumn.One,
+					preserveFocus: true
+				},
+				pugTemplatePath: path.join(
+					this.context.extensionPath,
+					TemplatePath,
+					'captcha.pug'
+				),
+				iconPath: path.join(
+					this.context.extensionPath,
+					LightIconPath,
+					ZhihuIconName,
+				),
+				pugObjects: {
+					title: '',
+					captchaSrc: imgSrc
+				}
+			})
 			panel.webview.html = `
 					<!DOCTYPE html>
 						<html lang="en">
@@ -107,13 +140,7 @@ export class AuthenticateService {
 						</body>
 						</html>
 					`;
-	
-			function getCaptcha(headers) {
-				httpClient(CaptchaAPI, { method: 'put', headers }, (error, resp) => {
-					let base64Image = JSON.parse(resp.body)['img_base64'].replace('\n', '');
-					fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
-				});
-			}
+
 	
 			do {
 				var captcha: string | undefined = await vscode.window.showInputBox({

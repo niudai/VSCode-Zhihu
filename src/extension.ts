@@ -1,14 +1,12 @@
 "use strict";
 
-import * as CookieUtil from "tough-cookie";
 import * as vscode from "vscode";
-import { loginHandler } from "./command/loginHandler";
 import { FileExplorer } from "./fileExplorer";
 import { FtpExplorer } from "./ftpExplorer";
 import { JsonOutlineProvider } from "./jsonOutline";
 import { AccountService } from "./service/account.service";
-import { HttpService } from "./service/http.service";
 import { AuthenticateService } from "./service/authenticate.service";
+import { HttpService } from "./service/http.service";
 import { ProfileService } from "./service/profile.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
@@ -27,7 +25,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
-	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService);
+	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {

@@ -310,7 +310,8 @@
 		"@types/rimraf": "^2.0.3",
 		"@types/vscode": "^1.41.0",
 		"tslint": "^5.20.1",
-		"typescript": "^3.7.5"
+		"typescript": "^3.7.5",
+		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
 		"@types/cookie": "^0.3.3",
