@@ -36,9 +36,6 @@ export class AuthenticateService {
 	}
 
 	public async login() {
-		var headers = DefaultHTTPHeader;
-
-		headers['cookie'] = fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'));
 	
 		if (await this.accountService.isAuthenticated()) {
 			vscode.window.showInformationMessage(`你已经登录了哦~ ${this.profileService.name}`);

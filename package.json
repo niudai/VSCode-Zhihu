@@ -304,11 +304,13 @@
 	},
 	"devDependencies": {
 		"@types/mkdirp": "^0.5.2",
+		"@types/mocha": "^5.2.7",
 		"@types/node": "^10.17.13",
 		"@types/pug": "^2.0.4",
 		"@types/request": "^2.48.4",
 		"@types/rimraf": "^2.0.3",
 		"@types/vscode": "^1.41.0",
+		"mocha": "^7.0.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.7.5",
 		"vscode-test": "^1.3.0"
