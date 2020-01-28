@@ -13,13 +13,14 @@ export class HttpService {
 	}
 	
 	public async sendRequest(options): Promise<any> {
+		if (options.headers == undefined) {
+			options.headers = DefaultHTTPHeader;
 	
-		var headers = DefaultHTTPHeader;
-	
-		try {
-			headers['cookie'] = fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'), 'utf8');
-		} catch(error) {
-			fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
+			try {
+				options.headers['cookie'] = fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'), 'utf8');
+			} catch(error) {
+				fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
+			}
 		}
 	
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
@@ -32,7 +33,6 @@ export class HttpService {
 		}
 		options.resolveWithFullResponse = true;
 	
-		options.headers = headers;
 		options.simple = false;
 	
 		try {

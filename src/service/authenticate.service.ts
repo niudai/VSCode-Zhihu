@@ -36,6 +36,9 @@ export class AuthenticateService {
 	}
 
 	public async login() {
+		var headers = DefaultHTTPHeader;
+
+		headers['cookie'] = fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'));
 	
 		if (await this.accountService.isAuthenticated()) {
 			vscode.window.showInformationMessage(`你已经登录了哦~ ${this.profileService.name}`);
@@ -62,6 +65,7 @@ export class AuthenticateService {
 					cookieStr = cookieStr.concat(c, '; ');
 				}
 			);
+			fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), cookieStr, 'utf8')
 			if (JSON.parse(resp.body)['show_captcha']) {
 				fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), cookieStr, 'utf8');
 				let captchaImg = await this.httpService.sendRequest({ 
@@ -73,19 +77,11 @@ export class AuthenticateService {
 				let base64Image = captchaImg['img_base64'].replace('\n', '');
 				fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
 			}
-			const panel = vscode.window.createWebviewPanel(
-				"zhihu",
-				"验证码",
-				{
-					viewColumn: vscode.ViewColumn.One,
-					preserveFocus: true
-				}
-			);
+			const panel = vscode.window.createWebviewPanel("zhihu", "验证码", vscode.ViewColumn.One);
 			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
 				path.join(this.context.extensionPath, './captcha.jpg')
 			));
 			
-			panel.iconPath = vscode.Uri.file(path.join(this.context.extensionPath, 'media', 'zhihu-logo-material.svg'));
 			this.webviewService.renderHtml({
 				viewType: 'zhihu',
 				title: '验证码',
@@ -105,39 +101,9 @@ export class AuthenticateService {
 				),
 				pugObjects: {
 					title: '',
-					captchaSrc: imgSrc
+					captchaSrc: imgSrc.toString()
 				}
 			})
-			panel.webview.html = `
-					<!DOCTYPE html>
-						<html lang="en">
-						<head>
-							<meta charset="UTF-8">
-							<!--
-							Use a content security policy to only allow loading images from https or from our extension directory,
-							and only allow scripts that have a specific nonce.
-							-->
-							<title>Captcha</title>
-							<style>
-								img {
-									max-width: 100%;
-									max-height: 100%;
-									margin: 0 auto;
-									margin-top: 20%;
-									display: block;
-									border-style: ridge;
-									border-radius: 20px;
-									background-color: blanchedalmond;
-									width: 500;
-								}
-							</style>
-						</head>
-						<body>
-							<img src="${imgSrc}" width="500" />
-						</body>
-						</html>
-					`;
-
 	
 			do {
 				var captcha: string | undefined = await vscode.window.showInputBox({
@@ -145,27 +111,34 @@ export class AuthenticateService {
 					placeHolder: "",
 					ignoreFocusOut: true
 				});
-				resp = await httpClient({
+				if (captcha == undefined) return
+				let headers = DefaultHTTPHeader;
+				headers['cookie'] = fs.readFileSync
+				resp = await this.httpService.sendRequest({
 					method: 'POST',
 					uri: CaptchaAPI,
 					form: {
 						input_text: captcha
 					},
+					json: true,
+					simple: false,
+					gzip: true,
+					resolveWithFullResponse: true,
 					headers: {
 						'cookie': fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'), 'utf8')
 					},
-					json: true
 				});
-			} while (resp.success != true);
+				if (resp.statusCode != 201) {
+					vscode.window.showWarningMessage('请输入正确的验证码')
+				}
+			} while (resp.statusCode != 201);
 	
 			const phoneNumber: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
 				prompt: "输入手机号或邮箱",
 				placeHolder: "",
 			});
-			if (!phoneNumber) {
-				return;
-			}
+			if (!phoneNumber) return;
 	
 			const password: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
@@ -173,6 +146,7 @@ export class AuthenticateService {
 				placeHolder: "",
 				password: true
 			});
+			if (!password) return
 	
 			let loginData: ILogin = {
 				'client_id': 'c3cef7c66a1843f8b3a9e6a1e3160e20',
