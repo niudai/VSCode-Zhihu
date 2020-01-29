@@ -77,7 +77,6 @@ export class AuthenticateService {
 		));
 		
 		this.webviewService.renderHtml({
-			viewType: 'zhihu',
 			title: '验证码',
 			showOptions: {
 				viewColumn: vscode.ViewColumn.One,
@@ -87,11 +86,6 @@ export class AuthenticateService {
 				this.context.extensionPath,
 				TemplatePath,
 				'captcha.pug'
-			),
-			iconPath: path.join(
-				this.context.extensionPath,
-				LightIconPath,
-				ZhihuIconName,
 			),
 			pugObjects: {
 				title: '',

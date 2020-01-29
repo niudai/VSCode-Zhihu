@@ -8,13 +8,13 @@ import * as path from "path";
 import { IArticle } from "../model/article/article-detail";
 
 export interface IWebviewPugRender {
-	viewType: string,
-	title: string,
-	showOptions: vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean},
+	viewType?: string,
+	title?: string,
+	showOptions?: vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean},
 	options?: vscode.WebviewOptions & vscode.WebviewPanelOptions,
 	pugTemplatePath: string,
 	pugObjects?: any,
-	iconPath: any
+	iconPath?: any
 }
 
 export class WebviewService {
@@ -31,15 +31,18 @@ export class WebviewService {
 		if (panel == undefined) {
 			panel = vscode.window.createWebviewPanel(
 				w.viewType ? w.viewType : 'zhihu',
-				w.title,
-				w.showOptions,
+				w.title ? w.title : '知乎',
+				w.showOptions ? w.showOptions : vscode.ViewColumn.One,
 				w.options
 			);	
 		}
 		const compiledFunction = compileFile(
 			w.pugTemplatePath
 		);
-		panel.iconPath = vscode.Uri.file(w.iconPath);
+		panel.iconPath = vscode.Uri.file(w.iconPath ? w.iconPath : path.join(
+			this.context.extensionPath,
+			LightIconPath,
+			'zhihu-logo-material.svg'));
 		panel.webview.html = compiledFunction(w.pugObjects);
 	}
 
@@ -56,18 +59,12 @@ export class WebviewService {
 			});
 	
 			this.renderHtml({
-				viewType: "zhihu",
 				title: "知乎问题",
-				showOptions: vscode.ViewColumn.One,
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
 					TemplatePath,
 					"questions-answers.pug"
 				),
-				iconPath: path.join(
-					this.context.extensionPath,
-					LightIconPath,
-					'zhihu-logo-material.svg'),
 				pugObjects: {
 					answers: body.data,
 					title: body.data[0].question.title
@@ -76,18 +73,12 @@ export class WebviewService {
 			})
 		} else if (object.type == 'answer') {
 			this.renderHtml({
-				viewType: "zhihu",
 				title: "知乎回答",
-				showOptions: vscode.ViewColumn.One,
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
 					TemplatePath,
 					"questions-answers.pug"
 				),
-				iconPath: path.join(
-					this.context.extensionPath,
-					LightIconPath,
-					'zhihu-logo-material.svg'),
 				pugObjects: {
 					answers: [object],
 					title: object.question.name
@@ -101,18 +92,12 @@ export class WebviewService {
 				headers: null
 			});
 			this.renderHtml({
-				viewType: "zhihu",
 				title: "知乎文章",
-				showOptions: vscode.ViewColumn.One,
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
 					TemplatePath,
 					"article.pug"
 				),
-				iconPath: path.join(
-					this.context.extensionPath,
-					LightIconPath,
-					'zhihu-logo-material.svg'),
 				pugObjects: {
 					content: article.content,
 					title: article.title

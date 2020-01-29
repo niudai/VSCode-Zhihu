@@ -30,10 +30,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	const cookieJar = new CookieJar(store);
 	const httpService = new HttpService(context, cookieJar, store);
 	const profileService = new ProfileService(context, httpService);
-	const publishService = new PublishService(context, httpService, mdParser);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
 	const webviewService = new WebviewService(context, httpService);
+	const publishService = new PublishService(context, httpService, mdParser, webviewService);
 	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
@@ -62,7 +62,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		hotStoryTreeViewProvider
 	);
 	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
-		publishService.publish(textEditor, edit);
+		publishService.preview(textEditor, edit);
 	})
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();

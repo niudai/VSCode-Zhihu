@@ -101,7 +101,20 @@
 			},
 			{
 				"command": "zhihu.publish",
-				"title": "Publish Answer",
+				"title": "Zhihu: Publish",
+				"icon": {
+					"light": "media/light/publish.svg",
+					"dark": "media/dark/publish.svg"
+				},
+				"category": "Zhihu"
+			},
+			{
+				"command": "zhihu.preview",
+				"title": "Zhihu: Preview",
+				"icon": {
+					"light": "media/light/preview.svg",
+					"dark": "media/dark/preview.svg"
+				},				
 				"category": "Zhihu"
 			},
 			{
@@ -226,14 +239,21 @@
 					"group": "zhihu@0"
 				},
 				{
-					"command": "zhihu.login",
+					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
 					"group": "zhihu@1"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "zhihu.publish",
+					"when": "resourceLangId == markdown",
+					"group": "navigation"
 				},
 				{
-					"command": "zhihu.logout",
+					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
-					"group": "zhihu@2"
+					"group": "navigation"
 				}
 			],
 			"view/title": [
