@@ -76,13 +76,14 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 
 	}
 
-	private getHotStoriesType(): ZhihuTreeItem[] {
-		return STORY_TYPES.map(type => {
+	private async getHotStoriesType(): Promise<ZhihuTreeItem[]> {
+		await this.profileService.fetchProfile();
+		return Promise.resolve(STORY_TYPES.map(type => {
 			if (type.storyType == 'feed') {
 				return new ZhihuTreeItem(`${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, 0);
 			}
 			return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
-		});
+		}));
 	}
 
 }

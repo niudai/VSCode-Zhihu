@@ -43,12 +43,11 @@ export class HttpService {
 
 		var resp;
 		try {
-			resp = await httpClient(options);	
-			resp.headers['set-cookie'].map(c => {
-				return Cookie.parse(c);
-			}).forEach(c => {
-				this.cookieJar.setCookieSync(c, options.uri);
-			});
+			resp = await httpClient(options);
+			if (resp.headers['set-cookie']) {
+				resp.headers['set-cookie'].map(c => Cookie.parse(c))
+				.forEach(c => this.cookieJar.setCookieSync(c, options.uri));
+			}	
 		} catch (error) {
 			vscode.window.showInformationMessage('请求错误');
 			return Promise.resolve(null);

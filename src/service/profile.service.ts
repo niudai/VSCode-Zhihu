@@ -11,7 +11,7 @@ export class ProfileService {
 		protected httpService: HttpService) {
 	}
 
-	async fetchProfile() {
+	public async fetchProfile() {
 		this.profile  = await this.httpService.sendRequest({
 			uri: SelfProfileAPI,
 			json: true
