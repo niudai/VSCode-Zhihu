@@ -38,7 +38,7 @@ export class PublishService {
 		html.replace('\"', '\\\"');
 		this.httpService.sendRequest({
 			uri: `${AnswerAPI}/678356914`,
-			method: 'post',
+			method: 'put',
 			body: {
 				content: html,
 				reward_setting: {"can_reward":false,"tagline":""},

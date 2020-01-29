@@ -29,7 +29,7 @@ export class HttpService {
 			}
 		}	
 		if(this.xsrfToken) {
-			
+			options.headers['x-xsrftoken'] = this.xsrfToken;
 		}
 		options.headers['cookie'] = this.cookieJar.getCookieStringSync(options.uri);
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
