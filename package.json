@@ -15,6 +15,7 @@
 		"onCommand:zhihu.refreshEntry",
 		"onCommand:zhihu.openWebView",
 		"onCommand:zhihu.publish",
+		"onCommand:zhihu.preview",
 		"onCommand:zhihu.search",
 		"onCommand:zhihu.login",
 		"onCommand:zhihu.logout",
@@ -248,12 +249,12 @@
 				{
 					"command": "zhihu.publish",
 					"when": "resourceLangId == markdown",
-					"group": "navigation"
+					"group": "navigation@0"
 				},
 				{
 					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
-					"group": "navigation"
+					"group": "navigation@1"
 				}
 			],
 			"view/title": [

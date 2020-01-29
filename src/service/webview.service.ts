@@ -57,7 +57,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			});
-	
+
 			this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
@@ -68,7 +68,6 @@ export class WebviewService {
 				pugObjects: {
 					answers: body.data,
 					title: body.data[0].question.title
-					// title: body.data[0].question.title
 				}
 			})
 		} else if (object.type == 'answer') {

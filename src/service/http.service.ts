@@ -10,6 +10,7 @@ import { ZhihuDomain } from "../const/URL";
 
 export class HttpService {
 	public profile: IProfile;
+	public xsrfToken: string;
 
 	constructor (
 		protected context: vscode.ExtensionContext,
@@ -21,15 +22,15 @@ export class HttpService {
 	public async sendRequest(options): Promise<any> {
 		if (options.headers == undefined) {
 			options.headers = DefaultHTTPHeader;
-	
 			try {
 				options.headers['cookie'] = this.cookieJar.getCookieStringSync(options.uri);
-				// options.headers['cookie'] = fs.readFileSync(path.join(this.context.extensionPath, 'cookie.txt'), 'utf8');
 			} catch(error) {
-				// fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
 				console.log(error)
 			}
 		}	
+		if(this.xsrfToken) {
+			
+		}
 		options.headers['cookie'] = this.cookieJar.getCookieStringSync(options.uri);
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
 		var returnBody;
@@ -47,7 +48,12 @@ export class HttpService {
 			resp = await httpClient(options);
 			if (resp.headers['set-cookie']) {
 				resp.headers['set-cookie'].map(c => Cookie.parse(c))
-				.forEach(c => this.cookieJar.setCookieSync(c, options.uri));
+				.forEach(c => { 
+					this.cookieJar.setCookieSync(c, options.uri)
+					this.store.findCookie(ZhihuDomain, '/', '_xsrf', (err, c) => {
+						this.xsrfToken = c.value
+					})
+				});
 			}	
 		} catch (error) {
 			vscode.window.showInformationMessage('请求错误');

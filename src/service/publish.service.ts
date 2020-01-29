@@ -6,6 +6,7 @@ import MarkdownIt = require("markdown-it");
 import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
+import { AnswerAPI } from "../const/URL";
 
 
 export class PublishService {
@@ -20,7 +21,6 @@ export class PublishService {
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		vscode.window.showInformationMessage(text);
 		let html = this.mdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
@@ -32,4 +32,20 @@ export class PublishService {
 		});
 	}
 
+	publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+		let text = textEdtior.document.getText();
+		let html = this.mdParser.render(text);
+		html.replace('\"', '\\\"');
+		this.httpService.sendRequest({
+			uri: `${AnswerAPI}/678356914`,
+			method: 'post',
+			body: {
+				content: html,
+				reward_setting: {"can_reward":false,"tagline":""},
+			},
+			json: true,
+			resolveWithFullResponse: true,
+			headers: {},
+		}).then(resp => console.log(resp))
+	}
 }

@@ -10,8 +10,8 @@ export const DefaultHTTPHeader = {
 }
 
 export const LoginPostHeader = {
-	'x-zse-83': '3_2.0',
-	'x-xsrftoken': 'dCyt1Kb97IN7jeh5SJo92A9mw2bvv9Es',
+	'x-zse-83': '3_1.1',
+	'x-xsrftoken': 'HXVUoGikKN8nor8BW9AZEdJAVayIRWSl',
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
 	'(KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',		
 	'accept-encoding': 'gzip',	

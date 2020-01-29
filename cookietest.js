@@ -11,6 +11,7 @@ request({
 	let cookieJar = new cookieUtil.CookieJar(store);
 	resp.headers['set-cookie'].map(cookieUtil.Cookie.parse).forEach(c => cookieJar.setCookieSync(c, 'https://www.zhihu.com/', { loose: true }))
 	console.log(cookieJar.getCookiesSync('https://www.zhihu.com/'))
+	console.log(store.findCookie('zhihu.com', '/', '_xsrf', (err, c) => console.log(c.value)))
 	store.removeCookies('zhihu.com', null, err => err)
 	console.log(cookieJar.getCookiesSync('https://www.zhihu.com/'))
 })
