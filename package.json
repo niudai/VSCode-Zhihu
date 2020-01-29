@@ -14,6 +14,7 @@
 	"activationEvents": [
 		"onCommand:zhihu.refreshEntry",
 		"onCommand:zhihu.openWebView",
+		"onCommand:zhihu.publish",
 		"onCommand:zhihu.search",
 		"onCommand:zhihu.login",
 		"onCommand:zhihu.logout",
@@ -96,6 +97,11 @@
 					"light": "media/light/search.svg",
 					"dark": "media/dark/search.svg"
 				},
+				"category": "Zhihu"
+			},
+			{
+				"command": "zhihu.publish",
+				"title": "Publish Answer",
 				"category": "Zhihu"
 			},
 			{
@@ -213,6 +219,23 @@
 			}
 		],
 		"menus": {
+			"editor/context": [
+				{
+					"command": "zhihu.publish",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@0"
+				},
+				{
+					"command": "zhihu.login",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@1"
+				},
+				{
+					"command": "zhihu.logout",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@2"
+				}
+			],
 			"view/title": [
 				{
 					"command": "zhihu.refreshEntry",
@@ -319,6 +342,7 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"@types/markdown-it": "0.0.9",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
 		"cookie": "^0.4.0",
@@ -326,6 +350,7 @@
 		"form-urlencoded": "^4.1.1",
 		"ftp": "^0.3.10",
 		"jsonc-parser": "^0.4.2",
+		"markdown-it": "^10.0.0",
 		"mkdirp": "^0.5.1",
 		"pug": "^2.0.4",
 		"request": "^2.88.0",

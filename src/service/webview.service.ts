@@ -30,7 +30,7 @@ export class WebviewService {
 	public 	renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel) {
 		if (panel == undefined) {
 			panel = vscode.window.createWebviewPanel(
-				w.viewType,
+				w.viewType ? w.viewType : 'zhihu',
 				w.title,
 				w.showOptions,
 				w.options

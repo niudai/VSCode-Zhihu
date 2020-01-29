@@ -16,6 +16,8 @@ import { CookieJar } from "tough-cookie";
 import * as FileCookieStore from "tough-cookie-filestore";
 import * as path from "path";
 import * as fs from "fs";
+import { PublishService } from "./service/publish.service";
+import MarkdownIt = require("markdown-it");
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -24,9 +26,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Bean Initialization
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
+	const mdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
 	const httpService = new HttpService(context, cookieJar, store);
 	const profileService = new ProfileService(context, httpService);
+	const publishService = new PublishService(context, httpService, mdParser);
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
 	const webviewService = new WebviewService(context, httpService);
@@ -57,6 +61,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		"zhihu-hotStories",
 		hotStoryTreeViewProvider
 	);
+	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
+		publishService.publish(textEditor, edit);
+	})
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();
 		hotStoryTreeViewProvider.refresh();

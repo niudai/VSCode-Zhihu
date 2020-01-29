@@ -1,20 +1,18 @@
+import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { DefaultHTTPHeader, LoginPostHeader } from "../const/HTTP";
-import { ProfileService } from "./profile.service";
-import { AccountService } from "./account.service";
-import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { HttpService } from "./http.service";
-import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
-import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
-import * as httpClient from "request-promise";
-import { ILogin, ISmsData } from "../model/login.model";
-import * as crypto from "crypto";
 import * as zhihuEncrypt from "zhihu-encrypt";
+import { DefaultHTTPHeader, LoginPostHeader } from "../const/HTTP";
+import { LightIconPath, TemplatePath, ZhihuIconName } from "../const/PATH";
+import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
+import { ILogin, ISmsData } from "../model/login.model";
+import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
+import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
+import { AccountService } from "./account.service";
+import { HttpService } from "./http.service";
+import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
-import { TemplatePath, LightIconPath, ZhihuIconName } from "../const/PATH";
-import { CookieJar, Store } from "tough-cookie";
 
 var formurlencoded = require('form-urlencoded').default;
 
