@@ -30,6 +30,7 @@ export class HttpService {
 				console.log(error)
 			}
 		}	
+		options.headers['cookie'] = this.cookieJar.getCookieStringSync(options.uri);
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
 		var returnBody;
 		if (options.resolveWithFullResponse == undefined || options.resolveWithFullResponse == false) {
