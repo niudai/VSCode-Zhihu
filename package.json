@@ -196,16 +196,6 @@
 					"command": "zhihu.addEntry",
 					"when": "view == zhihu-feed"
 				},
-				{
-					"command": "jsonOutline.refresh",
-					"when": "view == jsonOutline",
-					"group": "navigation"
-				},
-				{
-					"command": "ftpExplorer.refresh",
-					"when": "view == ftpExplorer",
-					"group": "navigation"
-				}
 			],
 			"view/item/context": [
 				{
@@ -227,20 +217,6 @@
 					"command": "zhihu.deleteEntry",
 					"when": "view == zhihu-feed && viewItem == dependency"
 				},
-				{
-					"command": "jsonOutline.renameNode",
-					"when": "view == jsonOutline"
-				},
-				{
-					"command": "jsonOutline.refreshNode",
-					"when": "view == jsonOutline",
-					"group": "inline"
-				},
-				{
-					"command": "fileExplorer.refreshFile",
-					"when": "view == fileExplorer && viewItem == file",
-					"group": "inline"
-				}
 			]
 		},
 		"configuration": [
@@ -277,6 +253,7 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"@types/cheerio": "^0.22.16",
 		"@types/markdown-it": "0.0.9",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",

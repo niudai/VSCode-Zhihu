@@ -8,6 +8,7 @@ import { QuestionAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
 import { HttpService } from "./http.service";
+import * as cheerio from "cheerio";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -35,7 +36,7 @@ export class WebviewService {
 				w.viewType ? w.viewType : 'zhihu',
 				w.title ? w.title : '知乎',
 				w.showOptions ? w.showOptions : vscode.ViewColumn.One,
-				w.options
+				w.options ? w.options : { enableScripts: true }
 			);	
 		}
 		const compiledFunction = compileFile(
@@ -53,12 +54,11 @@ export class WebviewService {
 			const includeContent = "data[*].is_normal,content;";
 			let offset = 0;
 			let answerAPI = `${QuestionAPI}/${object.id}/answers?include=${includeContent}?offset=${offset}`;
-			let body: { data: IQuestionAnswerTarget } = await this.httpService.sendRequest({
+			let body: { data: IQuestionAnswerTarget[] } = await this.httpService.sendRequest({
 				uri: answerAPI,
 				json: true,
 				gzip: true
 			});
-
 			this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
@@ -67,7 +67,7 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: body.data,
+					answers: body.data.map(t => { return this.actualSrcNormalize(t.content) }),
 					title: body.data[0].question.title
 				}
 			})
@@ -80,7 +80,7 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: [object],
+					answers: [this.actualSrcNormalize(object.content)],
 					title: object.question.name
 				}
 			})
@@ -99,10 +99,14 @@ export class WebviewService {
 					"article.pug"
 				),
 				pugObjects: {
-					content: article.content,
+					content: this.actualSrcNormalize(article.content),
 					title: article.title
 				}
 			})
 		}		
+	}
+
+	private actualSrcNormalize(html: string): string {
+		return html.replace(/<\/?noscript>/, '');
 	}
 }
