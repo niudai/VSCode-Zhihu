@@ -4,7 +4,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as zhihuEncrypt from "zhihu-encrypt";
 import { DefaultHTTPHeader, LoginPostHeader } from "../const/HTTP";
-import { LightIconPath, TemplatePath, ZhihuIconName } from "../const/PATH";
+import { TemplatePath } from "../const/PATH";
 import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";

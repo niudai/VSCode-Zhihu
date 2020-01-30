@@ -1,13 +1,13 @@
 
+import * as path from "path";
 import { compileFile } from "pug";
 import * as vscode from "vscode";
-import { ITarget, IQuestionAnswerTarget } from "../model/target/target";
-import { HttpService } from "./http.service";
-import { TemplatePath, LightIconPath, ZhihuIconName } from "../const/PATH";
-import * as path from "path";
-import { IArticle } from "../model/article/article-detail";
-import { QuestionAPI } from "../const/URL";
 import { MediaTypes } from "../const/ENUM";
+import { TemplatePath, ZhihuIconPath } from "../const/PATH";
+import { QuestionAPI } from "../const/URL";
+import { IArticle } from "../model/article/article-detail";
+import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
+import { HttpService } from "./http.service";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -43,7 +43,7 @@ export class WebviewService {
 		);
 		panel.iconPath = vscode.Uri.file(w.iconPath ? w.iconPath : path.join(
 			this.context.extensionPath,
-			ZhihuIconName));
+			ZhihuIconPath));
 		panel.webview.html = compiledFunction(w.pugObjects);
 	}
 

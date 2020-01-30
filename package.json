@@ -84,8 +84,10 @@
 				"command": "zhihu.collect",
 				"title": "Collect",
 				"icon": {
-					
-				}
+					"light": "media/light/collect.svg",
+					"dark": "media/dark/collect.svg"
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.preview",
@@ -93,7 +95,7 @@
 				"icon": {
 					"light": "media/light/preview.svg",
 					"dark": "media/dark/preview.svg"
-				},				
+				},
 				"category": "Zhihu"
 			},
 			{
@@ -127,6 +129,7 @@
 			{
 				"command": "zhihu.previousPage",
 				"title": "Zhihu: PreviousPage",
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.nextPage",
@@ -134,7 +137,8 @@
 				"icon": {
 					"light": "media/light/right-arrow.svg",
 					"dark": "media/dark/right-arrow.svg"
-				}
+				},
+				"category": "Zhihu"
 			},
 			{
 				"command": "zhihu.deleteEntry",
@@ -276,6 +280,7 @@
 		"@types/markdown-it": "0.0.9",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
+		"cheerio": "^1.0.0-rc.3",
 		"cookie": "^0.4.0",
 		"crypto": "^1.0.1",
 		"form-urlencoded": "^4.1.1",
