@@ -43,7 +43,6 @@ export class WebviewService {
 		);
 		panel.iconPath = vscode.Uri.file(w.iconPath ? w.iconPath : path.join(
 			this.context.extensionPath,
-			LightIconPath,
 			ZhihuIconName));
 		panel.webview.html = compiledFunction(w.pugObjects);
 	}

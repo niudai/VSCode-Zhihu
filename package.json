@@ -81,6 +81,13 @@
 				"category": "Zhihu"
 			},
 			{
+				"command": "zhihu.collect",
+				"title": "Collect",
+				"icon": {
+					
+				}
+			},
+			{
 				"command": "zhihu.preview",
 				"title": "Zhihu: Preview",
 				"icon": {
@@ -141,7 +148,7 @@
 				"command": "zhihu.deleteEntry",
 				"title": "Zhihu: Delete",
 				"category": "Zhihu"
-			},
+			}
 		],
 		"menus": {
 			"editor/context": [
@@ -154,9 +161,6 @@
 					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
 					"group": "zhihu@1"
-				},
-				{
-					"co"
 				}
 			],
 			"editor/title": [
