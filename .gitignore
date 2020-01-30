@@ -4,3 +4,6 @@ node_modules
 /zhihu_login/*
 cookie.*
 captcha.jpg
+/tmp_test
+collection.json
+

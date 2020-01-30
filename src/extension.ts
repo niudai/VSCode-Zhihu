@@ -1,24 +1,21 @@
 "use strict";
 
+import * as fs from "fs";
+import * as path from "path";
+import { CookieJar } from "tough-cookie";
+import * as FileCookieStore from "tough-cookie-filestore";
 import * as vscode from "vscode";
-import { FileExplorer } from "./fileExplorer";
-import { FtpExplorer } from "./ftpExplorer";
-import { JsonOutlineProvider } from "./jsonOutline";
 import { AccountService } from "./service/account.service";
 import { AuthenticateService } from "./service/authenticate.service";
+import { CollectionService } from "./service/collection.service";
 import { HttpService } from "./service/http.service";
 import { ProfileService } from "./service/profile.service";
+import { PublishService } from "./service/publish.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
-import { CookieJar } from "tough-cookie";
-import * as FileCookieStore from "tough-cookie-filestore";
-import * as path from "path";
-import * as fs from "fs";
-import { PublishService } from "./service/publish.service";
 import MarkdownIt = require("markdown-it");
-import { CollectionService } from "./service/collection.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -74,12 +71,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		hotStoryTreeViewProvider.refresh();
 	}
 	);
-	vscode.commands.registerCommand("extension.openPackageOnNpm", moduleName =>
-		vscode.commands.executeCommand(
-			"vscode.open",
-			vscode.Uri.parse(`https://www.npmjs.com/package/${moduleName}`)
-		)
-	);
 	vscode.commands.registerCommand("zhihu.addEntry", () =>
 		vscode.window.showInformationMessage(`Successfully called add entry.`)
 	);
@@ -111,25 +102,4 @@ export async function activate(context: vscode.ExtensionContext) {
 				`Successfully called delete entry on ${node.label}.`
 			)
 	);
-
-	const jsonOutlineProvider = new JsonOutlineProvider(context);
-	vscode.window.registerTreeDataProvider("jsonOutline", jsonOutlineProvider);
-	vscode.commands.registerCommand("jsonOutline.refresh", () =>
-		jsonOutlineProvider.refresh()
-	);
-	vscode.commands.registerCommand("jsonOutline.refreshNode", offset =>
-		jsonOutlineProvider.refresh(offset)
-	);
-	vscode.commands.registerCommand("jsonOutline.renameNode", offset =>
-		jsonOutlineProvider.rename(offset)
-	);
-	vscode.commands.registerCommand("extension.openJsonSelection", range =>
-		jsonOutlineProvider.select(range)
-	);
-
-	// Samples of `window.createView`
-	new FtpExplorer(context);
-	new FileExplorer(context);
-
-	// Test View
 }
