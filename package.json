@@ -31,7 +31,7 @@
 				{
 					"id": "zhihu-explorer",
 					"title": "知乎",
-					"icon": "media/light/zhihu-logo-fluent.svg"
+					"icon": "media/zhihu-logo-fluent.svg"
 				}
 			]
 		},
@@ -108,10 +108,6 @@
 			{
 				"command": "zhihu.logout",
 				"title": "Logout",
-				"icon": {
-					"light": "media/light/logout.svg",
-					"dark": "media/light/logout.svg"
-				},
 				"category": "Zhihu"
 			},
 			{
@@ -131,10 +127,6 @@
 			{
 				"command": "zhihu.previousPage",
 				"title": "Zhihu: PreviousPage",
-				"icon": {
-					"light": "media/light/left-arrow.svg",
-					"dark": "media/light/left-arrow.svg"
-				}
 			},
 			{
 				"command": "zhihu.nextPage",
