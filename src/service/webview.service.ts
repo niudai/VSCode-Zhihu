@@ -6,6 +6,8 @@ import { HttpService } from "./http.service";
 import { TemplatePath, LightIconPath } from "../const/PATH";
 import * as path from "path";
 import { IArticle } from "../model/article/article-detail";
+import { QuestionAPI } from "../const/URL";
+import { MediaTypes } from "../const/ENUM";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -33,7 +35,7 @@ export class WebviewService {
 				w.viewType ? w.viewType : 'zhihu',
 				w.title ? w.title : '知乎',
 				w.showOptions ? w.showOptions : vscode.ViewColumn.One,
-				w.options
+				w.options ? w.options : { enableScripts: true }
 			);	
 		}
 		const compiledFunction = compileFile(
@@ -47,11 +49,11 @@ export class WebviewService {
 	}
 
 	public async openWebview(object: ITarget & any) {
-		if (object.type == 'question') {
+		if (object.type == MediaTypes.question) {
 
 			const includeContent = "data[*].is_normal,content;";
 			let offset = 0;
-			let answerAPI = `https://www.zhihu.com/api/v4/questions/${object.id}/answers?include=${includeContent}?offset=${offset}`;
+			let answerAPI = `${QuestionAPI}/${object.id}/answers?include=${includeContent}?offset=${offset}`;
 			let body: { data: IQuestionAnswerTarget } = await this.httpService.sendRequest({
 				uri: answerAPI,
 				json: true,
@@ -70,7 +72,7 @@ export class WebviewService {
 					title: body.data[0].question.title
 				}
 			})
-		} else if (object.type == 'answer') {
+		} else if (object.type == MediaTypes.answer) {
 			this.renderHtml({
 				title: "知乎回答",
 				pugTemplatePath: path.join(
@@ -83,7 +85,7 @@ export class WebviewService {
 					title: object.question.name
 				}
 			})
-		} else if (object.type == 'article') {
+		} else if (object.type == MediaTypes.article) {
 			let article: IArticle = await this.httpService.sendRequest({
 				uri: object.url,
 				json: true,
