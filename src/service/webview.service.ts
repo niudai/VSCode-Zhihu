@@ -3,7 +3,7 @@ import { compileFile } from "pug";
 import * as vscode from "vscode";
 import { ITarget, IQuestionAnswerTarget } from "../model/target/target";
 import { HttpService } from "./http.service";
-import { TemplatePath, LightIconPath } from "../const/PATH";
+import { TemplatePath, LightIconPath, ZhihuIconName } from "../const/PATH";
 import * as path from "path";
 import { IArticle } from "../model/article/article-detail";
 import { QuestionAPI } from "../const/URL";
@@ -35,7 +35,7 @@ export class WebviewService {
 				w.viewType ? w.viewType : 'zhihu',
 				w.title ? w.title : '知乎',
 				w.showOptions ? w.showOptions : vscode.ViewColumn.One,
-				w.options ? w.options : { enableScripts: true }
+				w.options
 			);	
 		}
 		const compiledFunction = compileFile(
@@ -44,7 +44,7 @@ export class WebviewService {
 		panel.iconPath = vscode.Uri.file(w.iconPath ? w.iconPath : path.join(
 			this.context.extensionPath,
 			LightIconPath,
-			'zhihu-logo-material.svg'));
+			ZhihuIconName));
 		panel.webview.html = compiledFunction(w.pugObjects);
 	}
 

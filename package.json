@@ -19,20 +19,10 @@
 		"onCommand:zhihu.search",
 		"onCommand:zhihu.login",
 		"onCommand:zhihu.logout",
-		"onCommand:zhihu.logout",
 		"onCommand:zhihu.previousPage",
 		"onCommand:zhihu.nextPage",
 		"onView:zhihu-explorer",
-		"onView:zhihu-feed",
-		"onView:ftpExplorer",
-		"onView:jsonOutline",
-		"onView:fileExplorer",
-		"onView:testView",
-		"onLanguage:json",
-		"onLanguage:jsonc",
-		"onCommand:sample.reveal",
-		"onCommand:zhihu.login",
-		"onCommand:zhihu.logout"
+		"onLanguage:markdown"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -54,25 +44,6 @@
 				{
 					"id": "zhihu-hotStories",
 					"name": "热榜"
-				}
-			],
-			"explorer": [
-				{
-					"id": "jsonOutline",
-					"name": "Json Outline",
-					"when": "jsonOutlineEnabled"
-				},
-				{
-					"id": "ftpExplorer",
-					"name": "FTP Explorer"
-				},
-				{
-					"id": "fileExplorer",
-					"name": "File Explorer"
-				},
-				{
-					"id": "testView",
-					"name": "Test View"
 				}
 			]
 		},
@@ -171,66 +142,6 @@
 				"title": "Zhihu: Delete",
 				"category": "Zhihu"
 			},
-			{
-				"command": "ftpExplorer.refresh",
-				"title": "Refresh",
-				"icon": {
-					"light": "media/light/refresh.svg",
-					"dark": "media/dark/refresh.svg"
-				},
-				"category": "Zhihu"
-			},
-			{
-				"command": "ftpExplorer.openFtpResource",
-				"title": "Open FTP Resource",
-				"category": "Zhihu"
-			},
-			{
-				"command": "ftpExplorer.revealResource",
-				"title": "Reveal in FTP View",
-				"category": "Zhihu"
-			},
-			{
-				"command": "jsonOutline.refresh",
-				"title": "Refresh",
-				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
-				},
-				"category": "Zhihu"
-			},
-			{
-				"command": "jsonOutline.refreshNode",
-				"title": "Refresh",
-				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
-				},
-				"category": "Zhihu"
-			},
-			{
-				"command": "jsonOutline.renameNode",
-				"title": "Rename"
-			},
-			{
-				"command": "fileExplorer.refreshFile",
-				"title": "Refresh",
-				"icon": {
-					"light": "resources/light/refresh.svg",
-					"dark": "resources/dark/refresh.svg"
-				},
-				"category": "Zhihu"
-			},
-			{
-				"command": "fileExplorer.openFile",
-				"title": "Open File",
-				"category": "Zhihu"
-			},
-			{
-				"command": "testView.reveal",
-				"title": "Test View: Reveal",
-				"category": "Zhihu"
-			}
 		],
 		"menus": {
 			"editor/context": [
@@ -243,6 +154,9 @@
 					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
 					"group": "zhihu@1"
+				},
+				{
+					"co"
 				}
 			],
 			"editor/title": [
