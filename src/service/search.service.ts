@@ -41,7 +41,7 @@ export class SearchService {
 		const selectedItem: ISearchItem | undefined = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: ISearchItem }>(
 			searchResults.map(item => ({ value: item, label: `$(package) ${item.highlight.title}`, description: item.highlight.description})),
 			{ placeHolder: "选择你想要的结果:"}
-		).then(vscodeItem => vscodeItem.value ? vscodeItem.value : undefined);
+		).then(vscodeItem => vscodeItem ? vscodeItem.value : undefined);
 		if (!selectedItem) return
 		
 		this.webviewService.openWebview(selectedItem.object);

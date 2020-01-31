@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { CollectionPath } from "../const/PATH";
 import { MediaTypes } from "../const/ENUM";
 import { HttpService } from "./http.service";
-import { AnswerAPI, QuestionAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI, ArticleAPI } from "../const/URL";
 import { ITarget } from "../model/target/target";
 
 export interface ICollectionItem {
@@ -51,13 +51,13 @@ export class CollectionService {
 				})
 			} else if (c.type == MediaTypes.question) {
 				t = await this.httpService.sendRequest({
-					uri: `${QuestionAPI}/${c.id}?include=data[*].content,excerpt`,
+					uri: `${QuestionAPI}/${c.id}`,
 					json: true,
 					gzip: true
 				})
 			} else if (c.type == MediaTypes.article) {
 				t = await this.httpService.sendRequest({
-					uri: `${AnswerAPI}/${c.id}?include=data[*].content,excerpt`,
+					uri: `${ArticleAPI}/${c.id}`,
 					json: true,
 					gzip: true
 				})
