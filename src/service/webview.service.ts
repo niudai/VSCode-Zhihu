@@ -4,7 +4,7 @@ import { compileFile } from "pug";
 import * as vscode from "vscode";
 import { MediaTypes } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
-import { QuestionAPI } from "../const/URL";
+import { QuestionAPI, AnswerAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
 import { HttpService } from "./http.service";
@@ -80,6 +80,10 @@ export class WebviewService {
 			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });
 
 		} else if (object.type == MediaTypes.answer) {
+			let body = await this.httpService.sendRequest({
+				uri: object.id,
+
+			})
 			let panel = this.renderHtml({
 				title: "知乎回答",
 				pugTemplatePath: path.join(

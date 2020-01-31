@@ -28,6 +28,10 @@ export class PublishService {
 			pugObjects: {
 				title: '答案预览',
 				content: html
+			},
+			showOptions: {
+				viewColumn: vscode.ViewColumn.Beside,
+				preserveFocus: true
 			}
 		});
 	}
