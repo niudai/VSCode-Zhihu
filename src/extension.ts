@@ -23,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		fs.createWriteStream(path.join(context.extensionPath, './cookie.json')).end()
 	}
 
-	// Bean Initialization
+	// Dependency Injection
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
 	const mdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
@@ -32,12 +32,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
 	const collectionService = new CollectionService(context, httpService);
-	const webviewService = new WebviewService(context, httpService, collectionService);
-	const publishService = new PublishService(context, httpService, mdParser, webviewService);
-	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
+	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
+	const publishService = new PublishService(context, httpService, mdParser, webviewService);
+	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 
 	context.subscriptions.push(

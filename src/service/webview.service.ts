@@ -10,6 +10,7 @@ import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
 import { HttpService } from "./http.service";
 import * as cheerio from "cheerio";
 import { CollectionService, ICollectionItem } from "./collection.service";
+import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -26,7 +27,8 @@ export class WebviewService {
 	constructor (
 		protected context: vscode.ExtensionContext,
 		protected httpService: HttpService,
-		protected collectService: CollectionService
+		protected collectService: CollectionService,
+		protected collectionTreeviewProvider: CollectionTreeviewProvider 
 		) {
 	}
 
@@ -119,6 +121,7 @@ export class WebviewService {
 			if (e.command == 'collect') {
 				this.collectService.addItem(c)
 				vscode.window.showInformationMessage('收藏成功！');
+				this.collectionTreeviewProvider.refresh()
 			}
 		}, undefined, this.context.subscriptions)
 	}

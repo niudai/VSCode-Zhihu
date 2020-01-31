@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { MediaTypes } from '../const/ENUM';
 import { AccountService } from '../service/account.service';
-import { CollectionService } from '../service/collection.service';
+import { CollectionService, ICollectionItem } from '../service/collection.service';
 import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
 
@@ -38,9 +38,9 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 
 		if (element) {
 			return new Promise(async (resolve, reject) => {
-				let targets = await this.collectionService.getTargets();
+				let targets = await this.collectionService.getTargets(element.type);
 				resolve(targets.map(t => {
-					return new CollectionItem(t.title, t.type, vscode.TreeItemCollapsibleState.None, {
+					return new CollectionItem(t.title ? t.title : t.excerpt, t.type, vscode.TreeItemCollapsibleState.None, {
 						command: 'zhihu.openWebView',
 						title: 'openWebView',
 						arguments: [t]
@@ -99,7 +99,7 @@ export class CollectionItem extends vscode.TreeItem {
 
 	constructor(
 		public readonly label: string,
-		public type: string,
+		public type: MediaTypes,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
 		public page?: number,
@@ -120,6 +120,6 @@ export class CollectionItem extends vscode.TreeItem {
 	// 	dark: vscode.ThemeIcon.File
 	// };
 
-	contextValue =  (this.type == 'feed') ? 'feed' : 'dependency';
+	contextValue =  this.type;
 
 }

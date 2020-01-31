@@ -41,22 +41,25 @@ export class CollectionService {
 		else _collection = this.collection
 		var c: ICollectionItem;
 		var targets: ITarget[] = [];
-		for (c of this.collection) {
+		for (c of _collection) {
 			var t;
 			if (c.type == MediaTypes.answer) {
 				t = await this.httpService.sendRequest({
-					uri: `${AnswerAPI}/${c.id}`,
-					json: true
+					uri: `${AnswerAPI}/${c.id}?include=data[*].content,excerpt`,
+					json: true,
+					gzip: true
 				})
 			} else if (c.type == MediaTypes.question) {
 				t = await this.httpService.sendRequest({
-					uri: `${QuestionAPI}/${c.id}`,
-					json: true
+					uri: `${QuestionAPI}/${c.id}?include=data[*].content,excerpt`,
+					json: true,
+					gzip: true
 				})
 			} else if (c.type == MediaTypes.article) {
 				t = await this.httpService.sendRequest({
-					uri: `${AnswerAPI}/${c.id}`,
-					json: true
+					uri: `${AnswerAPI}/${c.id}?include=data[*].content,excerpt`,
+					json: true,
+					gzip: true
 				})
 			}	
 			targets.push(t);	

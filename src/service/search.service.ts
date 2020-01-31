@@ -28,20 +28,21 @@ export class SearchService {
 			SearchTypes.map(type => ({ value: type.value, label: type.ch, description: '' })),
 				{ placeHolder: "你要搜什么?"}
 		).then(item => item.value);
+
+		if (!selectedSearchType) return
 	
 		const keywordString: string | undefined = await vscode.window.showInputBox({
 			ignoreFocusOut: true,
 			prompt: "输入关键字, 搜索知乎内容",
 			placeHolder: "",
 		});
-		if (!keywordString) {
-			return;
-		}
+		if (!keywordString) return;
 		const searchResults = await this.getSearchResults(keywordString, selectedSearchType);
 		const selectedItem: ISearchItem | undefined = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: ISearchItem }>(
 			searchResults.map(item => ({ value: item, label: `$(package) ${item.highlight.title}`, description: item.highlight.description})),
 			{ placeHolder: "选择你想要的结果:"}
-		).then(vscodeItem => vscodeItem.value);
+		).then(vscodeItem => vscodeItem.value ? vscodeItem.value : undefined);
+		if (!selectedItem) return
 		
 		this.webviewService.openWebview(selectedItem.object);
 	}
