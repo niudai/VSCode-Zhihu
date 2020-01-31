@@ -16,6 +16,7 @@ import { WebviewService } from "./service/webview.service";
 import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
+import { CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -36,6 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
+	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 
 	context.subscriptions.push(
@@ -60,6 +62,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		"zhihu-hotStories",
 		hotStoryTreeViewProvider
 	);
+	vscode.window.registerTreeDataProvider(
+		"zhihu-collection",
+		collectionTreeViewProvider
+	)
 	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
 		publishService.publish(textEditor, edit);
 	})
@@ -69,6 +75,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();
 		hotStoryTreeViewProvider.refresh();
+		collectionTreeViewProvider.refresh();
 	}
 	);
 	vscode.commands.registerCommand("zhihu.addEntry", () =>

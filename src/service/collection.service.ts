@@ -35,22 +35,33 @@ export class CollectionService {
 		this.persist();
 	}
 
-	getTargets(): Promise<ITarget>[] {
-		return this.collection.map(c => {
+	async getTargets(type: MediaTypes): Promise<(ITarget & any) []> {
+		var _collection;
+		if (type) _collection = this.collection.filter(c => c.type == type)
+		else _collection = this.collection
+		var c: ICollectionItem;
+		var targets: ITarget[] = [];
+		for (c of this.collection) {
+			var t;
 			if (c.type == MediaTypes.answer) {
-				return this.httpService.sendRequest({
-					uri: `${AnswerAPI}/${c.id}`
+				t = await this.httpService.sendRequest({
+					uri: `${AnswerAPI}/${c.id}`,
+					json: true
 				})
 			} else if (c.type == MediaTypes.question) {
-				return this.httpService.sendRequest({
-					uri: `${QuestionAPI}/${c.id}`
+				t = await this.httpService.sendRequest({
+					uri: `${QuestionAPI}/${c.id}`,
+					json: true
 				})
 			} else if (c.type == MediaTypes.article) {
-				return this.httpService.sendRequest({
-					uri: `${AnswerAPI}/${c.id}`
+				t = await this.httpService.sendRequest({
+					uri: `${AnswerAPI}/${c.id}`,
+					json: true
 				})
-			}
-		})
+			}	
+			targets.push(t);	
+		}
+		return Promise.resolve(targets)
 	}
 
 	persist() {

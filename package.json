@@ -44,6 +44,10 @@
 				{
 					"id": "zhihu-hotStories",
 					"name": "热榜"
+				},
+				{
+					"id": "zhihu-collection",
+					"name": "收藏"
 				}
 			]
 		},
