@@ -9,6 +9,7 @@ import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
 import { HttpService } from "./http.service";
 import * as cheerio from "cheerio";
+import { CollectionService, ICollectionItem } from "./collection.service";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -24,13 +25,15 @@ export class WebviewService {
 
 	constructor (
 		protected context: vscode.ExtensionContext,
-		protected httpService: HttpService) {
+		protected httpService: HttpService,
+		protected collectService: CollectionService
+		) {
 	}
 
 	/**
 	 * Create and show a webview provided by pug
 	 */
-	public 	renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel) {
+	public 	renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel): vscode.WebviewPanel {
 		if (panel == undefined) {
 			panel = vscode.window.createWebviewPanel(
 				w.viewType ? w.viewType : 'zhihu',
@@ -52,6 +55,7 @@ export class WebviewService {
 					vscode.window.showErrorMessage('Hello Wolrd')
 			}
 		}, undefined, this.context.subscriptions)
+		return panel;
 	}
 
 	public async openWebview(object: ITarget & any) {
@@ -65,7 +69,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			});
-			this.renderHtml({
+			let panel = this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
@@ -77,8 +81,10 @@ export class WebviewService {
 					title: body.data[0].question.title
 				}
 			})
+			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });
+
 		} else if (object.type == MediaTypes.answer) {
-			this.renderHtml({
+			let panel = this.renderHtml({
 				title: "知乎回答",
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
@@ -90,6 +96,7 @@ export class WebviewService {
 					title: object.question.name
 				}
 			})
+			this.registerCollectEvent(panel, { type: MediaTypes.answer, id: object.id })
 		} else if (object.type == MediaTypes.article) {
 			let article: IArticle = await this.httpService.sendRequest({
 				uri: object.url,
@@ -97,7 +104,7 @@ export class WebviewService {
 				gzip: true,
 				headers: null
 			});
-			this.renderHtml({
+			let panel = this.renderHtml({
 				title: "知乎文章",
 				pugTemplatePath: path.join(
 					this.context.extensionPath,
@@ -109,7 +116,16 @@ export class WebviewService {
 					title: article.title
 				}
 			})
+			this.registerCollectEvent(panel, { type: MediaTypes.article, id: object.id })
 		}		
+	}
+
+	private registerCollectEvent(panel: vscode.WebviewPanel, c: ICollectionItem) {
+		panel.webview.onDidReceiveMessage(e => {
+			if (e.command == 'collect') {
+				this.collectService.addItem(c)
+			}
+		})
 	}
 
 	private actualSrcNormalize(html: string): string {

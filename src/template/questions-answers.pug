@@ -3,8 +3,6 @@ html
   head
     style
       include global.css
-    script
-      include global.js
     title= title
   body
     header(class = 'title')
@@ -15,4 +13,6 @@ html
     div(class = 'container')
       each answer in answers
         div !{answer}
+    script
+      include global.js
 
