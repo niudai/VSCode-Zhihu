@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
 	const collectionService = new CollectionService(context, httpService);
-	const webviewService = new WebviewService(context, httpService);
+	const webviewService = new WebviewService(context, httpService, collectionService);
 	const publishService = new PublishService(context, httpService, mdParser, webviewService);
 	const searchService = new SearchService(context, webviewService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);

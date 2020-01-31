@@ -49,12 +49,6 @@ export class WebviewService {
 			this.context.extensionPath,
 			ZhihuIconPath));
 		panel.webview.html = compiledFunction(w.pugObjects);
-		panel.webview.onDidReceiveMessage(m => {
-			switch (m.command) {
-				case 'collect':
-					vscode.window.showErrorMessage('Hello Wolrd')
-			}
-		}, undefined, this.context.subscriptions)
 		return panel;
 	}
 
@@ -124,8 +118,9 @@ export class WebviewService {
 		panel.webview.onDidReceiveMessage(e => {
 			if (e.command == 'collect') {
 				this.collectService.addItem(c)
+				vscode.window.showInformationMessage('收藏成功！');
 			}
-		})
+		}, undefined, this.context.subscriptions)
 	}
 
 	private actualSrcNormalize(html: string): string {

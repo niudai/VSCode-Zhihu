@@ -20,6 +20,8 @@ export class CollectionService {
 		protected httpService: HttpService) {
 		if(fs.existsSync(path.join(context.extensionPath, CollectionPath))) {
 			this.collection = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'collection.json'), 'utf8'));
+		} else {
+			this.collection = []
 		}
 	}
 
