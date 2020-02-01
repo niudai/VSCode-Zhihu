@@ -123,8 +123,11 @@ export class WebviewService {
 	private registerCollectEvent(panel: vscode.WebviewPanel, c: ICollectionItem) {
 		panel.webview.onDidReceiveMessage(e => {
 			if (e.command == 'collect') {
-				this.collectService.addItem(c)
-				vscode.window.showInformationMessage('收藏成功！');
+				if(this.collectService.addItem(c)) {
+					vscode.window.showInformationMessage('收藏成功！');
+				} else {
+					vscode.window.showWarningMessage('你已经收藏了它！');
+				}
 				this.collectionTreeviewProvider.refresh()
 			}
 		}, undefined, this.context.subscriptions)

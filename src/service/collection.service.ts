@@ -26,12 +26,15 @@ export class CollectionService {
 	}
 
 	addItem(item: ICollectionItem) {
-		this.collection.push(item);
-		this.persist();
+		if(!this.collection.find(v => v.id == item.id && v.type == item.type)) {
+			this.collection.push(item);
+			this.persist();
+			return true;
+		} else return false;
 	}
 
-	deleteItem(type: string, id: string) {
-		this.collection = this.collection.filter(c => !(c.id == id && c.type == type))
+	deleteItem(item: ICollectionItem) {
+		this.collection = this.collection.filter(c => !(c.id == item.id && c.type == item.type))
 		this.persist();
 	}
 

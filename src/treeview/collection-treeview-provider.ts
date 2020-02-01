@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import { MediaTypes } from '../const/ENUM';
-import { AccountService } from '../service/account.service';
 import { CollectionService, ICollectionItem } from '../service/collection.service';
-import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
 
 export interface CollectType {
@@ -40,56 +38,26 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 			return new Promise(async (resolve, reject) => {
 				let targets = await this.collectionService.getTargets(element.type);
 				resolve(targets.map(t => {
-					return new CollectionItem(t.title ? t.title : t.excerpt, t.type, vscode.TreeItemCollapsibleState.None, {
+					return new CollectionItem(t.title ? t.title : t.excerpt, t.type, { type: t.type, id: t.id }, vscode.TreeItemCollapsibleState.None, {
 						command: 'zhihu.openWebView',
 						title: 'openWebView',
 						arguments: [t]
-					});
+					}, element);
 				}))
-				// if (element.type == 'feed') {
-				// 	if (! await this.accountService.isAuthenticated()) {
-				// 		return resolve([new ZhihuTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
-				// 	} 
-				// 	let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
-				// 	let feedResp = await this.httpService.sendRequest(
-				// 		{
-				// 			uri: feedAPI,
-				// 			json: true,
-				// 			gzip: true
-				// 		});
-				// 	feedResp = feedResp.data.filter(f => { return f.target.type != 'feed_advert';});
-				// 	let deps: ZhihuTreeItem[] = feedResp.map(feed => {
-				// 		let type = feed.target.type;
-				// 		if(type == 'article') {
-				// 			return new ZhihuTreeItem(feed.target.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
-				// 				command: 'zhihu.openWebView',
-				// 				title: 'openWebView',
-				// 				arguments: [feed.target]
-				// 			});
-				// 		} else if (type == 'answer') {
-				// 			return new ZhihuTreeItem(feed.target.question.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
-				// 				command: 'zhihu.openWebView',
-				// 				title: 'openWebView',
-				// 				arguments: [feed.target.question]
-				// 			});
-				// 		} else {
-				// 			return new ZhihuTreeItem('', '', vscode.TreeItemCollapsibleState.None);
-				// 		}
-				// 	});
-				// 	resolve(deps);
-
-				// }
 			});
 		} else {
 			return Promise.resolve(this.getCollectionsType());
 		}
+	}
 
+	getParent(element?: CollectionItem): Thenable<CollectionItem> {
+		return Promise.resolve(element.parent);
 	}
 
 	private async getCollectionsType(): Promise<CollectionItem[]> {
 		await this.profileService.fetchProfile();
 		return Promise.resolve(COLLECT_TYPES.map(c => {
-			return new CollectionItem(c.ch, c.type, vscode.TreeItemCollapsibleState.Collapsed);
+			return new CollectionItem(c.ch, c.type, undefined, vscode.TreeItemCollapsibleState.Collapsed);
 		}));
 	}
 
@@ -100,8 +68,10 @@ export class CollectionItem extends vscode.TreeItem {
 	constructor(
 		public readonly label: string,
 		public type: MediaTypes,
+		public item: ICollectionItem,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
+		public readonly parent?: CollectionItem,
 		public page?: number,
 	) {
 		super(label, collapsibleState);
@@ -120,6 +90,6 @@ export class CollectionItem extends vscode.TreeItem {
 	// 	dark: vscode.ThemeIcon.File
 	// };
 
-	contextValue =  this.type;
+	contextValue =  this.collapsibleState == vscode.TreeItemCollapsibleState.None ? 'collect-item' : this.type;
 
 }

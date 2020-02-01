@@ -16,7 +16,7 @@ import { WebviewService } from "./service/webview.service";
 import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
-import { CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
+import { CollectionTreeviewProvider, CollectionItem } from "./treeview/collection-treeview-provider";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -88,6 +88,13 @@ export async function activate(context: vscode.ExtensionContext) {
 				`Successfully called edit entry on ${node.label}.`
 			)
 	);
+	vscode.commands.registerCommand(
+		"zhihu.deleteItem",
+		(node: CollectionItem) => {
+			collectionService.deleteItem(node.item);
+			collectionTreeViewProvider.refresh(node.parent);
+		}
+	)
 	vscode.commands.registerCommand(
 		"zhihu.nextPage",
 		(node: ZhihuTreeItem) => {
