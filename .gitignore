@@ -6,4 +6,5 @@ cookie.*
 captcha.jpg
 /tmp_test
 collection.json
+/.vscode
 
