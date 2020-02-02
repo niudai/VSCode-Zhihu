@@ -100,12 +100,16 @@ export class FeedTreeItem extends vscode.TreeItem {
 	}
 
 	get tooltip(): string {
-		return `${this.label}`;
+		return this.target ? this.target.excerpt : '';
 	}
 
 	get description(): string {
-		return this.target.excerpt;
+		return this.target ? this.target.excerpt : '';
 	}
+
+	// get description(): boolean {
+	// 	return false;
+	// }
 
 	// iconPath = {
 	// 	light: vscode.ThemeIcon.File,

@@ -1,11 +1,31 @@
+/**
+ * GET, PUT, POST Captcha through this API
+ */
 export const CaptchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 
+/**
+ * POST Login data to this API to aquire authentication
+ */
 export const LoginAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in';
 
+/**
+ * Helper link to indicate if already login in
+ */
 export const SignUpRedirectPage = 'https://www.zhihu.com/signup';
 
+/**
+ * Feed Story
+ */
 export const FeedStoryAPI = 'https://www.zhihu.com/api/v3/feed/topstory/recommend';
 
+/**
+ * Get hot stories
+ */
+export const HotStoryAPI = 'https://www.zhihu.com/api/v3/feed/topstory/hot-lists';
+
+/**
+ * Get info about myself
+ */
 export const SelfProfileAPI = 'https://www.zhihu.com/api/v4/me';
 
 /**

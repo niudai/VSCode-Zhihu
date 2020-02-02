@@ -1,6 +1,8 @@
 import * as httpClient from 'request';
 import * as vscode from 'vscode';
 import { HotStory } from '../model/hot-story.model';
+import { IStoryTarget } from '../model/target/target';
+import { HotStoryAPI } from '../const/URL';
 
 export interface StoryType {
 	storyType?: string;
@@ -36,7 +38,7 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 
 		if (element) {
 			return new Promise(async (resolve, reject) => {
-				let hotStoryAPI = `https://www.zhihu.com/api/v3/feed/topstory/hot-lists/${element.type}?desktop=true`;
+				let hotStoryAPI = `${HotStoryAPI}/${element.type}?desktop=true`;
 				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
 					let questions: HotStory[] = body.data;
 					let deps: ZhihuTreeItem[] = questions.map(story => {
@@ -45,7 +47,7 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 							command: 'zhihu.openWebView',
 							title: 'openWebView',
 							arguments: [story.target]
-						}); 
+						}, story.target); 
 					});
 					resolve(deps);
 				});
@@ -70,17 +72,18 @@ export class ZhihuTreeItem extends vscode.TreeItem {
 		public type: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
+		public target?: IStoryTarget,
 		public page?: number,
 	) {
 		super(label, collapsibleState);
 	}
 
 	get tooltip(): string {
-		return `${this.label}-${this.type}`;
+		return this.target ? this.target.excerpt : '';
 	}
 
 	get description(): string {
-		return this.type;
+		return this.target ? this.target.excerpt : '';
 	}
 
 	// iconPath = {
