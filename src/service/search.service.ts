@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { ISearchItem, ISearchResults } from "../model/search-results";
 import { SearchTypes } from "../util/searchTypesEnum";
 import { WebviewService } from "./webview.service";
+import { removeHtmlTag } from "../util/md-html-utils";
 
 const ZHIHU_SEARCH_API: string = "https://www.zhihu.com/api/v4/search_v3";
 
@@ -39,7 +40,7 @@ export class SearchService {
 		if (!keywordString) return;
 		const searchResults = await this.getSearchResults(keywordString, selectedSearchType);
 		const selectedItem: ISearchItem | undefined = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: ISearchItem }>(
-			searchResults.map(item => ({ value: item, label: `$(package) ${item.highlight.title}`, description: item.highlight.description})),
+			searchResults.map(item => ({ value: item, label: `${removeHtmlTag(item.highlight.title)}`, description: removeHtmlTag(item.highlight.description) })),
 			{ placeHolder: "选择你想要的结果:"}
 		).then(vscodeItem => vscodeItem ? vscodeItem.value : undefined);
 		if (!selectedItem) return

@@ -74,15 +74,17 @@ export class WebviewService {
 				),
 				pugObjects: {
 					answers: body.data.map(t => { return this.actualSrcNormalize(t.content) }),
-					title: body.data[0].question.title
+					title: body.data[0].question.title,
+					subTitle: body.data[0].question.
 				}
 			})
 			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });
 
 		} else if (object.type == MediaTypes.answer) {
 			let body = await this.httpService.sendRequest({
-				uri: object.id,
-
+				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt`,
+				json: true,
+				gzip: true
 			})
 			let panel = this.renderHtml({
 				title: "知乎回答",
@@ -92,7 +94,7 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: [this.actualSrcNormalize(object.content)],
+					answers: [this.actualSrcNormalize(body.content)],
 					title: object.question.name
 				}
 			})

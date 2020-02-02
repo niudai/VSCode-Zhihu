@@ -99,6 +99,6 @@ export class PublishService {
 			json: true,
 			resolveWithFullResponse: true,
 			headers: {},
-		}).then(resp => console.log(resp))
+		}).then(resp => vscode.window.showInformationMessage('发布成功！\n ', 'https://www.zhihu.com/answer/678356914'))
 	}
 }

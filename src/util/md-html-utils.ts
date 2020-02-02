@@ -25,4 +25,13 @@ function unescapeMd(str) {
 	return str.replace(UNESCAPE_MD_RE, '$1');
 }
 
-export { escapeHtml, unescapeMd }
+/**
+ * Remove html tag from text
+ */
+function removeHtmlTag(text: string) {
+	let TagRegExp = /<[^<>]+\/?>/g;
+	return text.replace(TagRegExp, '');
+}
+
+
+export { escapeHtml, unescapeMd, removeHtmlTag }
