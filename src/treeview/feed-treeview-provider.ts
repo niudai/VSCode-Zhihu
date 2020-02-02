@@ -3,6 +3,7 @@ import { FeedStoryAPI } from '../const/URL';
 import { AccountService } from '../service/account.service';
 import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
+import { IFeedTarget, IQuestionAnswerTarget, IArticleTarget } from '../model/target/target';
 
 export interface StoryType {
 	storyType?: string;
@@ -13,10 +14,10 @@ export const STORY_TYPES = [
 	{ storyType: 'feed', ch: '推荐' },
 ];
 
-export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeItem> {
+export class FeedTreeViewProvider implements vscode.TreeDataProvider<FeedTreeItem> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<ZhihuTreeItem | undefined> = new vscode.EventEmitter<ZhihuTreeItem | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<ZhihuTreeItem | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<FeedTreeItem | undefined> = new vscode.EventEmitter<FeedTreeItem | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<FeedTreeItem | undefined> = this._onDidChangeTreeData.event;
 
 	constructor(private context: vscode.ExtensionContext, 
 		private accountService: AccountService,
@@ -24,21 +25,21 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 		private httpService: HttpService) {
 	}
 
-	refresh(node?: ZhihuTreeItem): void {
+	refresh(node?: FeedTreeItem): void {
 		this._onDidChangeTreeData.fire(node);
 	}
 
-	getTreeItem(element: ZhihuTreeItem): vscode.TreeItem {
+	getTreeItem(element: FeedTreeItem): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: ZhihuTreeItem): Thenable<ZhihuTreeItem[]> {
+	getChildren(element?: FeedTreeItem): Thenable<FeedTreeItem[]> {
 
 		if (element) {
 			return new Promise(async (resolve, reject) => {
 				if (element.type == 'feed') {
 					if (! await this.accountService.isAuthenticated()) {
-						return resolve([new ZhihuTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
+						return resolve([new FeedTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
 					} 
 					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
 					let feedResp = await this.httpService.sendRequest(
@@ -48,22 +49,22 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 							gzip: true
 						});
 					feedResp = feedResp.data.filter(f => { return f.target.type != 'feed_advert';});
-					let deps: ZhihuTreeItem[] = feedResp.map(feed => {
+					let deps: FeedTreeItem[] = feedResp.map(feed => {
 						let type = feed.target.type;
 						if(type == 'article') {
-							return new ZhihuTreeItem(feed.target.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
+							return new FeedTreeItem(feed.target.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target]
-							});
+							}, feed.target);
 						} else if (type == 'answer') {
-							return new ZhihuTreeItem(feed.target.question.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
+							return new FeedTreeItem(feed.target.question.title, feed.target.type, vscode.TreeItemCollapsibleState.None, {
 								command: 'zhihu.openWebView',
 								title: 'openWebView',
 								arguments: [feed.target.question]
-							});
+							}, feed.target);
 						} else {
-							return new ZhihuTreeItem('', '', vscode.TreeItemCollapsibleState.None);
+							return new FeedTreeItem('', '', vscode.TreeItemCollapsibleState.None);
 						}
 					});
 					resolve(deps);
@@ -76,25 +77,23 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<ZhihuTreeIt
 
 	}
 
-	private async getHotStoriesType(): Promise<ZhihuTreeItem[]> {
+	private async getHotStoriesType(): Promise<FeedTreeItem[]> {
 		await this.profileService.fetchProfile();
 		return Promise.resolve(STORY_TYPES.map(type => {
-			if (type.storyType == 'feed') {
-				return new ZhihuTreeItem(`${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, 0);
-			}
-			return new ZhihuTreeItem(type.ch, type.storyType, vscode.TreeItemCollapsibleState.Collapsed);
+			return new FeedTreeItem(`${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, undefined, 0);
 		}));
 	}
 
 }
 
-export class ZhihuTreeItem extends vscode.TreeItem {
+export class FeedTreeItem extends vscode.TreeItem {
 
 	constructor(
 		public readonly label: string,
 		public type: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
+		public readonly target?: IQuestionAnswerTarget | IArticleTarget,
 		public page?: number,
 	) {
 		super(label, collapsibleState);
@@ -104,8 +103,8 @@ export class ZhihuTreeItem extends vscode.TreeItem {
 		return `${this.label}`;
 	}
 
-	get description(): boolean {
-		return false;
+	get description(): string {
+		return this.target.excerpt;
 	}
 
 	// iconPath = {

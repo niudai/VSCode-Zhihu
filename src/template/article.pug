@@ -7,6 +7,10 @@ html
   body
     header(class = 'title')
       include header.pug
+    div(class = 'header')
+      div(class = 'description')
+        h1 !{title}
+        h2 !{subTitle}
     div(class = 'container') !{content}
     script
       include global.js

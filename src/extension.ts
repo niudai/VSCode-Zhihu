@@ -13,7 +13,7 @@ import { ProfileService } from "./service/profile.service";
 import { PublishService } from "./service/publish.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
-import { FeedTreeViewProvider, ZhihuTreeItem } from "./treeview/feed-treeview-provider";
+import { FeedTreeViewProvider, FeedTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
 import { CollectionTreeviewProvider, CollectionItem } from "./treeview/collection-treeview-provider";
@@ -83,7 +83,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.commands.registerCommand(
 		"zhihu.editEntry",
-		(node: ZhihuTreeItem) =>
+		(node: FeedTreeItem) =>
 			vscode.window.showInformationMessage(
 				`Successfully called edit entry on ${node.label}.`
 			)
@@ -93,25 +93,26 @@ export async function activate(context: vscode.ExtensionContext) {
 		(node: CollectionItem) => {
 			collectionService.deleteItem(node.item);
 			collectionTreeViewProvider.refresh(node.parent);
+			vscode.window.showInformationMessage('已从收藏夹移除');
 		}
 	)
 	vscode.commands.registerCommand(
 		"zhihu.nextPage",
-		(node: ZhihuTreeItem) => {
+		(node: FeedTreeItem) => {
 			node.page++;
 			feedTreeViewProvider.refresh(node);
 		}
 	)
 	vscode.commands.registerCommand(
 		"zhihu.previousPage",
-		(node: ZhihuTreeItem) => {
+		(node: FeedTreeItem) => {
 			node.page--;
 			feedTreeViewProvider.refresh(node);
 		}
 	)
 	vscode.commands.registerCommand(
 		"zhihu.deleteEntry",
-		(node: ZhihuTreeItem) =>
+		(node: FeedTreeItem) =>
 			vscode.window.showInformationMessage(
 				`Successfully called delete entry on ${node.label}.`
 			)

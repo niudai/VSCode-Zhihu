@@ -6,7 +6,7 @@ import { MediaTypes } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
 import { QuestionAPI, AnswerAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
-import { IQuestionAnswerTarget, ITarget } from "../model/target/target";
+import { IQuestionAnswerTarget, ITarget, IQuestionTarget } from "../model/target/target";
 import { HttpService } from "./http.service";
 import * as cheerio from "cheerio";
 import { CollectionService, ICollectionItem } from "./collection.service";
@@ -59,7 +59,13 @@ export class WebviewService {
 
 			const includeContent = "data[*].is_normal,content;";
 			let offset = 0;
+			let questionAPI = `${QuestionAPI}/${object.id}?include=detail%2cexcerpt`;
 			let answerAPI = `${QuestionAPI}/${object.id}/answers?include=${includeContent}?offset=${offset}`;
+			let question: IQuestionTarget = await this.httpService.sendRequest({
+				uri: questionAPI,
+				json: true,
+				gzip: true
+			});
 			let body: { data: IQuestionAnswerTarget[] } = await this.httpService.sendRequest({
 				uri: answerAPI,
 				json: true,
@@ -74,8 +80,8 @@ export class WebviewService {
 				),
 				pugObjects: {
 					answers: body.data.map(t => { return this.actualSrcNormalize(t.content) }),
-					title: body.data[0].question.title,
-					subTitle: body.data[0].question.
+					title: question.title,
+					subTitle: question.detail
 				}
 			})
 			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });

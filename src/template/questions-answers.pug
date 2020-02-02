@@ -7,6 +7,10 @@ html
   body
     header(class = 'title')
       include header.pug
+    div(class = 'header')
+      div(class = 'description')
+        h1 !{title}
+        h2 !{subTitle}
     div(class = 'container')
       each answer in answers
         div !{answer}

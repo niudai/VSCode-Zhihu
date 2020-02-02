@@ -24,6 +24,8 @@ body.vscode-light, body.vscode-dark {
 }
 
 button#favorite {
+    float: right;
+    margin-right: 20px;
     min-width: 0;
     color: white;
     border: none;
@@ -32,7 +34,6 @@ button#favorite {
     padding: 5px;
     width: 30px;
     height: 30px;
-    margin: 5px;
     box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
     background-color: #ff1493;
     cursor: pointer;
@@ -67,13 +68,26 @@ p {
 
 .container {
     /* border-style: groove; */
-    border-radius: 15px;
     background-color: white;
     padding: 25px;
     box-shadow: 0 1px 3px rgba(26,26,26,.1);
     width: 700px;
     margin: 0 auto;
-    margin-top: 50px;
+    margin-top: 15px;
+}
+
+.header {
+    background-color: white;
+    padding: 5px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    /* width: 700px; */
+    margin: 0 auto;
+    margin-top: 65px;
+}
+
+.description {
+    width: 900px;
+    margin: 0 auto;
 }
 
 img.origin_image.zh-lightbox-thumb.lazy {

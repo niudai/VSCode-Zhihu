@@ -47,15 +47,25 @@ export interface IQuestionAnswerTarget extends ITarget {
 	relationship?: any;
 }
 
-interface IQuestionTarget extends ITarget {
+export interface IQuestionTarget extends ITarget {
 	title?: string;
 	question_type?: string;
 	created?: number;
 	updated_time?: number;
 	relationship?: any;
+
+	/**
+	 * with html tag
+	 */
+	detail: string,
+
+	/**
+	 *  no html tag
+	 */
+	excerpt: string 
 }
 
-interface IArticleTarget extends ITarget {
+export interface IArticleTarget extends ITarget {
 	title: string;
 	excerpt_title: string;
 	image_url: string;
