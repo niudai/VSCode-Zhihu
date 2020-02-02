@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { FeedStoryAPI } from '../const/URL';
+import { IArticleTarget, IQuestionAnswerTarget } from '../model/target/target';
 import { AccountService } from '../service/account.service';
 import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
-import { IFeedTarget, IQuestionAnswerTarget, IArticleTarget } from '../model/target/target';
 
 export interface StoryType {
 	storyType?: string;
@@ -72,15 +72,15 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<FeedTreeIte
 				}
 			});
 		} else {
-			return Promise.resolve(this.getHotStoriesType());
+			return Promise.resolve(this.getRootItem());
 		}
 
 	}
 
-	private async getHotStoriesType(): Promise<FeedTreeItem[]> {
+	private async getRootItem(): Promise<FeedTreeItem[]> {
 		await this.profileService.fetchProfile();
 		return Promise.resolve(STORY_TYPES.map(type => {
-			return new FeedTreeItem(`${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, undefined, 0);
+			return new FeedTreeItem(`${this.profileService.name} - ${this.profileService.headline}`, type.storyType, vscode.TreeItemCollapsibleState.Expanded, null, undefined, 0, this.profileService.avatarUrl);
 		}));
 	}
 
@@ -95,6 +95,7 @@ export class FeedTreeItem extends vscode.TreeItem {
 		public readonly command?: vscode.Command,
 		public readonly target?: IQuestionAnswerTarget | IArticleTarget,
 		public page?: number,
+		public avatarUrl?: string
 	) {
 		super(label, collapsibleState);
 	}
@@ -111,10 +112,7 @@ export class FeedTreeItem extends vscode.TreeItem {
 	// 	return false;
 	// }
 
-	// iconPath = {
-	// 	light: vscode.ThemeIcon.File,
-	// 	dark: vscode.ThemeIcon.File
-	// };
+	iconPath = this.avatarUrl ? vscode.Uri.parse(this.avatarUrl) : false;
 
 	contextValue =  (this.type == 'feed') ? 'feed' : 'dependency';
 

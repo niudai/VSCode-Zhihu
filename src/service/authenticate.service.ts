@@ -58,7 +58,9 @@ export class AuthenticateService {
 	public async passwordLogin() {
 		let resp = await this.httpService.sendRequest({
 			uri: CaptchaAPI,
-			method: 'get', resolveWithFullResponse: true, gzip: true
+			method: 'get',
+			resolveWithFullResponse: true,
+			gzip: true
 		});
 
 		if (JSON.parse(resp.body)['show_captcha']) {
@@ -70,53 +72,54 @@ export class AuthenticateService {
 			});
 			let base64Image = captchaImg['img_base64'].replace('\n', '');
 			fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
-		}
-		const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
-		const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, './captcha.jpg')
-		));
-		
-		this.webviewService.renderHtml({
-			title: '验证码',
-			showOptions: {
-				viewColumn: vscode.ViewColumn.One,
-				preserveFocus: true
-			},
-			pugTemplatePath: path.join(
-				this.context.extensionPath,
-				TemplatePath,
-				'captcha.pug'
-			),
-			pugObjects: {
-				title: '',
-				captchaSrc: imgSrc.toString()
-			}
-		}, panel)
-
-		do {
-			var captcha: string | undefined = await vscode.window.showInputBox({
-				prompt: "输入验证码",
-				placeHolder: "",
-				ignoreFocusOut: true
-			});
-			if (!captcha) return
-			let headers = DefaultHTTPHeader;
-			headers['cookie'] = fs.readFileSync
-			resp = await this.httpService.sendRequest({
-				method: 'POST',
-				uri: CaptchaAPI,
-				form: {
-					input_text: captcha
+			const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
+			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
+				path.join(this.context.extensionPath, './captcha.jpg')
+			));
+			
+			this.webviewService.renderHtml({
+				title: '验证码',
+				showOptions: {
+					viewColumn: vscode.ViewColumn.One,
+					preserveFocus: true
 				},
-				json: true,
-				simple: false,
-				gzip: true,
-				resolveWithFullResponse: true,
-			});
-			if (resp.statusCode != 201) {
-				vscode.window.showWarningMessage('请输入正确的验证码')
-			}
-		} while (resp.statusCode != 201);
+				pugTemplatePath: path.join(
+					this.context.extensionPath,
+					TemplatePath,
+					'captcha.pug'
+				),
+				pugObjects: {
+					title: '',
+					captchaSrc: imgSrc.toString()
+				}
+			}, panel)
+	
+			do {
+				var captcha: string | undefined = await vscode.window.showInputBox({
+					prompt: "输入验证码",
+					placeHolder: "",
+					ignoreFocusOut: true
+				});
+				if (!captcha) return
+				let headers = DefaultHTTPHeader;
+				headers['cookie'] = fs.readFileSync
+				resp = await this.httpService.sendRequest({
+					method: 'POST',
+					uri: CaptchaAPI,
+					form: {
+						input_text: captcha
+					},
+					json: true,
+					simple: false,
+					gzip: true,
+					resolveWithFullResponse: true,
+				});
+				if (resp.statusCode != 201) {
+					vscode.window.showWarningMessage('请输入正确的验证码')
+				}
+			} while (resp.statusCode != 201);
+		}
+		
 
 		const phoneNumber: string | undefined = await vscode.window.showInputBox({
 			ignoreFocusOut: true,

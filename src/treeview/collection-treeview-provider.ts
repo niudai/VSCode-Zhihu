@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { MediaTypes } from '../const/ENUM';
 import { CollectionService, ICollectionItem } from '../service/collection.service';
 import { ProfileService } from '../service/profile.service';
+import { IQuestionAnswerTarget, IQuestionTarget, IArticleTarget } from '../model/target/target';
 
 export interface CollectType {
 	type?: string;
@@ -42,7 +43,7 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 						command: 'zhihu.openWebView',
 						title: 'openWebView',
 						arguments: [t]
-					}, element);
+					}, element, t);
 				}))
 			});
 		} else {
@@ -72,17 +73,17 @@ export class CollectionItem extends vscode.TreeItem {
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
 		public readonly parent?: CollectionItem,
-		public page?: number,
+		public readonly target?: IQuestionAnswerTarget | IQuestionTarget | IArticleTarget,
 	) {
 		super(label, collapsibleState);
 	}
 
 	get tooltip(): string {
-		return `${this.label}`;
+		return this.target ? this.target.excerpt : '';
 	}
 
-	get description(): boolean {
-		return false;
+	get description(): string {
+		return this.target ? this.target.excerpt : '';
 	}
 
 	// iconPath = {

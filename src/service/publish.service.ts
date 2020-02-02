@@ -15,10 +15,11 @@ export class PublishService {
 
 	constructor (protected context: vscode.ExtensionContext, 
 		protected httpService: HttpService,
-		protected md: MarkdownIt,
+		protected zhihuMdParser: MarkdownIt,
+		protected defualtMdParser: MarkdownIt,
 		protected webviewService: WebviewService
 		) {
-			md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+			zhihuMdParser.renderer.rules.fence = function (tokens, idx, options, env, self) {
 				var token = tokens[idx],
 					info = token.info ? unescapeMd(token.info).trim() : '',
 					langName = '',
@@ -56,13 +57,13 @@ export class PublishService {
 						attrs: tmpAttrs
 					};
 			
-					return '<pre' + md.renderer.renderAttrs(tmpToken) + '>'
+					return '<pre' + zhihuMdParser.renderer.renderAttrs(tmpToken) + '>'
 						+ highlighted
 						+ '</pre>\n';
 				}
 			
 			
-				return '<pre' + md.renderer.renderAttrs(token) + '>'
+				return '<pre' + zhihuMdParser.renderer.renderAttrs(token) + '>'
 					+ highlighted
 					+ '</pre>\n';
 			};
@@ -70,7 +71,7 @@ export class PublishService {
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		let html = this.md.render(text);
+		let html = this.defualtMdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
 			pugTemplatePath: join(this.context.extensionPath, TemplatePath, 'pre-publish.pug'),
@@ -87,7 +88,7 @@ export class PublishService {
 
 	publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		let html = this.md.render(text);
+		let html = this.zhihuMdParser.render(text);
 		html.replace('\"', '\\\"');
 		this.httpService.sendRequest({
 			uri: `${AnswerAPI}/678356914`,
@@ -99,6 +100,14 @@ export class PublishService {
 			json: true,
 			resolveWithFullResponse: true,
 			headers: {},
-		}).then(resp => vscode.window.showInformationMessage('发布成功！\n ', 'https://www.zhihu.com/answer/678356914'))
+		}).then(resp => { 
+			vscode.window.showInformationMessage('发布成功！\n https://www.zhihu.com/answer/678356914')
+			const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
+			this.httpService.sendRequest({ uri: 'https://www.zhihu.com/answer/678356914', gzip: true } ).then(
+				resp => {
+					pane.webview.html = resp
+				}
+			);
+		})
 	}
 }

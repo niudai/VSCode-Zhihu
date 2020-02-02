@@ -1,12 +1,10 @@
 
-import * as vscode from "vscode";
-import { IProfile } from "../model/target/target";
-import { DefaultHTTPHeader } from "../const/HTTP";
-import * as fs from "fs";
-import * as path from "path";
 import * as httpClient from "request-promise";
-import { CookieJar, Cookie, Store } from "tough-cookie";
+import { Cookie, CookieJar, Store } from "tough-cookie";
+import * as vscode from "vscode";
+import { DefaultHTTPHeader } from "../const/HTTP";
 import { ZhihuDomain } from "../const/URL";
+import { IProfile } from "../model/target/target";
 
 export class HttpService {
 	public profile: IProfile;

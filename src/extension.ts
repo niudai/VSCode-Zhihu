@@ -25,18 +25,19 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Dependency Injection
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
-	const mdParser = new MarkdownIt();
+	const zhihuMdParser = new MarkdownIt();
+	const defualtMdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
 	const httpService = new HttpService(context, cookieJar, store);
-	const profileService = new ProfileService(context, httpService);
-	await profileService.fetchProfile();
 	const accountService = new AccountService(context, httpService);
+	const profileService = new ProfileService(context, httpService, accountService);
+	await profileService.fetchProfile();
 	const collectionService = new CollectionService(context, httpService);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
 	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
-	const publishService = new PublishService(context, httpService, mdParser, webviewService);
+	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService);
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 
