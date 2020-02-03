@@ -7,6 +7,7 @@ export const CaptchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 /**
  * Prefetch QRCode https://www.zhihu.com/api/v3/account/api/login/qrcode
  * Get QRCode https://www.zhihu.com/api/v3/account/api/login/qrcode/${token}/image
+ * Query ScanInfo https://www.zhihu.com/api/v3/account/api/login/qrcode/${token}/scan_info
  */
 export const QRCodeAPI = 'https://www.zhihu.com/api/v3/account/api/login/qrcode';
 

@@ -116,7 +116,7 @@ export class AuthenticateService {
 					gzip: true,
 					resolveWithFullResponse: true,
 				});
-				if (resp.statusCode != 201) {
+				if (resp.statusCode != 201) { 
 					vscode.window.showWarningMessage('请输入正确的验证码')
 				}
 			} while (resp.statusCode != 201);
@@ -255,6 +255,25 @@ export class AuthenticateService {
 					qrcodeSrc: imgSrc.toString()
 				}
 			}
-		)
+		);
+		let intervalId = setInterval(() => {
+			this.httpService.sendRequest({
+				uri: `${QRCodeAPI}/${resp.token}/scan_info`,
+				json: true,
+				gzip: true
+			}).then(
+				r => {
+					if (r.status == 1) {
+						vscode.window.showInformationMessage('请在手机上确认登录！');
+					} else if (r.user_id) {
+						clearInterval(intervalId);
+						this.profileService.fetchProfile().then(() => {
+							vscode.window.showInformationMessage(`你好，${this.profileService.name}`);
+							this.feedTreeViewProvider.refresh();	
+						})
+					}
+				}
+			);
+		}, 1000)
 	}
 }
