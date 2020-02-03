@@ -3,9 +3,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as zhihuEncrypt from "zhihu-encrypt";
-import { DefaultHTTPHeader, LoginPostHeader } from "../const/HTTP";
+import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader } from "../const/HTTP";
 import { TemplatePath } from "../const/PATH";
-import { CaptchaAPI, LoginAPI, SMSAPI } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
@@ -52,18 +52,20 @@ export class AuthenticateService {
 			this.passwordLogin();
 		} else if (selectedLoginType == LoginEnum.sms) {
 			this.smsLogin();
-		}		
+		} else if (selectedLoginType == LoginEnum.qrcode) {
+			this.qrcodeLogin();
+		} 
 	}
 
 	public async passwordLogin() {
 		let resp = await this.httpService.sendRequest({
 			uri: CaptchaAPI,
 			method: 'get',
-			resolveWithFullResponse: true,
-			gzip: true
+			gzip: true,
+			json: true
 		});
 
-		if (JSON.parse(resp.body)['show_captcha']) {
+		if (resp.show_captcha) {
 			let captchaImg = await this.httpService.sendRequest({ 
 				uri: CaptchaAPI,
 				method: 'put',
@@ -213,5 +215,24 @@ export class AuthenticateService {
 			prompt: "输入短信验证码：",
 			placeHolder: "",
 		});		
+	}
+
+	public async qrcodeLogin() {
+		await this.httpService.sendRequest({
+			uri: UDIDAPI,
+			method: 'post'
+		});
+		let resp = await this.httpService.sendRequest({
+			uri: QRCodeAPI,
+			method: 'post',
+			json: true,
+			gzip: true,
+			header: QRCodeOptionHeader
+		});
+		let qrcode = await this.httpService.sendRequest({
+			uri: `${QRCodeAPI}/${resp.token}/image`,
+			encoding: null
+		});
+		fs.writeFileSync(path.join(this.context.extensionPath, 'qrcode.png'), qrcode);
 	}
 }

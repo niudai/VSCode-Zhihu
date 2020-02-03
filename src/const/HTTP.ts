@@ -17,3 +17,7 @@ export const LoginPostHeader = {
 	'accept-encoding': 'gzip',	
 	'content-type': 'application/x-www-form-urlencoded'
 }
+
+export const QRCodeOptionHeader = {
+	'authority': 'www.zhihu.com'
+}

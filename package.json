@@ -112,6 +112,11 @@
 				"category": "Zhihu"
 			},
 			{
+				"command": "zhihu.pasteImage",
+				"title": "Zhihu: PasteImage",
+				"category": "Zhihu"
+			},
+			{
 				"command": "zhihu.login",
 				"title": "Login",
 				"icon": {

@@ -54,7 +54,7 @@ export class HttpService {
 				});
 			}	
 		} catch (error) {
-			vscode.window.showInformationMessage('请求错误');
+			// vscode.window.showInformationMessage('请求错误');
 			return Promise.resolve(null);
 		}
 		if (returnBody) {

@@ -3,6 +3,18 @@
  */
 export const CaptchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 
+
+/**
+ * Prefetch QRCode https://www.zhihu.com/api/v3/account/api/login/qrcode
+ * Get QRCode https://www.zhihu.com/api/v3/account/api/login/qrcode/${token}/image
+ */
+export const QRCodeAPI = 'https://www.zhihu.com/api/v3/account/api/login/qrcode';
+
+/**
+ * Get qrcode ticket
+ */
+export const UDIDAPI = 'https://www.zhihu.com/udid';
+
 /**
  * POST Login data to this API to aquire authentication
  */
