@@ -234,5 +234,27 @@ export class AuthenticateService {
 			encoding: null
 		});
 		fs.writeFileSync(path.join(this.context.extensionPath, 'qrcode.png'), qrcode);
+		const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
+		const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
+			path.join(this.context.extensionPath, './qrcode.png')
+		))
+		this.webviewService.renderHtml(
+			{
+				title: '二维码',
+				showOptions: {
+					viewColumn: vscode.ViewColumn.One,
+					preserveFocus: true
+				},
+				pugTemplatePath: path.join(
+					this.context.extensionPath,
+					TemplatePath,
+					'qrcode.pug'
+				),
+				pugObjects: {
+					title: '',
+					qrcodeSrc: imgSrc.toString()
+				}
+			}
+		)
 	}
 }

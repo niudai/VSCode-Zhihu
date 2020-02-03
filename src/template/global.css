@@ -40,6 +40,17 @@ button#favorite {
     border-radius: 50%;
 }
 
+img.qrcode {
+    margin: 0 auto;
+    margin-top: 180px;
+    box-shadow: 0px 0px 9px rgba(76, 49, 40, 1);
+}
+
+.qr-container {
+    margin: 0 auto;
+    text-align: center;
+}
+
 svg.Zi.Zi--Star.Button-zi {
     vertical-align: bottom;
 }
