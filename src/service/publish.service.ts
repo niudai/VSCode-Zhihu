@@ -6,8 +6,11 @@ import MarkdownIt = require("markdown-it");
 import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
-import { AnswerAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI } from "../const/URL";
 import { unescapeMd, escapeHtml } from "../util/md-html-utils";
+import { CollectionService, ICollectionItem } from "./collection.service";
+import { MediaTypes } from "../const/ENUM";
+import { PostAnswer } from "../model/publish/answer.model";
 
 
 export class PublishService {
@@ -17,7 +20,8 @@ export class PublishService {
 		protected httpService: HttpService,
 		protected zhihuMdParser: MarkdownIt,
 		protected defualtMdParser: MarkdownIt,
-		protected webviewService: WebviewService
+		protected webviewService: WebviewService,
+		protected collectionService: CollectionService
 		) {
 			zhihuMdParser.renderer.rules.fence = function (tokens, idx, options, env, self) {
 				var token = tokens[idx],
@@ -86,28 +90,58 @@ export class PublishService {
 		});
 	}
 
-	publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
 		let html = this.zhihuMdParser.render(text);
-		html.replace('\"', '\\\"');
-		this.httpService.sendRequest({
-			uri: `${AnswerAPI}/678356914`,
-			method: 'put',
-			body: {
-				content: html,
-				reward_setting: {"can_reward":false,"tagline":""},
-			},
-			json: true,
-			resolveWithFullResponse: true,
-			headers: {},
-		}).then(resp => { 
-			vscode.window.showInformationMessage('发布成功！\n https://www.zhihu.com/answer/678356914')
-			const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-			this.httpService.sendRequest({ uri: 'https://www.zhihu.com/answer/678356914', gzip: true } ).then(
-				resp => {
-					pane.webview.html = resp
+		const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem> (
+			this.collectionService.getTargets().then(
+				(targets) => {
+					let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
+					return items;
 				}
-			);
-		})
+			)
+		).then(item => ({ id: item.id, type: item.type}) );
+		html.replace('\"', '\\\"');
+		if (selectedTarget.type == MediaTypes.question) {
+			this.httpService.sendRequest({
+				uri: `${QuestionAPI}/${selectedTarget.id}/answers`,
+				method: 'post',
+				body: new PostAnswer(html),
+				json: true,
+				resolveWithFullResponse: true,
+				headers: {}
+			}).then(resp => {
+				if (resp.statusCode == 200) {
+					vscode.window.showInformationMessage(`发布成功！\n ${QuestionAPI}/${selectedTarget.id}/answers/${resp.body.id}`)
+					const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
+					this.httpService.sendRequest({ uri: `${AnswerAPI}/${selectedTarget.id}`, gzip: true } ).then(
+						resp => {
+							pane.webview.html = resp
+						}
+					);					
+				}
+			})
+		} else if (selectedTarget.type == MediaTypes.answer) {
+			this.httpService.sendRequest({
+				uri: `${AnswerAPI}/${selectedTarget.id}`,
+				method: 'put',
+				body: {
+					content: html,
+					reward_setting: {"can_reward":false,"tagline":""},
+				},
+				json: true,
+				resolveWithFullResponse: true,
+				headers: {},
+			}).then(resp => { 
+				vscode.window.showInformationMessage(`发布成功！\n ${AnswerAPI}/${selectedTarget.id}`)
+				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
+				this.httpService.sendRequest({ uri: `${AnswerAPI}/${selectedTarget.id}`, gzip: true } ).then(
+					resp => {
+						pane.webview.html = resp
+					}
+				);
+			})
+	
+		}
 	}
 }

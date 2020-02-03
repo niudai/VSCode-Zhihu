@@ -38,7 +38,7 @@ export class CollectionService {
 		this.persist();
 	}
 
-	async getTargets(type: MediaTypes): Promise<(ITarget & any) []> {
+	async getTargets(type?: MediaTypes): Promise<(ITarget & any) []> {
 		var _collection;
 		if (type) _collection = this.collection.filter(c => c.type == type)
 		else _collection = this.collection

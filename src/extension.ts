@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
 	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
-	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService);
+	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService);
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 
