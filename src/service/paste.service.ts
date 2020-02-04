@@ -52,22 +52,29 @@ export class PasteService {
 				source: "answer"
 			},
 			headers: {},
-			json: true
+			json: true,
+			resolveWithFullResponse: true,
+			simple: false
 		};
 
-		let prefetchResp: IImageUploadToken = await this.httpService.sendRequest(options)
-		let upload_file = prefetchResp.upload_file;
-		zhihu_agent.options.accessKeyId = prefetchResp.upload_token.access_id;
-		zhihu_agent.options.accessKeySecret = prefetchResp.upload_token.access_key;
-		zhihu_agent.options.stsToken = prefetchResp.upload_token.access_token;
+		let prefetchResp = await this.httpService.sendRequest(options)
+		if (prefetchResp.statusCode == 401) {
+			vscode.window.showWarningMessage('登录之后才可上传图片！');
+			return;
+		}
+		let prefetchBody: IImageUploadToken = prefetchResp.body;
+		let upload_file = prefetchBody.upload_file;
+		zhihu_agent.options.accessKeyId = prefetchBody.upload_token.access_id;
+		zhihu_agent.options.accessKeySecret = prefetchBody.upload_token.access_key;
+		zhihu_agent.options.stsToken = prefetchBody.upload_token.access_token;
 		let client = new OSS(zhihu_agent.options);
-		console.log(prefetchResp);
-		this.insertImageLink(prefetchResp.upload_file.object_key);
+		console.log(prefetchBody);
+		this.insertImageLink(prefetchBody.upload_file.object_key);
 		// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
 		let putResp = client.put(upload_file.object_key, filePath);
 		console.log(putResp)
 		vscode.window.showInformationMessage('上传成功！')
-		return Promise.resolve(prefetchResp.upload_file.object_key);
+		return Promise.resolve(prefetchBody.upload_file.object_key);
 	}
 
 	private insertImageLink(filename: string) {
