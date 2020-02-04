@@ -14,7 +14,14 @@ export const QRCodeAPI = 'https://www.zhihu.com/api/v3/account/api/login/qrcode'
 /**
  * API for Aliyun OSS File Upload
  */
-export const ImageAPI = 'https://api.zhihu.com/images';
+export const ImageUpload = 'https://api.zhihu.com/images';
+
+
+/**
+ * Image-hosting domain for zhihu
+ * `https://pic4.zhimg.com/80/${file_name}_hd.png`
+ */
+export const ImageHostAPI = 'https://pic4.zhimg.com/80';
 
 /**
  * Get qrcode ticket
