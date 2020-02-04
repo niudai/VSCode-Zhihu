@@ -8,6 +8,7 @@ import { ShellScriptPath } from "../const/PATH";
 import { ImageAPI } from "../const/URL";
 import { HttpService } from "./http.service";
 import { ZhihuOSSAgent } from "../const/HTTP";
+import { IImageUploadToken } from "../model/publish/image.model"
 
 
 export class PasteService {
@@ -27,6 +28,7 @@ export class PasteService {
 		}
 		this.saveClipboardImageToFileAndGetPath(imagePath, (p, pathFromScript) => {
 			console.log(p + pathFromScript);
+			this.uploadImageToPath(imagePath);
 		})
 		return;
 	}
@@ -48,31 +50,24 @@ export class PasteService {
 			json: true
 		};
 
-		var fileObject;
-
-		var client;
-
-		this.httpService.sendRequest(options).then(body => {
-			fileObject = body.upload_file;
+		this.httpService.sendRequest(options).then((body: IImageUploadToken)  => {
+			let upload_file = body.upload_file;
 			zhihu_agent.options.accessKeyId = body.upload_token.access_id;
 			zhihu_agent.options.accessKeySecret = body.upload_token.access_key;
 			zhihu_agent.options.stsToken = body.upload_token.access_token;
-			client = new OSS(zhihu_agent.options);
+			let client = new OSS(zhihu_agent.options);
 			console.log(body);
-			put();
+			// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
+			client.put(upload_file.object_key, file).then(
+				r => { 
+					console.log(r)
+					vscode.window.showInformationMessage('上传成功！')
+				}
+			).catch(r => console.error('OSS Put Error'));
+			client.get(upload_file.object_key).then(
+				r => console.log(r)
+			).catch(r => console.error('OSS Get Error'));
 		});
-
-		async function put() {
-			try {
-				// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
-				let r1 = await client.put(fileObject.object_key, file);
-				console.log(r1);
-				let r2 = await client.get(fileObject.object_key);
-				console.log(r2);
-			} catch (e) {
-				console.error(e);
-			}
-		}
 	}
 
 	private saveClipboardImageToFileAndGetPath(imagePath, cb: (imagePath: string, imagePathFromScript: string) => void) {
