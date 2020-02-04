@@ -69,6 +69,12 @@ export const QuestionAPI = 'https://www.zhihu.com/api/v4/questions'
 export const ArticleAPI = 'https://www.zhihu.com/api/v4/articles'
 
 /**
+ * Search All items in Zhihu
+ */
+export const SearchAPI: string = "https://www.zhihu.com/api/v4/search_v3";
+
+
+/**
  *  get sms
  */
 export const SMSAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in/digits';
