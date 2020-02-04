@@ -21,6 +21,7 @@
 		"onCommand:zhihu.logout",
 		"onCommand:zhihu.previousPage",
 		"onCommand:zhihu.nextPage",
+		"onCommand:zhihu.pasteImage",
 		"onView:zhihu-explorer",
 		"onLanguage:markdown"
 	],
@@ -260,10 +261,12 @@
 		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
+		"@types/ali-oss": "^6.0.4",
 		"@types/cheerio": "^0.22.16",
 		"@types/cookie": "^0.3.3",
 		"@types/form-urlencoded": "^2.0.1",
 		"@types/markdown-it": "0.0.9",
+		"@types/md5": "^2.1.33",
 		"@types/mkdirp": "^0.5.2",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^10.17.13",
@@ -272,6 +275,7 @@
 		"@types/request-promise": "^4.1.45",
 		"@types/rimraf": "^2.0.3",
 		"@types/vscode": "^1.41.0",
+		"md5": "^2.2.1",
 		"mocha": "^7.0.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.7.5",

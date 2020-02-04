@@ -17,6 +17,7 @@ import { FeedTreeViewProvider, FeedTreeItem } from "./treeview/feed-treeview-pro
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
 import { CollectionTreeviewProvider, CollectionItem } from "./treeview/collection-treeview-provider";
+import { PasteService } from "./service/paste.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -40,6 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService);
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
+	const pasteService = new PasteService(context);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
@@ -74,7 +76,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		publishService.preview(textEditor, edit);
 	})
 	vscode.commands.registerCommand('zhihu.pasteImage', async () => {
-		vscode.window.showInformationMessage(await vscode.env.clipboard.readText());
+		pasteService.pasteImageToPath()
 	})
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();

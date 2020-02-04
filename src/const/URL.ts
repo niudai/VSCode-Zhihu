@@ -12,6 +12,11 @@ export const CaptchaAPI = `https://www.zhihu.com/api/v3/oauth/captcha?lang=en`;
 export const QRCodeAPI = 'https://www.zhihu.com/api/v3/account/api/login/qrcode';
 
 /**
+ * API for Aliyun OSS File Upload
+ */
+export const ImageAPI = 'https://api.zhihu.com/images';
+
+/**
  * Get qrcode ticket
  */
 export const UDIDAPI = 'https://www.zhihu.com/udid';
