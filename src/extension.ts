@@ -5,6 +5,7 @@ import * as path from "path";
 import { CookieJar } from "tough-cookie";
 import * as FileCookieStore from "tough-cookie-filestore";
 import * as vscode from "vscode";
+import * as ZhihuMarkdownIt from "zhihu-markdown"; 
 import { AccountService } from "./service/account.service";
 import { AuthenticateService } from "./service/authenticate.service";
 import { CollectionService } from "./service/collection.service";
@@ -26,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Dependency Injection
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
-	const zhihuMdParser = new MarkdownIt();
+	const zhihuMdParser = new ZhihuMarkdownIt();
 	const defualtMdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
 	const httpService = new HttpService(context, cookieJar, store);

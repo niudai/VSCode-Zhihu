@@ -11,6 +11,7 @@ import { unescapeMd, escapeHtml } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
+import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
 
 
 export class PublishService {
@@ -75,7 +76,7 @@ export class PublishService {
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		let html = this.defualtMdParser.render(text);
+		let html = this.zhihuMdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
 			pugTemplatePath: join(this.context.extensionPath, TemplatePath, 'pre-publish.pug'),
@@ -92,56 +93,105 @@ export class PublishService {
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
+		
+		let url: URL = this.shebangParser(text);
+		
+		// get rid of shebang line
+		if (url) text = text.slice(text.indexOf('\n')+1);
+
 		let html = this.zhihuMdParser.render(text);
-		const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem> (
-			this.collectionService.getTargets().then(
-				(targets) => {
-					let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
-					return items;
-				}
-			)
-		).then(item => ({ id: item.id, type: item.type}) );
 		html.replace('\"', '\\\"');
-		if (selectedTarget.type == MediaTypes.question) {
-			this.httpService.sendRequest({
-				uri: `${QuestionAPI}/${selectedTarget.id}/answers`,
-				method: 'post',
-				body: new PostAnswer(html),
-				json: true,
-				resolveWithFullResponse: true,
-				headers: {}
-			}).then(resp => {
-				if (resp.statusCode == 200) {
-					vscode.window.showInformationMessage(`发布成功！\n ${QuestionAPI}/${selectedTarget.id}/answers/${resp.body.id}`)
-					const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-					this.httpService.sendRequest({ uri: `${AnswerAPI}/${selectedTarget.id}`, gzip: true } ).then(
-						resp => {
-							pane.webview.html = resp
-						}
-					);					
-				}
-			})
-		} else if (selectedTarget.type == MediaTypes.answer) {
-			this.httpService.sendRequest({
-				uri: `${AnswerAPI}/${selectedTarget.id}`,
-				method: 'put',
-				body: {
-					content: html,
-					reward_setting: {"can_reward":false,"tagline":""},
-				},
-				json: true,
-				resolveWithFullResponse: true,
-				headers: {},
-			}).then(resp => { 
-				vscode.window.showInformationMessage(`发布成功！\n ${AnswerAPI}/${selectedTarget.id}`)
+
+
+		if (url) {
+			// just publish answer in terms of what shebang indicates
+			if (QuestionAnswerPathReg.test(url.pathname)) {
+				// answer link, update answer
+				let aId = url.pathname.replace(QuestionAnswerPathReg, '$2');
+				this.putAnswer(html, aId);
+			} else if (QuestionPathReg.test(url.pathname)) {
+				// question link, post new answer
+				let qId = url.pathname.replace(QuestionPathReg, '$1');
+				this.postAnswer(html, qId);
+			}
+		} else {
+			// shebang not found, then prompt a quick pick to select a question from collections
+			const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem> (
+				this.collectionService.getTargets().then(
+					(targets) => {
+						let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
+						return items;
+					}
+				)
+			).then(item => ({ id: item.id, type: item.type}) );
+			if (selectedTarget.type == MediaTypes.question) {
+				this.postAnswer(html, selectedTarget.id);
+			} else if (selectedTarget.type == MediaTypes.answer) {
+				this.putAnswer(html, selectedTarget.id);
+			}			
+		}
+
+	}
+
+	private putAnswer(html: string, answerId: string) {
+		this.httpService.sendRequest({
+			uri: `${AnswerAPI}/${answerId}`,
+			method: 'put',
+			body: {
+				content: html,
+				reward_setting: {"can_reward":false,"tagline":""},
+			},
+			json: true,
+			resolveWithFullResponse: true,
+			headers: {},
+		}).then(resp => { 
+			if (resp.statusCode === 200) {
+				vscode.window.showInformationMessage(`发布成功！\n ${AnswerAPI}/${answerId}`)
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerAPI}/${selectedTarget.id}`, gzip: true } ).then(
+				this.httpService.sendRequest({ uri: `${AnswerAPI}/${answerId}`, gzip: true } ).then(
 					resp => {
 						pane.webview.html = resp
 					}
-				);
-			})
-	
-		}
+				);	
+			} else {
+				vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
+			}
+		})
+	}
+
+	private postAnswer(html: string, questionId: string) {
+		this.httpService.sendRequest({
+			uri: `${QuestionAPI}/${questionId}/answers`,
+			method: 'post',
+			body: new PostAnswer(html),
+			json: true,
+			resolveWithFullResponse: true,
+			headers: {}
+		}).then(resp => {
+			if (resp.statusCode == 200) {
+				vscode.window.showInformationMessage(`发布成功！\n ${QuestionAPI}/${questionId}/answers/${resp.body.id}`)
+				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
+				this.httpService.sendRequest({ uri: `${AnswerAPI}/${questionId}`, gzip: true } ).then(
+					resp => {
+						pane.webview.html = resp
+					}
+				);					
+			} else {
+				vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
+			}
+		})
+	}
+
+
+	shebangParser(text: string): URL {
+		let shebangRegExp = /#!\s+((https?:\/\/)?(.+))$/i
+		let lf = text.indexOf('\n');
+		if (lf < 0) lf = text.length;
+		let link = text.slice(0, lf-1);
+		if(!shebangRegExp.test(link)) return undefined;
+		let url = new URL(link.replace(shebangRegExp, '$1'));
+		if (url.host === 'www.zhihu.com') return url;
+		else return undefined;		
+		// shebangRegExp = /(https?:\/\/)/i
 	}
 }
