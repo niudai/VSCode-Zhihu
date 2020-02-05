@@ -76,6 +76,9 @@ export class PublishService {
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
+		let url: URL = this.shebangParser(text);		
+		// get rid of shebang line
+		if (url) text = text.slice(text.indexOf('\n')+1);
 		let html = this.zhihuMdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
