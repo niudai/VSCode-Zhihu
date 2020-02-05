@@ -65,10 +65,9 @@ a.internal, a.external {
 }
 
 h1 {
-    display: inline;
-    margin-left: 20px;
+    /* display: inline; */
     color: black;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
 }
 
 p {
