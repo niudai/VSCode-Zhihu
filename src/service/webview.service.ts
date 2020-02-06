@@ -4,13 +4,12 @@ import { compileFile } from "pug";
 import * as vscode from "vscode";
 import { MediaTypes } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
-import { QuestionAPI, AnswerAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
-import { IQuestionAnswerTarget, ITarget, IQuestionTarget } from "../model/target/target";
-import { HttpService } from "./http.service";
-import * as cheerio from "cheerio";
-import { CollectionService, ICollectionItem } from "./collection.service";
+import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target/target";
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
+import { CollectionService, ICollectionItem } from "./collection.service";
+import { HttpService } from "./http.service";
 
 export interface IWebviewPugRender {
 	viewType?: string,
