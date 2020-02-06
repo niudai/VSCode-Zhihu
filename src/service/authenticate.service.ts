@@ -8,7 +8,7 @@ import { TemplatePath } from "../const/PATH";
 import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { LoginEnum, LoginTypes } from "../util/loginTypeEnum";
+import { LoginEnum, LoginTypes } from "../const/ENUM";
 import { AccountService } from "./account.service";
 import { HttpService } from "./http.service";
 import { ProfileService } from "./profile.service";

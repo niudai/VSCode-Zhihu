@@ -10,8 +10,6 @@ import { SearchAPI } from "../const/URL";
 export const SearchDict = [
 	{ value: SearchTypes.general, ch: '综合' },
 	{ value: SearchTypes.question, ch: '问题' },
-	// { value: SearchTypes.answer, ch: '答案' },
-	// { value: SearchTypes.article, ch: '文章' }
 ];
 
 export class SearchService {

@@ -9,3 +9,4 @@ collection.json
 .vscode
 qrcode.png
 image.png 
+*.vsix
