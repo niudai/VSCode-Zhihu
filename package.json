@@ -252,18 +252,7 @@
 					"group": "inline"
 				}
 			]
-		},
-		"configuration": [
-			{
-				"title": "JSON Outline",
-				"properties": {
-					"jsonOutline.autorefresh": {
-						"type": "boolean",
-						"default": false
-					}
-				}
-			}
-		]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -272,7 +261,6 @@
 	},
 	"devDependencies": {
 		"@types/ali-oss": "^6.0.4",
-		"@types/cheerio": "^0.22.16",
 		"@types/cookie": "^0.3.3",
 		"@types/form-urlencoded": "^2.0.1",
 		"@types/markdown-it": "0.0.9",
@@ -282,7 +270,6 @@
 		"@types/pug": "^2.0.4",
 		"@types/request": "^2.48.4",
 		"@types/request-promise": "^4.1.45",
-		"@types/rimraf": "^2.0.3",
 		"@types/vscode": "^1.41.0",
 		"mocha": "^7.0.1",
 		"tslint": "^5.20.1",
