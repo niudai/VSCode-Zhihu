@@ -91,7 +91,7 @@ export class AuthenticateService {
 					'captcha.pug'
 				),
 				pugObjects: {
-					title: '',
+					title: '验证码',
 					captchaSrc: imgSrc.toString()
 				}
 			}, panel)
@@ -251,7 +251,7 @@ export class AuthenticateService {
 					'qrcode.pug'
 				),
 				pugObjects: {
-					title: '',
+					title: '打开知乎 APP 扫一扫',
 					qrcodeSrc: imgSrc.toString()
 				}
 			}

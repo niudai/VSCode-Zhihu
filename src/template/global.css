@@ -1,3 +1,7 @@
+body {
+    color: black;
+}
+
 header.title {
     position: fixed;
     top: 0;
@@ -64,7 +68,7 @@ a.internal, a.external {
     box-shadow: 0 5px 5px wheat;
 }
 
-h1 {
+h1, h2, h3, p, blockquote {
     /* display: inline; */
     color: black;
     /* padding-bottom: 10px; */
