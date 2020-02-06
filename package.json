@@ -34,7 +34,7 @@
 		"type": "git",
 		"url": "https://github.com/niudai/VSCode-Zhihu"
 	},
-	"icon": "media/extension-zhihu.png",
+	"icon": "res/media/extension-zhihu.png",
 	"main": "./out/extension.js",
 	"contributes": {
 		"viewsContainers": {
@@ -42,7 +42,7 @@
 				{
 					"id": "zhihu-explorer",
 					"title": "知乎",
-					"icon": "media/zhihu-logo-fluent.svg"
+					"icon": "res/media/zhihu-logo-fluent.svg"
 				}
 			]
 		},
@@ -67,8 +67,8 @@
 				"command": "zhihu.refreshEntry",
 				"title": "Refresh",
 				"icon": {
-					"light": "media/light/refresh.svg",
-					"dark": "media/dark/refresh.svg"
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -76,8 +76,8 @@
 				"command": "zhihu.deleteItem",
 				"title": "Delete Collection Item",
 				"icon": {
-					"light": "media/light/delete.svg",
-					"dark": "media/dark/delete.svg"
+					"light": "res/media/light/delete.svg",
+					"dark": "res/media/dark/delete.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -90,8 +90,8 @@
 				"command": "zhihu.search",
 				"title": "Search Items",
 				"icon": {
-					"light": "media/light/search.svg",
-					"dark": "media/dark/search.svg"
+					"light": "res/media/light/search.svg",
+					"dark": "res/media/dark/search.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -99,8 +99,8 @@
 				"command": "zhihu.publish",
 				"title": "Zhihu: Publish",
 				"icon": {
-					"light": "media/light/publish.svg",
-					"dark": "media/dark/publish.svg"
+					"light": "res/media/light/publish.svg",
+					"dark": "res/media/dark/publish.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -108,8 +108,8 @@
 				"command": "zhihu.collect",
 				"title": "Collect",
 				"icon": {
-					"light": "media/light/collect.svg",
-					"dark": "media/dark/collect.svg"
+					"light": "res/media/light/collect.svg",
+					"dark": "res/media/dark/collect.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -117,8 +117,8 @@
 				"command": "zhihu.preview",
 				"title": "Zhihu: Preview",
 				"icon": {
-					"light": "media/light/preview.svg",
-					"dark": "media/dark/preview.svg"
+					"light": "res/media/light/preview.svg",
+					"dark": "res/media/dark/preview.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -131,8 +131,8 @@
 				"command": "zhihu.login",
 				"title": "Login",
 				"icon": {
-					"light": "media/light/login.svg",
-					"dark": "media/dark/login.svg"
+					"light": "res/media/light/login.svg",
+					"dark": "res/media/dark/login.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -164,8 +164,8 @@
 				"command": "zhihu.nextPage",
 				"title": "Zhihu: NextPage",
 				"icon": {
-					"light": "media/light/right-arrow.svg",
-					"dark": "media/dark/right-arrow.svg"
+					"light": "res/media/light/right-arrow.svg",
+					"dark": "res/media/dark/right-arrow.svg"
 				},
 				"category": "Zhihu"
 			},
@@ -277,7 +277,6 @@
 		"@types/form-urlencoded": "^2.0.1",
 		"@types/markdown-it": "0.0.9",
 		"@types/md5": "^2.1.33",
-		"@types/mkdirp": "^0.5.2",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^10.17.14",
 		"@types/pug": "^2.0.4",
@@ -285,13 +284,13 @@
 		"@types/request-promise": "^4.1.45",
 		"@types/rimraf": "^2.0.3",
 		"@types/vscode": "^1.41.0",
-		"md5": "^2.2.1",
 		"mocha": "^7.0.1",
 		"tslint": "^5.20.1",
 		"typescript": "^3.7.5",
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"md5": "^2.2.1",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
 		"crypto": "^1.0.1",

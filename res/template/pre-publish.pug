@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    style
+      include global.css
+    style
+      include preview.css
+    title= title
+  body
+    div(class = 'header')
+      include header.pug
+    div(class = 'container')
+      div !{content}

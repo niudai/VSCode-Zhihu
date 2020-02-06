@@ -1,13 +1,12 @@
-import { join } from "path";
 
-export const TemplatePath = "src/template";
+export const TemplatePath = "res/template";
 
 export const CollectionPath = "collection.json";
 
-export const ShellScriptPath = "src/shell";
+export const ShellScriptPath = "res/shell";
 
-export const LightIconPath = "media/light";
+export const LightIconPath = "res/media/light";
 
-export const DarkIconPath = "media/dark";
+export const DarkIconPath = "res/media/dark";
 
-export const ZhihuIconPath = "media/zhihu-logo-material.svg";
+export const ZhihuIconPath = "res/media/zhihu-logo-material.svg";

@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    style
+      include global.css
+      include captcha.css
+    title= title
+  body
+    div(class = 'header')
+      include header.pug
+    div(class = 'qr-container')
+      img(src= qrcodeSrc, class= 'qrcode')

@@ -3,9 +3,15 @@ src
 /zhihu_login/*
 cookie.*
 captcha.jpg
-/tmp_test
+tmp_test
 collection.json
 .vscode
 qrcode.png
 image.png 
 *.vsix
+package.cmd
+out/test/**
+**/*.map
+.gitignore
+tsconfig.json
+tslint.json
