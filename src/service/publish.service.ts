@@ -1,12 +1,12 @@
 
 import * as vscode from "vscode";
-import { IProfile } from "../model/target/target";
+import { IProfile, ITarget } from "../model/target/target";
 import { HttpService } from "./http.service";
 import MarkdownIt = require("markdown-it");
 import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI, ZhuanlanAPI } from "../const/URL";
 import { unescapeMd, escapeHtml } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
@@ -123,6 +123,7 @@ export class PublishService {
 				this.collectionService.getTargets().then(
 					(targets) => {
 						let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
+						items.push({ label: '发布新文章', description: '', id: 0, type: MediaTypes.article })
 						return items;
 					}
 				)
@@ -131,7 +132,10 @@ export class PublishService {
 				this.postAnswer(html, selectedTarget.id);
 			} else if (selectedTarget.type == MediaTypes.answer) {
 				this.putAnswer(html, selectedTarget.id);
-			}			
+			} else if (selectedTarget.type == MediaTypes.article) {
+
+				this.postArticle(html, )
+			}
 		}
 
 	}
@@ -183,6 +187,43 @@ export class PublishService {
 				vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
 			}
 		})
+	}
+
+	private async postArticle(content: string) {
+		const title: string | undefined = await vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入文章标题：",
+			placeHolder: ""
+		})
+		if (!title) return;
+
+		let postResp: ITarget = await this.httpService.sendRequest({
+			uri: `${ZhuanlanAPI}/drafts`,
+			json: true,
+			method: 'post',
+			body: {"title":"h","delta_time":0},
+			headers: {}
+		})
+
+		let patchResp = await this.httpService.sendRequest({
+			uri: `${ZhuanlanAPI}/${postResp.id}/draft`,
+			json: true,
+			method: 'patch',
+			body: {
+				content: content,
+				title: title
+			},
+			headers: {}
+		})
+
+		let resp = await this.httpService.sendRequest({
+			uri: `${ZhuanlanAPI}/${postResp.id}/publish`,
+			json: true,
+			method: 'put',
+			body: {"column":null,"commentPermission":"anyone"},
+			headers: {}
+		})
+		return resp;
 	}
 
 

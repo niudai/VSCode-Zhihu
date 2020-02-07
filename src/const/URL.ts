@@ -64,6 +64,18 @@ export const AnswerAPI = 'https://www.zhihu.com/api/v4/answers';
 export const QuestionAPI = 'https://www.zhihu.com/api/v4/questions'
 
 /**
+ * ArticleAPI = 'https://zhuanlan.zhihu.com/api/articles/${articleId}/publish'
+ * 
+ * `POST` https://zhuanlan.zhihu.com/api/articles/drafts for creation
+ * 
+ * `PATCH` https://zhuanlan.zhihu.com/api/articles/${articleId}/draft` for patching
+ * 
+ * `PUT` https://zhuanlan.zhihu.com/api/articles/${articleId}/publish for publishing 
+ */
+
+export const ZhuanlanAPI = 'https://zhuanlan.zhihu.com/api/articles';
+
+/**
  * ArticleAPI = 'https://www.zhihu.com/api/v4/articles/${articleId}'
  */
 export const ArticleAPI = 'https://www.zhihu.com/api/v4/articles'
