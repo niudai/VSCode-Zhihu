@@ -10,3 +10,4 @@ collection.json
 qrcode.png
 image.png 
 *.vsix
+dist

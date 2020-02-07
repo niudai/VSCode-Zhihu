@@ -1,6 +1,8 @@
 src
+out
 # login.js
 /zhihu_login/*
+node_modules/
 cookie.*
 captcha.jpg
 tmp_test
