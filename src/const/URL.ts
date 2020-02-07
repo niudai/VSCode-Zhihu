@@ -59,6 +59,11 @@ export const SelfProfileAPI = 'https://www.zhihu.com/api/v4/me';
 export const AnswerAPI = 'https://www.zhihu.com/api/v4/answers';
 
 /**
+ * Answer URL 'https://www.zhihu.com/answers'
+ */
+export const AnswerURL = 'https://www.zhihu.com/answer';
+
+/**
  * QuestionAPI = 'https://www.zhihu.com/api/v4/questions/${questionId}'
  */
 export const QuestionAPI = 'https://www.zhihu.com/api/v4/questions'

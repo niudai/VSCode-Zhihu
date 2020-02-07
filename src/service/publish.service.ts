@@ -6,7 +6,7 @@ import MarkdownIt = require("markdown-it");
 import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI, ZhuanlanAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL } from "../const/URL";
 import { unescapeMd, escapeHtml } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
@@ -153,9 +153,9 @@ export class PublishService {
 			headers: {},
 		}).then(resp => { 
 			if (resp.statusCode === 200) {
-				vscode.window.showInformationMessage(`发布成功！\n ${AnswerAPI}/${answerId}`)
+				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${answerId}`)
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerAPI}/${answerId}`, gzip: true } ).then(
+				this.httpService.sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true } ).then(
 					resp => {
 						pane.webview.html = resp
 					}
@@ -176,15 +176,21 @@ export class PublishService {
 			headers: {}
 		}).then(resp => {
 			if (resp.statusCode == 200) {
-				vscode.window.showInformationMessage(`发布成功！\n ${QuestionAPI}/${questionId}/answers/${resp.body.id}`)
+
+				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${resp.body.id}`)
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerAPI}/${questionId}`, gzip: true } ).then(
+				this.httpService.sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true } ).then(
 					resp => {
 						pane.webview.html = resp
 					}
 				);					
 			} else {
-				vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
+				if (resp.statusCode == 400) {
+					vscode.window.showWarningMessage(`发布失败，你已经在该问题下发布过答案，请将头部链接更改为\
+					已回答的问题下的链接。`)
+				} else {
+					vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
+				}
 			}
 		})
 	}
@@ -221,8 +227,14 @@ export class PublishService {
 			json: true,
 			method: 'put',
 			body: {"column":null,"commentPermission":"anyone"},
-			headers: {}
+			headers: {},
+			resolveWithFullResponse: true
 		})
+		if (resp.statusCode < 300) {
+			vscode.window.showInformationMessage('文章发布成功！')
+		} else {
+			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
+		}
 		return resp;
 	}
 
