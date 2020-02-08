@@ -17,68 +17,68 @@ import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
 export class PublishService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext, 
+	constructor(protected context: vscode.ExtensionContext,
 		protected httpService: HttpService,
 		protected zhihuMdParser: MarkdownIt,
 		protected defualtMdParser: MarkdownIt,
 		protected webviewService: WebviewService,
 		protected collectionService: CollectionService
-		) {
-			zhihuMdParser.renderer.rules.fence = function (tokens, idx, options, env, self) {
-				var token = tokens[idx],
-					info = token.info ? unescapeMd(token.info).trim() : '',
-					langName = '',
-					highlighted, i, tmpAttrs, tmpToken;
-			
-				if (info) {
-					langName = info.split(/\s+/g)[0];
-				}
-			
-				if (options.highlight) {
-					highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
+	) {
+		zhihuMdParser.renderer.rules.fence = function (tokens, idx, options, env, self) {
+			var token = tokens[idx],
+				info = token.info ? unescapeMd(token.info).trim() : '',
+				langName = '',
+				highlighted, i, tmpAttrs, tmpToken;
+
+			if (info) {
+				langName = info.split(/\s+/g)[0];
+			}
+
+			if (options.highlight) {
+				highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
+			} else {
+				highlighted = escapeHtml(token.content);
+			}
+
+			if (highlighted.indexOf('<pre') === 0) {
+				return highlighted + '\n';
+			}
+
+			// If language exists, inject class gently, without modifying original token.
+			// May be, one day we will add .clone() for token and simplify this part, but
+			// now we prefer to keep things local.
+			if (info) {
+				i = token.attrIndex('lang');
+				tmpAttrs = token.attrs ? token.attrs.slice() : [];
+
+				if (i < 0) {
+					tmpAttrs.push(['lang', langName]);
 				} else {
-					highlighted = escapeHtml(token.content);
+					tmpAttrs[i][1] += ' ' + langName;
 				}
-			
-				if (highlighted.indexOf('<pre') === 0) {
-					return highlighted + '\n';
-				}
-			
-				// If language exists, inject class gently, without modifying original token.
-				// May be, one day we will add .clone() for token and simplify this part, but
-				// now we prefer to keep things local.
-				if (info) {
-					i = token.attrIndex('lang');
-					tmpAttrs = token.attrs ? token.attrs.slice() : [];
-			
-					if (i < 0) {
-						tmpAttrs.push(['lang', langName]);
-					} else {
-						tmpAttrs[i][1] += ' ' + langName;
-					}
-			
-					// Fake token just to render attributes
-					tmpToken = {
-						attrs: tmpAttrs
-					};
-			
-					return '<pre' + zhihuMdParser.renderer.renderAttrs(tmpToken) + '>'
-						+ highlighted
-						+ '</pre>\n';
-				}
-			
-			
-				return '<pre' + zhihuMdParser.renderer.renderAttrs(token) + '>'
+
+				// Fake token just to render attributes
+				tmpToken = {
+					attrs: tmpAttrs
+				};
+
+				return '<pre' + zhihuMdParser.renderer.renderAttrs(tmpToken) + '>'
 					+ highlighted
 					+ '</pre>\n';
-			};
+			}
+
+
+			return '<pre' + zhihuMdParser.renderer.renderAttrs(token) + '>'
+				+ highlighted
+				+ '</pre>\n';
+		};
 	}
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		let url: URL = this.shebangParser(text);		
+		let url: URL = this.shebangParser(text);
 		// get rid of shebang line
-		if (url) text = text.slice(text.indexOf('\n')+1);
+		if (url) text = text.slice(text.indexOf('\n') + 1);
 		let html = this.zhihuMdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
@@ -96,11 +96,11 @@ export class PublishService {
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
-		
+
 		let url: URL = this.shebangParser(text);
-		
+
 		// get rid of shebang line
-		if (url) text = text.slice(text.indexOf('\n')+1);
+		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
 		html.replace('\"', '\\\"');
@@ -118,26 +118,35 @@ export class PublishService {
 				this.postAnswer(html, qId);
 			}
 		} else {
-			// shebang not found, then prompt a quick pick to select a question from collections
-			const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem> (
-				this.collectionService.getTargets().then(
-					(targets) => {
-						let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
-						items.push({ label: '发布新文章', description: '', id: 0, type: MediaTypes.article })
-						return items;
-					}
-				)
-			).then(item => ({ id: item.id, type: item.type}) );
-			if (selectedTarget.type == MediaTypes.question) {
-				this.postAnswer(html, selectedTarget.id);
-			} else if (selectedTarget.type == MediaTypes.answer) {
-				this.putAnswer(html, selectedTarget.id);
-			} else if (selectedTarget.type == MediaTypes.article) {
+			const selectFrom: MediaTypes = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: MediaTypes }>(
+				[
+					{ label: '发布新文章', description: '', value: MediaTypes.article },
+					{ label: '从收藏夹中选取', description: '', value: MediaTypes.answer }
+				]
+			).then(item => item.value);
 
-				this.postArticle(html, )
+			if (selectFrom === MediaTypes.article) {
+				this.postArticle(html)
+			} else if (selectFrom === MediaTypes.answer) {
+				// shebang not found, then prompt a quick pick to select a question from collections
+				const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
+					this.collectionService.getTargets().then(
+						(targets) => {
+							let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
+							return items;
+						}
+					)
+				).then(item => ({ id: item.id, type: item.type }));
+				if (selectedTarget.type == MediaTypes.question) {
+					this.postAnswer(html, selectedTarget.id);
+				} else if (selectedTarget.type == MediaTypes.answer) {
+					this.putAnswer(html, selectedTarget.id);
+				} else if (selectedTarget.type == MediaTypes.article) {
+
+					this.postArticle(html)
+				}
 			}
 		}
-
 	}
 
 	private putAnswer(html: string, answerId: string) {
@@ -146,20 +155,20 @@ export class PublishService {
 			method: 'put',
 			body: {
 				content: html,
-				reward_setting: {"can_reward":false,"tagline":""},
+				reward_setting: { "can_reward": false, "tagline": "" },
 			},
 			json: true,
 			resolveWithFullResponse: true,
 			headers: {},
-		}).then(resp => { 
+		}).then(resp => {
 			if (resp.statusCode === 200) {
 				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${answerId}`)
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true } ).then(
+				this.httpService.sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true }).then(
 					resp => {
 						pane.webview.html = resp
 					}
-				);	
+				);
 			} else {
 				vscode.window.showWarningMessage(`发布失败！错误代码 ${resp.statusCode}`)
 			}
@@ -179,11 +188,11 @@ export class PublishService {
 
 				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${resp.body.id}`)
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true } ).then(
+				this.httpService.sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
 					resp => {
 						pane.webview.html = resp
 					}
-				);					
+				);
 			} else {
 				if (resp.statusCode == 400) {
 					vscode.window.showWarningMessage(`发布失败，你已经在该问题下发布过答案，请将头部链接更改为\
@@ -207,7 +216,7 @@ export class PublishService {
 			uri: `${ZhuanlanAPI}/drafts`,
 			json: true,
 			method: 'post',
-			body: {"title":"h","delta_time":0},
+			body: { "title": "h", "delta_time": 0 },
 			headers: {}
 		})
 
@@ -226,7 +235,7 @@ export class PublishService {
 			uri: `${ZhuanlanAPI}/${postResp.id}/publish`,
 			json: true,
 			method: 'put',
-			body: {"column":null,"commentPermission":"anyone"},
+			body: { "column": null, "commentPermission": "anyone" },
 			headers: {},
 			resolveWithFullResponse: true
 		})
@@ -240,14 +249,14 @@ export class PublishService {
 
 
 	shebangParser(text: string): URL {
-		let shebangRegExp = /#!\s+((https?:\/\/)?(.+))$/i
+		let shebangRegExp = /#!\s*((https?:\/\/)?(.+))$/i
 		let lf = text.indexOf('\n');
 		if (lf < 0) lf = text.length;
-		let link = text.slice(0, lf-1);
-		if(!shebangRegExp.test(link)) return undefined;
+		let link = text.slice(0, lf - 1);
+		if (!shebangRegExp.test(link)) return undefined;
 		let url = new URL(link.replace(shebangRegExp, '$1'));
 		if (url.host === 'www.zhihu.com') return url;
-		else return undefined;		
+		else return undefined;
 		// shebangRegExp = /(https?:\/\/)/i
 	}
 }

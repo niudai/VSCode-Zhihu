@@ -34,7 +34,7 @@
 		"type": "git",
 		"url": "https://github.com/niudai/VSCode-Zhihu"
 	},
-	"icon": "res/media/extension-zhihu.png",
+	"icon": "res/media/extension.png",
 	"main": "./dist/extension.js",
 	"contributes": {
 		"viewsContainers": {
