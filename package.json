@@ -170,6 +170,13 @@
 				"category": "Zhihu"
 			}
 		],
+		"keybindings": [
+			{
+				"command": "zhihu.pasteImage",
+				"key": "ctrl+shift+alt+p",
+				"mac": "cmd+shift+alt+p"
+			}
+		],
 		"menus": {
 			"editor/context": [
 				{
