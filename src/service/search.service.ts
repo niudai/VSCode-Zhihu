@@ -33,7 +33,7 @@ export class SearchService {
 		const selectedSearchType: string = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: string }>(
 			SearchDict.map(type => ({ value: type.value, label: type.ch, description: '' })),
 			{ placeHolder: "你要搜什么?" }
-		).then(item => item.value);
+		).then(item => item ? item.value : undefined);
 
 		if (!selectedSearchType) return
 

@@ -142,11 +142,6 @@
 				"category": "Zhihu"
 			},
 			{
-				"command": "zhihu.addEntry",
-				"title": "Add",
-				"category": "Zhihu"
-			},
-			{
 				"command": "zhihu.editEntry",
 				"title": "Zhihu: Edit",
 				"icon": {
@@ -220,10 +215,6 @@
 					"command": "zhihu.search",
 					"when": "view == zhihu-feed",
 					"group": "navigation"
-				},
-				{
-					"command": "zhihu.addEntry",
-					"when": "view == zhihu-feed"
 				}
 			],
 			"view/item/context": [

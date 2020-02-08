@@ -2,6 +2,7 @@
 [![](https://vsmarketplacebadge.apphb.com/downloads-short/niudai.zhihu.svg)](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 [![](https://vsmarketplacebadge.apphb.com/rating-short/niudai.zhihu.svg)](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
 
+
 <p align="center">
   <br />
   <a title="Learn more about GitLens" href="https://gitlens.amod.io"><img src="res/media/extension.png" alt="GitLens Logo" width="200px" /></a>
@@ -12,14 +13,10 @@
 
 基于 VSCode 的知乎客户端提供包括阅读，搜索，创作，发布等一站式服务，内容加载速度比 Web 端更快，创新的 Markdown-Latex 混合语法让内容创作者更方便地创作优质内容。
 
-## Preview
-
-![Image](https://niudai.oss-cn-beijing.aliyuncs.com/401abc7e0456af1048f9bf7ecfcddbcb.gif)
-
 ## Features
 
 - 支持二维码和账号密码两种登录方式。
-- 搜索全站知乎内容。
+- [搜索全站知乎内容](#search)
 - 浏览实时热榜内容。
 - 浏览知乎全站内容，包括答案，问题，文章。
 - 一键上传粘贴板中的图片至知乎图床。
@@ -28,11 +25,33 @@
 - 登陆后获取个性推荐内容。
 - 基于本地的收藏夹，收藏知乎内容。
 
+## Content
+
+- [图标按钮](#icon)
+
+<h2 id = "icons">图标按钮</h2>
+
+点击左侧活动栏的知乎按钮，进入知乎插件页面，在推荐的上方可以看到三个按钮，对应的命令分别为`Zhihu: Login`（登录），`Zhihu: Refresh`（刷新）, `Zhihu: Search`（搜素）。
+
+![](images/2020-02-08-19-53-17.png)
+
+最右侧的更多栏点开，可以看到 `Zhihu: Logout`(注销) 命令按钮:
+
+![](images/2020-02-08-20-00-48.png)
+
+在 Markdown 页面内，可以在编辑窗口的右上角看到两个按钮：
+
+![](images/2020-02-08-20-02-37.png)
+
+左侧的为 `Zhihu: Publish`（发布答案），右侧的为 `Zhihu: Preview` (预览答案)。
+
+
 ## 登录
 
 进入主页面，左侧最上方栏为个人中心，点击登录图标，或使用 `Ctrl + Shift + P` 打开命令面板，搜索并执行 `Zhihu: Login` 命令。
 
 选择登录方式：
+
 
 
 ### 二维码
@@ -52,14 +71,14 @@
 登陆成功后，个性推荐板块会自动刷新，提供你的个性推荐内容：
 
 
-## 搜索
+## 搜索 
 
+<a name = "search"></a>
 点击搜索按钮，或搜索命令 `Zhihu: Search Items`，使用搜索功能：
 
-![Image](https://niudai.oss-cn-beijing.aliyuncs.com/1f3d3e73d7743a0fc5cef23193b91610.gif)
+![Image](https://user-images.githubusercontent.com/44165182/74081861-69db1b80-4a8e-11ea-8ec7-6a8f01a072bf.gif)
 
 ## 内容创作
-
 
 
 新建一个后缀名为`.md`的文件，若不需要数学公式，只需要按照你最熟悉的 Markdown 语法写即可，右键点击 `Zhihu: Preview` 可预览答案:
@@ -84,4 +103,8 @@
 若没有在文件首行发现链接，则会弹出对话选择框：
 
 ![](images/2020-02-07-21-54-57.png)
+
+## Preview
+
+![Image](https://user-images.githubusercontent.com/44165182/74081863-6f386600-4a8e-11ea-8fad-abf61b70e5f7.gif)
 

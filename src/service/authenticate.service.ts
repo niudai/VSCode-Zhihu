@@ -120,7 +120,10 @@ export class AuthenticateService {
 					vscode.window.showWarningMessage('请输入正确的验证码')
 				}
 			} while (resp.statusCode != 201);
+			vscode.window.showInformationMessage('验证码正确。')
+			panel.dispose()
 		}
+
 		
 
 		const phoneNumber: string | undefined = await vscode.window.showInputBox({
@@ -254,7 +257,8 @@ export class AuthenticateService {
 					title: '打开知乎 APP 扫一扫',
 					qrcodeSrc: imgSrc.toString()
 				}
-			}
+			},
+			panel
 		);
 		let intervalId = setInterval(() => {
 			this.httpService.sendRequest({
@@ -267,6 +271,7 @@ export class AuthenticateService {
 						vscode.window.showInformationMessage('请在手机上确认登录！');
 					} else if (r.user_id) {
 						clearInterval(intervalId);
+						panel.dispose();
 						this.profileService.fetchProfile().then(() => {
 							vscode.window.showInformationMessage(`你好，${this.profileService.name}`);
 							this.feedTreeViewProvider.refresh();	
@@ -275,5 +280,9 @@ export class AuthenticateService {
 				}
 			);
 		}, 1000)
+		panel.onDidDispose(() => { 
+			console.log('Window is disposed')
+			clearInterval(intervalId)
+		})
 	}
 }
