@@ -21,7 +21,8 @@
 		"onCommand:zhihu.logout",
 		"onCommand:zhihu.previousPage",
 		"onCommand:zhihu.nextPage",
-		"onCommand:zhihu.pasteImage",
+		"onCommand:zhihu.uploadImageFromClipboard",
+		"onCommand:zhihu.uploadImageFromPath",
 		"onView:zhihu-explorer",
 		"onLanguage:markdown"
 	],
@@ -123,8 +124,13 @@
 				"category": "Zhihu"
 			},
 			{
-				"command": "zhihu.pasteImage",
-				"title": "Zhihu: PasteImage",
+				"command": "zhihu.uploadImageFromClipboard",
+				"title": "PasteImage",
+				"category": "Zhihu"
+			},
+			{
+				"command": "zhihu.uploadImageFromPath",
+				"title": "Upload Image From Path",
 				"category": "Zhihu"
 			},
 			{
@@ -172,8 +178,13 @@
 		],
 		"keybindings": [
 			{
-				"command": "zhihu.pasteImage",
+				"command": "zhihu.uploadImageFromClipboard",
 				"key": "ctrl+shift+alt+p",
+				"mac": "cmd+shift+alt+p"
+			},
+			{
+				"command": "zhihu.uploadImageFromPath",
+				"key": "ctrl+shift+alt+u",
 				"mac": "cmd+shift+alt+p"
 			}
 		],

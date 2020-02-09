@@ -76,8 +76,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
 		publishService.preview(textEditor, edit);
 	})
-	vscode.commands.registerCommand('zhihu.pasteImage', async () => {
-		pasteService.pasteImageToPath()
+	vscode.commands.registerCommand('zhihu.uploadImageFromClipboard', async () => {
+		pasteService.uploadImageFromClipboard()
+	})
+
+	vscode.commands.registerCommand('zhihu.uploadImageFromPath', async => {
+		pasteService.uploadImageFromPath()
 	})
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();

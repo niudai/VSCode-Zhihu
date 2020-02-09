@@ -11,6 +11,8 @@ export enum SearchTypes {
 	article = 'article'
 }
 
+export const LegalImageExt = [ 'jpg', 'jpeg', 'gif', 'png' ]; 
+
 export enum LoginEnum {
 	sms,
 	password,
