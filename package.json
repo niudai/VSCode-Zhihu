@@ -119,7 +119,7 @@
 			},
 			{
 				"command": "zhihu.uploadImageFromClipboard",
-				"title": "Zhihu: PasteImage"
+				"title": "Zhihu: Paste Image From Clipboard"
 			},
 			{
 				"command": "zhihu.uploadImageFromPath",
