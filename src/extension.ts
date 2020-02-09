@@ -80,8 +80,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		pasteService.uploadImageFromClipboard()
 	})
 
-	vscode.commands.registerCommand('zhihu.uploadImageFromPath', async => {
-		pasteService.uploadImageFromPath()
+	vscode.commands.registerCommand('zhihu.uploadImageFromPath', (uri: vscode.Uri) => {
+		pasteService.uploadImageFromPath(uri)
+	})
+
+	vscode.commands.registerCommand('zhihu.uploadImageFromExplorer', () => {
+		pasteService.uploadImageFromExplorer()
 	})
 	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
 		feedTreeViewProvider.refresh();

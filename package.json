@@ -23,6 +23,7 @@
 		"onCommand:zhihu.nextPage",
 		"onCommand:zhihu.uploadImageFromClipboard",
 		"onCommand:zhihu.uploadImageFromPath",
+		"onCommand:zhihu.uploadImageFromExplorer",
 		"onView:zhihu-explorer",
 		"onLanguage:markdown"
 	],
@@ -66,35 +67,31 @@
 		"commands": [
 			{
 				"command": "zhihu.refreshEntry",
-				"title": "Refresh",
+				"title": "Zhihu: Refresh",
 				"icon": {
 					"light": "res/media/light/refresh.svg",
 					"dark": "res/media/dark/refresh.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.deleteItem",
-				"title": "Delete Collection Item",
+				"title": "Zhihu: Delete Collection Item",
 				"icon": {
 					"light": "res/media/light/delete.svg",
 					"dark": "res/media/dark/delete.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.openWebView",
-				"title": "openWebView",
-				"category": "Zhihu"
+				"title": "Zhihu: openWebView"
 			},
 			{
 				"command": "zhihu.search",
-				"title": "Search Items",
+				"title": "Zhihu: Search Items",
 				"icon": {
 					"light": "res/media/light/search.svg",
 					"dark": "res/media/dark/search.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.publish",
@@ -102,17 +99,15 @@
 				"icon": {
 					"light": "res/media/light/publish.svg",
 					"dark": "res/media/dark/publish.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.collect",
-				"title": "Collect",
+				"title": "Zhihu: Collect",
 				"icon": {
 					"light": "res/media/light/collect.svg",
 					"dark": "res/media/dark/collect.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.preview",
@@ -120,32 +115,31 @@
 				"icon": {
 					"light": "res/media/light/preview.svg",
 					"dark": "res/media/dark/preview.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.uploadImageFromClipboard",
-				"title": "PasteImage",
-				"category": "Zhihu"
+				"title": "Zhihu: PasteImage"
 			},
 			{
 				"command": "zhihu.uploadImageFromPath",
-				"title": "Upload Image From Path",
-				"category": "Zhihu"
+				"title": "Zhihu: Upload Image From Path"
+			},
+			{
+				"command": "zhihu.uploadImageFromExplorer",
+				"title": "Zhihu: Upload Image From Explorer"
 			},
 			{
 				"command": "zhihu.login",
-				"title": "Login",
+				"title": "Zhihu: Login",
 				"icon": {
 					"light": "res/media/light/login.svg",
 					"dark": "res/media/dark/login.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.logout",
-				"title": "Logout",
-				"category": "Zhihu"
+				"title": "Zhihu: Logout"
 			},
 			{
 				"command": "zhihu.editEntry",
@@ -153,13 +147,11 @@
 				"icon": {
 					"light": "resources/light/edit.svg",
 					"dark": "resources/dark/edit.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.previousPage",
-				"title": "Zhihu: PreviousPage",
-				"category": "Zhihu"
+				"title": "Zhihu: PreviousPage"
 			},
 			{
 				"command": "zhihu.nextPage",
@@ -167,25 +159,28 @@
 				"icon": {
 					"light": "res/media/light/right-arrow.svg",
 					"dark": "res/media/dark/right-arrow.svg"
-				},
-				"category": "Zhihu"
+				}
 			},
 			{
 				"command": "zhihu.deleteEntry",
-				"title": "Zhihu: Delete",
-				"category": "Zhihu"
+				"title": "Zhihu: Delete"
 			}
 		],
 		"keybindings": [
 			{
 				"command": "zhihu.uploadImageFromClipboard",
-				"key": "ctrl+shift+alt+p",
-				"mac": "cmd+shift+alt+p"
+				"key": "ctrl+z p",
+				"mac": "cmd+z p"
 			},
 			{
 				"command": "zhihu.uploadImageFromPath",
-				"key": "ctrl+shift+alt+u",
-				"mac": "cmd+shift+alt+p"
+				"key": "ctrl+z u",
+				"mac": "cmd+z p"
+			},
+			{
+				"command": "zhihu.uploadImageFromExplorer",
+				"key": "ctrl+z e",
+				"mac": "cmd+z e"
 			}
 		],
 		"menus": {
@@ -199,6 +194,11 @@
 					"command": "zhihu.preview",
 					"when": "resourceLangId == markdown",
 					"group": "zhihu@1"
+				},
+				{
+					"command": "zhihu.uploadImageFromExplorer",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@2"
 				}
 			],
 			"editor/title": [
@@ -213,6 +213,13 @@
 					"group": "navigation@1"
 				}
 			],
+			"explorer/context": [
+                {
+                    "command": "zhihu.uploadImageFromPath",
+                    "group": "extension",
+                    "when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg"
+                }
+            ],
 			"view/title": [
 				{
 					"command": "zhihu.refreshEntry",
