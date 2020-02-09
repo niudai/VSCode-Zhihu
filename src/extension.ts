@@ -74,7 +74,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		publishService.publish(textEditor, edit);
 	})
 	vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
-		publishService.preview(textEditor, edit);
+		vscode.commands.executeCommand('markdown.showPreviewToSide');
 	})
 	vscode.commands.registerCommand('zhihu.uploadImageFromClipboard', async () => {
 		pasteService.uploadImageFromClipboard()
@@ -132,4 +132,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				`Successfully called delete entry on ${node.label}.`
 			)
 	);
+
+	return {
+        extendMarkdownIt(md: any) {
+            return md.use(require('markdown-it-katex'));
+        }
+    }
 }

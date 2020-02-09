@@ -81,6 +81,11 @@ export const QuestionAPI = 'https://www.zhihu.com/api/v4/questions'
 export const ZhuanlanAPI = 'https://zhuanlan.zhihu.com/api/articles';
 
 /**
+ * Html Page: 'https://zhuanlan.zhihu.com/p/${articleId}'
+ */
+export const ZhuanlanURL = 'https://zhuanlan.zhihu.com/p/';
+
+/**
  * ArticleAPI = 'https://www.zhihu.com/api/v4/articles/${articleId}'
  */
 export const ArticleAPI = 'https://www.zhihu.com/api/v4/articles'

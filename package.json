@@ -214,12 +214,12 @@
 				}
 			],
 			"explorer/context": [
-                {
-                    "command": "zhihu.uploadImageFromPath",
-                    "group": "extension",
-                    "when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg"
-                }
-            ],
+				{
+					"command": "zhihu.uploadImageFromPath",
+					"group": "extension",
+					"when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg"
+				}
+			],
 			"view/title": [
 				{
 					"command": "zhihu.refreshEntry",
@@ -268,7 +268,11 @@
 					"group": "inline"
 				}
 			]
-		}
+		},
+        "markdown.markdownItPlugins": true,
+        "markdown.previewStyles": [
+            "./node_modules/katex/dist/katex.min.css"
+        ]
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
@@ -298,12 +302,13 @@
 		"webpack-cli": "^3.3.10"
 	},
 	"dependencies": {
-		"md5": "^2.2.1",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
 		"crypto": "^1.0.1",
 		"form-urlencoded": "^4.1.1",
 		"markdown-it": "^10.0.0",
+		"markdown-it-katex": "^2.0.3",
+		"md5": "^2.2.1",
 		"pug": "^2.0.4",
 		"request": "^2.88.0",
 		"request-promise": "^4.2.5",

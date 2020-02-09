@@ -6,13 +6,17 @@ import MarkdownIt = require("markdown-it");
 import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL } from "../const/URL";
+import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL, ZhuanlanURL } from "../const/URL";
 import { unescapeMd, escapeHtml } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
 import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
+import { Url } from "url";
 
+enum previewActions {
+	openInBrowser = '去看看'
+}
 
 export class PublishService {
 	public profile: IProfile;
@@ -162,7 +166,8 @@ export class PublishService {
 			headers: {},
 		}).then(resp => {
 			if (resp.statusCode === 200) {
-				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${answerId}`)
+				let newUrl = `${AnswerURL}/${answerId}`;
+				this.promptSuccessMsg(newUrl);
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
 				this.httpService.sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true }).then(
 					resp => {
@@ -185,8 +190,8 @@ export class PublishService {
 			headers: {}
 		}).then(resp => {
 			if (resp.statusCode == 200) {
-
-				vscode.window.showInformationMessage(`发布成功！\n ${AnswerURL}/${resp.body.id}`)
+				let newUrl = `${AnswerURL}/${resp.body.id}`;
+				this.promptSuccessMsg(newUrl);
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
 				this.httpService.sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
 					resp => {
@@ -240,11 +245,17 @@ export class PublishService {
 			resolveWithFullResponse: true
 		})
 		if (resp.statusCode < 300) {
-			vscode.window.showInformationMessage('文章发布成功！')
+			this.promptSuccessMsg(`${ZhuanlanURL}${postResp.id}`)
 		} else {
 			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
 		}
 		return resp;
+	}
+
+	private promptSuccessMsg(url: string) {
+		vscode.window.showInformationMessage(`发布成功！\n`, { modal: true }, 
+		previewActions.openInBrowser
+		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}
 
 
