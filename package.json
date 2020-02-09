@@ -169,18 +169,18 @@
 		"keybindings": [
 			{
 				"command": "zhihu.uploadImageFromClipboard",
-				"key": "ctrl+z p",
-				"mac": "cmd+z p"
+				"key": "ctrl+alt+p",
+				"mac": "cmd+alt+p"
 			},
 			{
 				"command": "zhihu.uploadImageFromPath",
-				"key": "ctrl+z u",
-				"mac": "cmd+z p"
+				"key": "ctrl+alt+q",
+				"mac": "cmd+alt+p"
 			},
 			{
 				"command": "zhihu.uploadImageFromExplorer",
-				"key": "ctrl+z e",
-				"mac": "cmd+z e"
+				"key": "ctrl+alt+f",
+				"mac": "cmd+alt+e"
 			}
 		],
 		"menus": {
