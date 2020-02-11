@@ -1,10 +1,10 @@
 {
-	"name": "zhihu-vscode-extension",
+	"name": "vscode-zhihu",
 	"displayName": "Zhihu On VSCode",
 	"description": "Zhihu VSCode Extension",
 	"version": "0.0.1",
 	"publisher": "niudai",
-	"enableProposedApi": true,
+	"enableProposedApi": false,
 	"engines": {
 		"vscode": "^1.41.0"
 	},
@@ -269,10 +269,10 @@
 				}
 			]
 		},
-        "markdown.markdownItPlugins": true,
-        "markdown.previewStyles": [
-            "./node_modules/katex/dist/katex.min.css"
-        ]
+		"markdown.markdownItPlugins": true,
+		"markdown.previewStyles": [
+			"./node_modules/katex/dist/katex.min.css"
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
