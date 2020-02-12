@@ -3,7 +3,7 @@ header.title {
     top: 0;
     padding: 10px;
     margin-top: px;
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    box-shadow: 0 1px 3px rgba(91, 231, 241, 0.1);
     width: 100%;
 }
 
@@ -58,7 +58,7 @@ svg.Zi.Zi--Star.Button-zi {
 a.internal, a.external {
 	text-decoration: none;
     background: hsla(177, 100%, 91%, 0.88);
-    padding: 6px;
+    padding: 2px;
     border-radius: 10px;
     box-shadow: 0 5px 5px wheat;
 }
