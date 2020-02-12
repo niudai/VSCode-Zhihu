@@ -2,7 +2,7 @@
 import * as path from "path";
 import { compileFile } from "pug";
 import * as vscode from "vscode";
-import { MediaTypes } from "../const/ENUM";
+import { MediaTypes, SettingEnum } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
 import { AnswerAPI, QuestionAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
@@ -70,7 +70,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			});
-			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get('useVSTheme');
+			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
 			
 			let panel = this.renderHtml({
 				title: "知乎问题",
@@ -94,7 +94,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			})
-			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get('useVSTheme');
+			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
 
 			let panel = this.renderHtml({
 				title: "知乎回答",
@@ -117,7 +117,7 @@ export class WebviewService {
 				gzip: true,
 				headers: null
 			});
-			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get('useVSTheme');
+			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
 
 			let panel = this.renderHtml({
 				title: "知乎文章",

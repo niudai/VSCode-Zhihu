@@ -8,7 +8,7 @@ import { TemplatePath } from "../const/PATH";
 import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { LoginEnum, LoginTypes } from "../const/ENUM";
+import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
 import { AccountService } from "./account.service";
 import { HttpService } from "./http.service";
 import { ProfileService } from "./profile.service";
@@ -92,7 +92,8 @@ export class AuthenticateService {
 				),
 				pugObjects: {
 					title: '验证码',
-					captchaSrc: imgSrc.toString()
+					captchaSrc: imgSrc.toString(),
+					useVSTheme: vscode.workspace.getConfiguration(SettingEnum.useVSTheme)
 				}
 			}, panel)
 	
@@ -123,8 +124,6 @@ export class AuthenticateService {
 			vscode.window.showInformationMessage('验证码正确。')
 			panel.dispose()
 		}
-
-		
 
 		const phoneNumber: string | undefined = await vscode.window.showInputBox({
 			ignoreFocusOut: true,
@@ -255,7 +254,8 @@ export class AuthenticateService {
 				),
 				pugObjects: {
 					title: '打开知乎 APP 扫一扫',
-					qrcodeSrc: imgSrc.toString()
+					qrcodeSrc: imgSrc.toString(),
+					useVSTheme: vscode.workspace.getConfiguration(SettingEnum.useVSTheme)
 				}
 			},
 			panel
