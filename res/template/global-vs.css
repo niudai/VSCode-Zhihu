@@ -47,6 +47,10 @@ img.qrcode {
     text-align: center;
 }
 
+li {
+    margin-top: 16px;
+}
+
 svg.Zi.Zi--Star.Button-zi {
     vertical-align: bottom;
 }

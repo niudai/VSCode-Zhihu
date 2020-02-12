@@ -18,6 +18,10 @@ svg.Icon.ZhihuLogo.ZhihuLogo--blue.Icon--logo {
     margin-bottom: -4px;
 }
 
+li {
+    margin-top: 16px;
+}
+
 img.origin_image.zh-lightbox-thumb {
     box-shadow: 0px 0px 10px powderblue;
 }

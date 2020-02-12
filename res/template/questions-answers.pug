@@ -1,13 +1,7 @@
 doctype html
 html
   head
-    if !useVSTheme
-      style
-        include global.css
-    else
-      style
-        include global_vs.css
-    title= title
+    include css.pug
   body
     div(class = 'header')
       include header.pug
