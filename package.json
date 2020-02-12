@@ -160,14 +160,6 @@
 				"title": "Zhihu: Logout"
 			},
 			{
-				"command": "zhihu.editEntry",
-				"title": "Zhihu: Edit",
-				"icon": {
-					"light": "resources/light/edit.svg",
-					"dark": "resources/dark/edit.svg"
-				}
-			},
-			{
 				"command": "zhihu.previousPage",
 				"title": "Zhihu: PreviousPage"
 			},
@@ -180,8 +172,8 @@
 				}
 			},
 			{
-				"command": "zhihu.deleteEntry",
-				"title": "Zhihu: Delete"
+				"command": "zhihu.getLink",
+				"title": "Zhihu: Get Link"
 			}
 		],
 		"keybindings": [
@@ -272,11 +264,6 @@
 			],
 			"view/item/context": [
 				{
-					"command": "zhihu.editEntry",
-					"when": "view == zhihu-feed && viewItem == dependency",
-					"group": "inline"
-				},
-				{
 					"command": "zhihu.previousPage",
 					"when": "view == zhihu-feed && viewItem == feed",
 					"group": "more"
@@ -285,10 +272,6 @@
 					"command": "zhihu.nextPage",
 					"when": "view == zhihu-feed && viewItem == feed",
 					"group": "inline"
-				},
-				{
-					"command": "zhihu.deleteEntry",
-					"when": "view == zhihu-feed && viewItem == dependency"
 				},
 				{
 					"command": "zhihu.deleteItem",

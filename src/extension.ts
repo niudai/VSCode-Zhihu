@@ -15,10 +15,11 @@ import { PublishService } from "./service/publish.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { FeedTreeViewProvider, FeedTreeItem } from "./treeview/feed-treeview-provider";
-import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
+import { HotStoryTreeViewProvider, LinkableTreeItem } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
 import { CollectionTreeviewProvider, CollectionItem } from "./treeview/collection-treeview-provider";
 import { PasteService } from "./service/paste.service";
+import { UtilCmds } from "./const/CMD";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -129,13 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			feedTreeViewProvider.refresh(node);
 		}
 	)
-	vscode.commands.registerCommand(
-		"zhihu.deleteEntry",
-		(node: FeedTreeItem) =>
-			vscode.window.showInformationMessage(
-				`Successfully called delete entry on ${node.label}.`
-			)
-	);
+
 
 	return {
         extendMarkdownIt(md: any) {

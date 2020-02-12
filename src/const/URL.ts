@@ -69,6 +69,11 @@ export const AnswerURL = 'https://www.zhihu.com/answer';
 export const QuestionAPI = 'https://www.zhihu.com/api/v4/questions'
 
 /**
+ * QuestionURL = 'https://www.zhihu.com/question/${question'
+ */
+export const QuestionURL = 'https://www.zhihu.com/question'
+
+/**
  * ArticleAPI = 'https://zhuanlan.zhihu.com/api/articles/${articleId}/publish'
  * 
  * `POST` https://zhuanlan.zhihu.com/api/articles/drafts for creation

@@ -42,7 +42,7 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 				httpClient(hotStoryAPI, { json: true }, (err, _res, body) => {
 					let questions: HotStory[] = body.data;
 					let deps: ZhihuTreeItem[] = questions.map(story => {
-						return new ZhihuTreeItem(story.target.title, '', vscode.TreeItemCollapsibleState.None, 
+						return new ZhihuTreeItem(story && story.target && story.target.title ? story.target.title : '', '', vscode.TreeItemCollapsibleState.None, 
 						{
 							command: 'zhihu.openWebView',
 							title: 'openWebView',
@@ -65,7 +65,15 @@ export class HotStoryTreeViewProvider implements vscode.TreeDataProvider<ZhihuTr
 	}
 }
 
-export class ZhihuTreeItem extends vscode.TreeItem {
+export class LinkableTreeItem extends vscode.TreeItem {
+	constructor(
+		public readonly label: string, 
+		public collapsibleState: vscode.TreeItemCollapsibleState,
+		public link: string | undefined
+		) { super(label, collapsibleState) }
+}
+
+export class ZhihuTreeItem extends LinkableTreeItem  {
 
 	constructor(
 		public readonly label: string,
@@ -75,15 +83,15 @@ export class ZhihuTreeItem extends vscode.TreeItem {
 		public target?: IStoryTarget,
 		public page?: number,
 	) {
-		super(label, collapsibleState);
+		super(label, collapsibleState, target && target.url ? target.url : '');
 	}
 
 	get tooltip(): string {
-		return this.target ? this.target.excerpt : '';
+		return this.target && this.target.excerpt ? this.target.excerpt : '';
 	}
 
 	get description(): string {
-		return this.target ? this.target.excerpt : '';
+		return this.target && this.target.excerpt ? this.target.excerpt : '';
 	}
 
 	// iconPath = {

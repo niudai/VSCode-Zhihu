@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { FeedStoryAPI } from '../const/URL';
-import { IArticleTarget, IQuestionAnswerTarget } from '../model/target/target';
+import { IArticleTarget, IQuestionAnswerTarget, ITarget } from '../model/target/target';
 import { AccountService } from '../service/account.service';
 import { HttpService } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
+import { LinkableTreeItem } from './hotstory-treeview-provider';
 
 export interface StoryType {
 	storyType?: string;
@@ -86,7 +87,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<FeedTreeIte
 
 }
 
-export class FeedTreeItem extends vscode.TreeItem {
+export class FeedTreeItem extends LinkableTreeItem {
 
 	constructor(
 		public readonly label: string,
@@ -97,15 +98,15 @@ export class FeedTreeItem extends vscode.TreeItem {
 		public page?: number,
 		public avatarUrl?: string
 	) {
-		super(label, collapsibleState);
+		super(label, collapsibleState, target ? target.url : '');
 	}
 
-	get tooltip(): string {
+	get tooltip(): string | undefined{
 		return this.target ? this.target.excerpt : '';
 	}
 
-	get description(): string {
-		return this.target ? this.target.excerpt : '';
+	get description(): string  {
+		return this.target && this.target.excerpt ? this.target.excerpt : '';
 	}
 
 	// get description(): boolean {

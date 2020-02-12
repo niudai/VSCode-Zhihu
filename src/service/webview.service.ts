@@ -2,19 +2,20 @@
 import * as path from "path";
 import { compileFile } from "pug";
 import * as vscode from "vscode";
-import { MediaTypes, SettingEnum } from "../const/ENUM";
+import { MediaTypes, SettingEnum, WebviewEvents } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI } from "../const/URL";
+import { AnswerAPI, QuestionAPI, AnswerURL, QuestionURL, ZhuanlanURL } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target/target";
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { HttpService } from "./http.service";
+import { WebviewCmds } from "../const/CMD";
 
 export interface IWebviewPugRender {
 	viewType?: string,
 	title?: string,
-	showOptions?: vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean},
+	showOptions?: vscode.ViewColumn | { viewColumn: vscode.ViewColumn, preserveFocus?: boolean },
 	options?: vscode.WebviewOptions & vscode.WebviewPanelOptions,
 	pugTemplatePath: string,
 	pugObjects?: any,
@@ -23,25 +24,25 @@ export interface IWebviewPugRender {
 
 export class WebviewService {
 
-	constructor (
+	constructor(
 		protected context: vscode.ExtensionContext,
 		protected httpService: HttpService,
 		protected collectService: CollectionService,
-		protected collectionTreeviewProvider: CollectionTreeviewProvider 
-		) {
+		protected collectionTreeviewProvider: CollectionTreeviewProvider
+	) {
 	}
 
 	/**
 	 * Create and show a webview provided by pug
 	 */
-	public 	renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel): vscode.WebviewPanel {
+	public renderHtml(w: IWebviewPugRender, panel?: vscode.WebviewPanel): vscode.WebviewPanel {
 		if (panel == undefined) {
 			panel = vscode.window.createWebviewPanel(
 				w.viewType ? w.viewType : 'zhihu',
 				w.title ? w.title : '知乎',
 				w.showOptions ? w.showOptions : vscode.ViewColumn.One,
 				w.options ? w.options : { enableScripts: true }
-			);	
+			);
 		}
 		const compiledFunction = compileFile(
 			w.pugTemplatePath
@@ -71,7 +72,7 @@ export class WebviewService {
 				gzip: true
 			});
 			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
-			
+
 			let panel = this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
@@ -86,10 +87,9 @@ export class WebviewService {
 					useVSTheme: useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });
-
+			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id }, `${QuestionURL}/${question.id}`);
 		} else if (object.type == MediaTypes.answer) {
-			let body = await this.httpService.sendRequest({
+			let body: IQuestionAnswerTarget = await this.httpService.sendRequest({
 				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt`,
 				json: true,
 				gzip: true
@@ -109,7 +109,7 @@ export class WebviewService {
 					useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.answer, id: object.id })
+			this.registerCollectEvent(panel, { type: MediaTypes.answer, id: object.id }, `${AnswerURL}/${body.id}`)
 		} else if (object.type == MediaTypes.article) {
 			let article: IArticle = await this.httpService.sendRequest({
 				uri: object.url,
@@ -132,19 +132,23 @@ export class WebviewService {
 					useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.article, id: object.id })
-		}		
+			this.registerCollectEvent(panel, { type: MediaTypes.article, id: object.id }, `${ZhuanlanURL}${article.id}`)
+		}
 	}
 
-	private registerCollectEvent(panel: vscode.WebviewPanel, c: ICollectionItem) {
+	private registerCollectEvent(panel: vscode.WebviewPanel, c: ICollectionItem, link?: string) {
 		panel.webview.onDidReceiveMessage(e => {
-			if (e.command == 'collect') {
-				if(this.collectService.addItem(c)) {
+			if (e.command == WebviewEvents.collect) {
+				if (this.collectService.addItem(c)) {
 					vscode.window.showInformationMessage('收藏成功！');
 				} else {
 					vscode.window.showWarningMessage('你已经收藏了它！');
 				}
 				this.collectionTreeviewProvider.refresh()
+			} else if (e.command == WebviewEvents.share) {
+				vscode.env.clipboard.writeText(link).then(() => {
+					vscode.window.showInformationMessage('链接已复制至粘贴板。');
+				})
 			}
 		}, undefined, this.context.subscriptions)
 	}

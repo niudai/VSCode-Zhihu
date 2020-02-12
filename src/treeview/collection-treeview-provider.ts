@@ -3,6 +3,7 @@ import { MediaTypes } from '../const/ENUM';
 import { CollectionService, ICollectionItem } from '../service/collection.service';
 import { ProfileService } from '../service/profile.service';
 import { IQuestionAnswerTarget, IQuestionTarget, IArticleTarget } from '../model/target/target';
+import { LinkableTreeItem } from './hotstory-treeview-provider';
 
 export interface CollectType {
 	type?: string;
@@ -15,7 +16,7 @@ export const COLLECT_TYPES = [
 	{ type: MediaTypes.question, ch: '问题' }
 ];
 
-export class CollectionTreeviewProvider implements vscode.TreeDataProvider<CollectionItem> {
+export class CollectionTreeviewProvider implements vscode.TreeDataProvider<CollectionItem | undefined> {
 
 	private _onDidChangeTreeData: vscode.EventEmitter<CollectionItem | undefined> = new vscode.EventEmitter<CollectionItem | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<CollectionItem | undefined> = this._onDidChangeTreeData.event;
@@ -51,8 +52,8 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 		}
 	}
 
-	getParent(element?: CollectionItem): Thenable<CollectionItem> {
-		return Promise.resolve(element.parent);
+	getParent(element?: CollectionItem): Thenable<CollectionItem | undefined> {
+		return Promise.resolve(element ? element.parent : undefined);
 	}
 
 	private async getCollectionsType(): Promise<CollectionItem[]> {
@@ -64,25 +65,25 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 
 }
 
-export class CollectionItem extends vscode.TreeItem {
+export class CollectionItem extends LinkableTreeItem {
 
 	constructor(
 		public readonly label: string,
 		public type: MediaTypes,
-		public item: ICollectionItem,
+		public item: ICollectionItem | undefined,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly command?: vscode.Command,
 		public readonly parent?: CollectionItem,
 		public readonly target?: IQuestionAnswerTarget | IQuestionTarget | IArticleTarget,
 	) {
-		super(label, collapsibleState);
+		super(label, collapsibleState, target ? target.url : '');
 	}
 
-	get tooltip(): string {
+	get tooltip(): string | undefined {
 		return this.target ? this.target.excerpt : '';
 	}
 
-	get description(): string {
+	get description(): string | undefined {
 		return this.target ? this.target.excerpt : '';
 	}
 

@@ -1,4 +1,5 @@
 {
+	"extends": "tslint:all",
 	"rules": {
 		"indent": [
 			true,

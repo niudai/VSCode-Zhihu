@@ -28,3 +28,8 @@ export const LoginTypes = [
 export enum SettingEnum {
 	useVSTheme = 'zhihu.useVSTheme',
 }
+
+export enum WebviewEvents {
+	collect = 'collect',
+	share = 'share'
+}

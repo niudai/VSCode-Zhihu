@@ -31,7 +31,7 @@ body.vscode-dark > .container {
     box-shadow: 0px 0px 6px rgba(253, 250, 250, 0.1);
 }
 
-button#favorite {
+button#favorite, button#share {
     float: right;
     margin-right: 20px;
     min-width: 0;
@@ -71,11 +71,6 @@ a.internal, a.external {
     padding: 2px;
     border-radius: 10px;
     box-shadow: 0 5px 5px wheat;
-}
-
-h1, h2, h3, p, blockquote {
-    /* display: inline; */
-    /* padding-bottom: 10px; */
 }
 
 p {
