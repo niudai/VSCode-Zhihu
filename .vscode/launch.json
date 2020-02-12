@@ -17,7 +17,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 // "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
             ], 

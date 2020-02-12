@@ -87,12 +87,16 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('zhihu.uploadImageFromExplorer', () => {
 		pasteService.uploadImageFromExplorer()
 	})
-	vscode.commands.registerCommand("zhihu.refreshEntry", () => {
+	vscode.commands.registerCommand("zhihu.refreshFeed", () => {
 		feedTreeViewProvider.refresh();
-		hotStoryTreeViewProvider.refresh();
-		collectionTreeViewProvider.refresh();
 	}
 	);
+	vscode.commands.registerCommand("zhihu.refreshHotstories", () => {
+		hotStoryTreeViewProvider.refresh();
+	})
+	vscode.commands.registerCommand("zhihu.refreshCollection", () => {
+		collectionTreeViewProvider.refresh();
+	})
 	vscode.commands.registerCommand("zhihu.addEntry", () =>
 		vscode.window.showInformationMessage(`Successfully called add entry.`)
 	);

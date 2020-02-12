@@ -70,6 +70,8 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			});
+			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get('useVSTheme');
+			
 			let panel = this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
@@ -80,7 +82,8 @@ export class WebviewService {
 				pugObjects: {
 					answers: body.data.map(t => { return this.actualSrcNormalize(t.content) }),
 					title: question.title,
-					subTitle: question.detail
+					subTitle: question.detail,
+					useVSTheme: useVSTheme
 				}
 			})
 			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id });

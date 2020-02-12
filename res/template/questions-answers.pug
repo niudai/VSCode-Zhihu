@@ -1,8 +1,12 @@
 doctype html
 html
   head
-    style
-      include global.css
+    if !useVSTheme
+      style
+        include global.css
+    else
+      style
+        include global_vs.css
     title= title
   body
     div(class = 'header')

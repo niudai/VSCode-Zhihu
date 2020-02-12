@@ -1,0 +1,96 @@
+header.title {
+    position: fixed;
+    top: 0;
+    padding: 10px;
+    margin-top: px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    width: 100%;
+}
+
+svg.Icon.ZhihuLogo.ZhihuLogo--blue.Icon--logo {
+    fill: #0084ff;
+    margin-left: 5px;
+    margin-bottom: -4px;
+}
+
+img.origin_image.zh-lightbox-thumb {
+    box-shadow: 0px 0px 10px powderblue;
+}
+
+body.vscode-light, body.vscode-dark {
+	padding: 0;
+}
+
+button#favorite {
+    float: right;
+    margin-right: 20px;
+    min-width: 0;
+    border: none;
+    border-style: none;
+    font-size: 13px;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+img.qrcode {
+    margin: 0 auto;
+    margin-top: 180px;
+    box-shadow: 0px 0px 9px rgba(76, 49, 40, 1);
+}
+
+.qr-container {
+    margin: 0 auto;
+    text-align: center;
+}
+
+svg.Zi.Zi--Star.Button-zi {
+    vertical-align: bottom;
+}
+
+a.internal, a.external {
+	text-decoration: none;
+    background: hsla(177, 100%, 91%, 0.88);
+    padding: 6px;
+    border-radius: 10px;
+    box-shadow: 0 5px 5px wheat;
+}
+
+h1, h2, h3, p, blockquote {
+    /* display: inline; */
+    /* padding-bottom: 10px; */
+}
+
+p {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.container {
+    /* border-style: groove; */
+    padding: 25px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    width: 700px;
+    margin: 0 auto;
+    margin-top: 15px;
+}
+
+.header {
+    padding: 5px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    /* width: 700px; */
+    margin: 0 auto;
+    margin-top: 65px;
+}
+
+.description {
+    width: 900px;
+    margin: 0 auto;
+}
+
+img.origin_image.zh-lightbox-thumb.lazy {
+    display: none;
+}

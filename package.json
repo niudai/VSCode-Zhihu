@@ -12,7 +12,9 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:zhihu.refreshEntry",
+		"onCommand:zhihu.refreshFeed",
+		"onCommand:zhihu.refreshHotstories",
+		"onCommand:zhihu.refreshCollection",
 		"onCommand:zhihu.openWebView",
 		"onCommand:zhihu.publish",
 		"onCommand:zhihu.preview",
@@ -66,8 +68,24 @@
 		},
 		"commands": [
 			{
-				"command": "zhihu.refreshEntry",
-				"title": "Zhihu: Refresh",
+				"command": "zhihu.refreshFeed",
+				"title": "Zhihu: Refresh Feed",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "zhihu.refreshHotstories",
+				"title": "Zhihu: Refresh HotStories",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "zhihu.refreshCollection",
+				"title": "Zhihu: Refresh Collection",
 				"icon": {
 					"light": "res/media/light/refresh.svg",
 					"dark": "res/media/dark/refresh.svg"
@@ -222,8 +240,18 @@
 			],
 			"view/title": [
 				{
-					"command": "zhihu.refreshEntry",
-					"when": "view == zhihu-feed || view == zhihu-collection || view == zhihu-hotStories",
+					"command": "zhihu.refreshFeed",
+					"when": "view == zhihu-feed",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.refreshHotstories",
+					"when": "view == zhihu-hotStories",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.refreshCollection",
+					"when": "view == zhihu-collection",
 					"group": "navigation@0"
 				},
 				{
@@ -268,6 +296,16 @@
 					"group": "inline"
 				}
 			]
+		},
+		"configuration": {
+			"title": "Zhihu",
+			"properties": {
+				"zhihu.useVSTheme": {
+					"type": "boolean",
+					"default": true,
+					"description": "Use VSCode default theme color, set false to disable"
+				}
+			}
 		},
 		"markdown.markdownItPlugins": true,
 		"markdown.previewStyles": [
