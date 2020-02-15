@@ -38,14 +38,14 @@ export class EventService {
 		protected context: vscode.ExtensionContext) {
 		if(fs.existsSync(path.join(context.extensionPath, EventsPath))) {
 			let _events: any[] = JSON.parse(fs.readFileSync(path.join(context.extensionPath, EventsPath), 'utf8'));
-			this.events = _events.map(e => { e.time = new Date(e.time);
+			this.events = _events.map(e => { e.date = new Date(e.date);
 				return e});
 		} else {
 			this.events = [];
 		}
-		this.events.forEach(e => {
-			e.timeoutId = setTimeout(e.handler, e.date.getTime() - Date.now());
-		})
+		// this.events.forEach(e => {
+		// 	e.timeoutId = setTimeout(e.handler, e.date.getTime() - Date.now());
+		// })
 	}
 
 	getEvents(): IEvent[] {

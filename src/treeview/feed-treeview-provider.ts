@@ -8,6 +8,7 @@ import { LinkableTreeItem } from './hotstory-treeview-provider';
 import { EventService, IEvent } from '../service/event.service';
 import { MediaTypes } from '../const/ENUM';
 import * as onChange from 'on-change';
+import { removeHtmlTag } from '../util/md-html-utils';
 
 export interface FeedType {
 	type?: string;
@@ -152,11 +153,11 @@ export class EventTreeItem extends vscode.TreeItem {
 		public readonly event: IEvent,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 	) {
-		super(event.content.slice(14), collapsibleState);
+		super(removeHtmlTag(event.content).slice(0, 15) , collapsibleState);
 	}
 
 	get tooltip(): string | undefined {
-		return this.event.content;
+		return removeHtmlTag(this.event.content);
 	}
 
 	get description(): string {
