@@ -71,13 +71,20 @@ export class PublishService {
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let text = textEdtior.document.getText();
 
-		let url: URL = this.shebangParser(text);
+		const url: URL = this.shebangParser(text);
 
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
 		html.replace('\"', '\\\"');
+
+		const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
+			[
+				{ label: '立即发布', description: '', value: false},
+				{ label: '稍后发布', description: '', value: true}
+			]
+		).then(item => item.value);
 
 
 		if (url) {
@@ -100,12 +107,6 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
-				const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
-					[
-						{ label: '立即发布', description: '', value: false},
-						{ label: '稍后发布', description: '', value: true}
-					]
-				).then(item => item.value);
 				if (pubLater) {
 					let title: string | undefined = await vscode.window.showInputBox({
 						ignoreFocusOut: true,
