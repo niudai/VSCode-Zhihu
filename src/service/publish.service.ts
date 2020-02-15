@@ -98,7 +98,7 @@ export class PublishService {
 		if (!pubLater) return;
 
 		if (pubLater) {
-			let latStr: string | undefined = await vscode.window.showInputBox({
+			let timeStr: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
 				prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
 				placeHolder: "",
@@ -107,12 +107,12 @@ export class PublishService {
 					return ''
 				} 
 			});	
-			if (!latStr) return;
+			if (!timeStr) return;
 			let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
-			latStr = latStr.trim();
-			timeObject.hour = parseInt(latStr.replace(timeReg, '$2'));
+			timeStr = timeStr.trim();
+			timeObject.hour = parseInt(timeStr.replace(timeReg, '$2'));
 			if (!timeObject.hour) timeObject.hour = 0;
-			timeObject.minute = parseInt(latStr.replace(timeReg, '$4'));
+			timeObject.minute = parseInt(timeStr.replace(timeReg, '$4'));
 			if (!timeObject.minute) timeObject.minute = 0;
 			/**
 			 * the time interval between now and the publish time in millisecs.
@@ -140,11 +140,12 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
+				// user select to publish new article
+
 				if (pubLater) {
 					let title: string | undefined = await this._getTitle();
 					if (!title) return;
-					vscode.window.showInformationMessage(`文章将在${timeObject.hour}小时，${timeObject.minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` + 
-					`激活知乎插件`);
+					this.promptEventRegistedInfo(timeObject);
 					let date = new Date();
 					date.setTime(Date.now() + timeObject.interval)
 					this.eventService.registerEvent({
@@ -162,9 +163,11 @@ export class PublishService {
 					this.postArticle(html);
 				}
 			} else if (selectFrom === MediaTypes.answer) {
+				// user select from collection
+
 				// shebang not found, then prompt a quick pick to select a question from collections
 				const selectedTarget: ICollectionItem | undefined= await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
-					this.collectionService.getTargets().then(
+					this.collectionService.getTargets(MediaTypes.question).then(
 						(targets) => {
 							let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
 							return items;
@@ -172,15 +175,30 @@ export class PublishService {
 					)
 				).then(item => (item ? { id: item.id, type: item.type } : undefined));
 				if (!selectedTarget) return;
-				if (selectedTarget.type == MediaTypes.question) {
+				if (pubLater) {
+					this.promptEventRegistedInfo(timeObject);
+					let date = new Date();
+					date.setTime(Date.now() + timeObject.interval)
+					this.eventService.registerEvent({
+						content: html,
+						type: MediaTypes.article,
+						date: date,
+						hash: md5(html),
+						handler: () => {
+							this.postAnswer(html, selectedTarget.id);
+							this.eventService.destroyEvent(md5(html));
+						}
+					});						
+				} else {
 					this.postAnswer(html, selectedTarget.id);
-				} else if (selectedTarget.type == MediaTypes.answer) {
-					this.putAnswer(html, selectedTarget.id);
-				} else if (selectedTarget.type == MediaTypes.article) {
-					this.postArticle(html)
 				}
 			}
 		}
+	}
+
+	private promptEventRegistedInfo(timeObject: TimeObject) {
+		vscode.window.showInformationMessage(`答案将在${timeObject.hour}小时，${timeObject.minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` +
+			`激活知乎插件`);
 	}
 
 	private async _getTitle(): Promise<string | undefined> {
