@@ -20,6 +20,16 @@ enum previewActions {
 	openInBrowser = '去看看'
 }
 
+interface TimeObject {
+	hour: number,
+	minute: number,
+
+	/**
+	 * interval in millisec
+	 */
+	interval: number
+}
+
 export class PublishService {
 	public profile: IProfile;
 
@@ -69,15 +79,14 @@ export class PublishService {
 	}
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+		
 		let text = textEdtior.document.getText();
-
 		const url: URL = this.shebangParser(text);
-
+		const timeObject: TimeObject = { hour: 0, interval: 0, minute: 0 };
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
-		html.replace('\"', '\\\"');
 
 		const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
 			[
@@ -86,6 +95,30 @@ export class PublishService {
 			]
 		).then(item => item.value);
 
+		if (!pubLater) return;
+
+		if (pubLater) {
+			let latStr: string | undefined = await vscode.window.showInputBox({
+				ignoreFocusOut: true,
+				prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
+				placeHolder: "",
+				validateInput: (s: string) => {
+					if(!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
+					return ''
+				} 
+			});	
+			if (!latStr) return;
+			let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
+			latStr = latStr.trim();
+			timeObject.hour = parseInt(latStr.replace(timeReg, '$2'));
+			if (!timeObject.hour) timeObject.hour = 0;
+			timeObject.minute = parseInt(latStr.replace(timeReg, '$4'));
+			if (!timeObject.minute) timeObject.minute = 0;
+			/**
+			 * the time interval between now and the publish time in millisecs.
+			 */
+			timeObject.interval = (timeObject.hour*60 + timeObject.minute)*60*1000;
+		}
 
 		if (url) {
 			// just publish answer in terms of what shebang indicates
@@ -108,38 +141,12 @@ export class PublishService {
 
 			if (selectFrom === MediaTypes.article) {
 				if (pubLater) {
-					let title: string | undefined = await vscode.window.showInputBox({
-						ignoreFocusOut: true,
-						prompt: "输入标题：",
-						placeHolder: "",
-					});
+					let title: string | undefined = await this._getTitle();
 					if (!title) return;
-					let latStr: string | undefined = await vscode.window.showInputBox({
-						ignoreFocusOut: true,
-						prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
-						placeHolder: "",
-						validateInput: (s: string) => {
-							if(!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
-							return ''
-						} 
-					});	
-					if (!latStr) return;
-					let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
-					latStr = latStr.trim();
-					let hour = parseInt(latStr.replace(timeReg, '$2'));
-					if (!hour) hour = 0;
-					let minute = parseInt(latStr.replace(timeReg, '$4'));
-					if (!minute) minute = 0;
-					
-					/**
-					 * the time interval between now and the publish time in millisecs.
-					 */
-					let latency = (hour*60 + minute)*60*1000;
-
-					vscode.window.showInformationMessage(`文章将在${hour}小时，${minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` + 
+					vscode.window.showInformationMessage(`文章将在${timeObject.hour}小时，${timeObject.minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` + 
 					`激活知乎插件`);
 					let date = new Date();
-					date.setTime(Date.now() + latency)
+					date.setTime(Date.now() + timeObject.interval)
 					this.eventService.registerEvent({
 						content: html,
 						type: MediaTypes.article,
@@ -174,6 +181,14 @@ export class PublishService {
 				}
 			}
 		}
+	}
+
+	private async _getTitle(): Promise<string | undefined> {
+		return vscode.window.showInputBox({
+			ignoreFocusOut: true,
+			prompt: "输入标题：",
+			placeHolder: "",
+		});
 	}
 
 	public putAnswer(html: string, answerId: string) {
