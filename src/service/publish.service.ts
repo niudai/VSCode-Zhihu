@@ -12,7 +12,7 @@ import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
 import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
-import { Url } from "url";
+import { EventService } from "./event.service";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -26,7 +26,8 @@ export class PublishService {
 		protected zhihuMdParser: MarkdownIt,
 		protected defualtMdParser: MarkdownIt,
 		protected webviewService: WebviewService,
-		protected collectionService: CollectionService
+		protected collectionService: CollectionService,
+		protected eventService: EventService
 	) {
 		zhihuMdParser.renderer.rules.fence = function (tokens, idx, options, env, self) {
 			var token = tokens[idx],
@@ -130,30 +131,78 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
-				this.postArticle(html)
+				const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
+					[
+						{ label: '立即发布', description: '', value: false},
+						{ label: '稍后发布', description: '', value: true}
+					]
+				).then(item => item.value);
+				if (pubLater) {
+					let title: string | undefined = await vscode.window.showInputBox({
+						ignoreFocusOut: true,
+						prompt: "输入标题：",
+						placeHolder: "",
+					});
+					if (!title) return;
+					let latStr: string | undefined = await vscode.window.showInputBox({
+						ignoreFocusOut: true,
+						prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
+						placeHolder: "",
+						validateInput: (s: string) => {
+							if(!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
+							return ''
+						} 
+					});	
+					if (!latStr) return;
+					let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
+					latStr = latStr.trim();
+					let hour = parseInt(latStr.replace(timeReg, '$2'));
+					if (!hour) hour = 0;
+					let minute = parseInt(latStr.replace(timeReg, '$4'));
+					if (!minute) minute = 0;
+
+					// the time interval between now and the publish time in millisecs.
+					let latency = (hour*60 + minute)*60*1000;
+
+					vscode.window.showInformationMessage(`文章将在${hour}小时，${minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` + 
+					`激活知乎插件`);
+					let date = new Date();
+					date.setTime(Date.now() + latency)
+					this.eventService.registerEvent({
+						content: html,
+						type: MediaTypes.article,
+						title,
+						date: date,
+						handler: () => {
+							this.postArticle(html, title);
+						}
+					});
+				} else {
+					this.postArticle(html);
+				}
 			} else if (selectFrom === MediaTypes.answer) {
 				// shebang not found, then prompt a quick pick to select a question from collections
-				const selectedTarget: ICollectionItem = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
+				const selectedTarget: ICollectionItem | undefined= await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
 					this.collectionService.getTargets().then(
 						(targets) => {
 							let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
 							return items;
 						}
 					)
-				).then(item => ({ id: item.id, type: item.type }));
+				).then(item => (item ? { id: item.id, type: item.type } : undefined));
+				if (!selectedTarget) return;
 				if (selectedTarget.type == MediaTypes.question) {
 					this.postAnswer(html, selectedTarget.id);
 				} else if (selectedTarget.type == MediaTypes.answer) {
 					this.putAnswer(html, selectedTarget.id);
 				} else if (selectedTarget.type == MediaTypes.article) {
-
 					this.postArticle(html)
 				}
 			}
 		}
 	}
 
-	private putAnswer(html: string, answerId: string) {
+	public putAnswer(html: string, answerId: string) {
 		this.httpService.sendRequest({
 			uri: `${AnswerAPI}/${answerId}`,
 			method: 'put',
@@ -180,7 +229,7 @@ export class PublishService {
 		})
 	}
 
-	private postAnswer(html: string, questionId: string) {
+	public postAnswer(html: string, questionId: string) {
 		this.httpService.sendRequest({
 			uri: `${QuestionAPI}/${questionId}/answers`,
 			method: 'post',
@@ -209,12 +258,14 @@ export class PublishService {
 		})
 	}
 
-	private async postArticle(content: string) {
-		const title: string | undefined = await vscode.window.showInputBox({
-			ignoreFocusOut: true,
-			prompt: "输入文章标题：",
-			placeHolder: ""
-		})
+	public async postArticle(content: string, title?: string) {
+		if (!title) {
+			const title: string | undefined = await vscode.window.showInputBox({
+				ignoreFocusOut: true,
+				prompt: "输入文章标题：",
+				placeHolder: ""
+			})	
+		}
 		if (!title) return;
 
 		let postResp: ITarget = await this.httpService.sendRequest({
@@ -245,15 +296,15 @@ export class PublishService {
 			resolveWithFullResponse: true
 		})
 		if (resp.statusCode < 300) {
-			this.promptSuccessMsg(`${ZhuanlanURL}${postResp.id}`)
+			this.promptSuccessMsg(`${ZhuanlanURL}${postResp.id}`, title)
 		} else {
 			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
 		}
 		return resp;
 	}
 
-	private promptSuccessMsg(url: string) {
-		vscode.window.showInformationMessage(`发布成功！\n`, { modal: true }, 
+	private promptSuccessMsg(url: string, title?: string) {
+		vscode.window.showInformationMessage(`${title ? '"' + title + '"' : ''} 发布成功！\n`, { modal: true }, 
 		previewActions.openInBrowser
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}

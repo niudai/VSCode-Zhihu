@@ -5,21 +5,21 @@ import * as path from "path";
 import { CookieJar } from "tough-cookie";
 import * as FileCookieStore from "tough-cookie-filestore";
 import * as vscode from "vscode";
-import * as ZhihuMarkdownIt from "zhihu-markdown"; 
+import * as ZhihuMarkdownIt from "zhihu-markdown";
 import { AccountService } from "./service/account.service";
 import { AuthenticateService } from "./service/authenticate.service";
 import { CollectionService } from "./service/collection.service";
+import { EventService } from "./service/event.service";
 import { HttpService } from "./service/http.service";
+import { PasteService } from "./service/paste.service";
 import { ProfileService } from "./service/profile.service";
 import { PublishService } from "./service/publish.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
-import { FeedTreeViewProvider, FeedTreeItem } from "./treeview/feed-treeview-provider";
-import { HotStoryTreeViewProvider, LinkableTreeItem } from "./treeview/hotstory-treeview-provider";
+import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
+import { FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
+import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
-import { CollectionTreeviewProvider, CollectionItem } from "./treeview/collection-treeview-provider";
-import { PasteService } from "./service/paste.service";
-import { UtilCmds } from "./const/CMD";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -36,11 +36,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	const profileService = new ProfileService(context, httpService, accountService);
 	await profileService.fetchProfile();
 	const collectionService = new CollectionService(context, httpService);
-	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
 	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
-	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService);
+	const eventService = new EventService(context);
+	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService, eventService);
+	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService);
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 	const pasteService = new PasteService(context, httpService);

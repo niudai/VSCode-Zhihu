@@ -8,7 +8,7 @@
         "type": "node",
         "request": "launch",
         "name": "launch script",
-        "program": "${file}",
+        "program": "${file}"
         // "args": ["${file}"]
     },
         {
@@ -17,14 +17,14 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // "--disable-extensions",
-                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceRoot}"
                 // "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
             ], 
             "stopOnEntry": false,
             "sourceMaps": true,
             // "outFiles": [
-            //     "${workspaceRoot}/dist/**/*.js"
+            //     "${workspaceRoot}/dist/*"
             // ],
             // "preLaunchTask": "npm: develop"
         },
