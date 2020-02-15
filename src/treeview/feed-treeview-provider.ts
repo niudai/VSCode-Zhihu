@@ -8,7 +8,7 @@ import { LinkableTreeItem } from './hotstory-treeview-provider';
 import { EventService, IEvent } from '../service/event.service';
 import { MediaTypes } from '../const/ENUM';
 import * as onChange from 'on-change';
-import { removeHtmlTag } from '../util/md-html-utils';
+import { removeHtmlTag, removeSpace, convert24To12 } from '../util/md-html-utils';
 
 export interface FeedType {
 	type?: string;
@@ -153,7 +153,7 @@ export class EventTreeItem extends vscode.TreeItem {
 		public readonly event: IEvent,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 	) {
-		super(removeHtmlTag(event.content).slice(0, 15) , collapsibleState);
+		super(removeSpace(removeHtmlTag(event.content)).slice(0, 12) , collapsibleState);
 	}
 
 	get tooltip(): string | undefined {
@@ -161,7 +161,7 @@ export class EventTreeItem extends vscode.TreeItem {
 	}
 
 	get description(): string {
-		return `${this.event.date.getHours()} 时 ${this.event.date.getMinutes()} 分 ${this.event.date.getSeconds()}`;
+		return convert24To12(this.event.date.getHours(), this.event.date.getMinutes());
 	}
 
 	iconPath = false;

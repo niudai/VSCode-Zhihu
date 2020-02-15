@@ -33,5 +33,20 @@ function removeHtmlTag(text: string) {
 	return text.replace(TagRegExp, '');
 }
 
+function removeSpace(text: string) {
+	let SpaceReg = /\s+/g;
+	return text.replace(SpaceReg, '');
+}
 
-export { escapeHtml, unescapeMd, removeHtmlTag }
+/**
+ * get human-readable time formate, like `5:24:24pm`
+ * @param hour the hour to be converted
+ */
+function convert24To12(hour: number, minute: number) {
+	let isAm = hour < 12;
+	return `${isAm ? hour : hour - 12}:${minute < 10 ? '0' + minute : minute} ${isAm ? 'am' : 'pm'}`
+}
+
+
+
+export { escapeHtml, unescapeMd, removeHtmlTag, removeSpace, convert24To12 }

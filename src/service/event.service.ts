@@ -13,7 +13,15 @@ export interface IEvent {
 	 * id is optional because the new article has no id
 	 */
 	id?: string,
+
 	content: string,
+
+	/**
+	 * md5 hash used to identify the publish event. 
+	 * Since the collision possibility is almost zero, (1/2^128), 
+	 * so in 10s scale we could convince every hash is unique.
+	 */
+	hash: string,
 
 	/**
 	 * the publishing time
@@ -43,9 +51,6 @@ export class EventService {
 		} else {
 			this.events = [];
 		}
-		// this.events.forEach(e => {
-		// 	e.timeoutId = setTimeout(e.handler, e.date.getTime() - Date.now());
-		// })
 	}
 
 	getEvents(): IEvent[] {
@@ -62,20 +67,27 @@ export class EventService {
 
 	registerEvent(e: IEvent) {
 		e.timeoutId = setTimeout(e.handler, e.date.getTime() - Date.now());
-		if(!this.events.find(v => v.id == e.id && v.type == e.type)) {
+		if(!this.events.find(v => v.hash == e.hash)) {
 			this.events.push(e);
 			this.persist();
 			return true;
 		} else return false;
 	}
 
-	destroyEvent(event: IEvent) {
+	/**
+	 * destroy an event. This could be called normally when event occured, 
+	 * but also called intendedly for deletion.
+	 * @param hash the hash of the event
+	 */
+	destroyEvent(hash: string) {
 		// find the target event and destroy its timeout event
-		let eventTarget = this.events.find(c => (c.id == event.id && c.type == event.type))
+		let eventTarget = this.events.find(c => (c.hash == hash))
+
+		// if the timeout handler still registerd, remove it. 
 		if (eventTarget.timeoutId) clearTimeout(eventTarget.timeoutId);
 
 		// filter the target out
-		this.events = this.events.filter(c => !(c.id == event.id && c.type == event.type));
+		this.events = this.events.filter(c => !(c.hash == hash));
 		this.persist();
 	}
 

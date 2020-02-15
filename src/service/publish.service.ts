@@ -13,6 +13,8 @@ import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
 import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
 import { EventService } from "./event.service";
+import md5 = require("md5");
+import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -29,6 +31,21 @@ export class PublishService {
 		protected collectionService: CollectionService,
 		protected eventService: EventService
 	) {
+		this.registerPublishEvents();
+	}
+
+	/**
+	 * When extension starts, all publish events should be re-registered,
+	 * this is what pre-log tech comes in. 
+	 */
+	private registerPublishEvents() {
+		let events = this.eventService.getEvents();
+		events.forEach(e => {
+			e.timeoutId = setTimeout(() => {
+				this.postArticle(e.content, e.title);
+				this.eventService.destroyEvent(e.hash);
+			}, e.date.getTime() - Date.now());
+		})
 	}
 
 	preview(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
@@ -112,8 +129,10 @@ export class PublishService {
 					if (!hour) hour = 0;
 					let minute = parseInt(latStr.replace(timeReg, '$4'));
 					if (!minute) minute = 0;
-
-					// the time interval between now and the publish time in millisecs.
+					
+					/**
+					 * the time interval between now and the publish time in millisecs.
+					 */
 					let latency = (hour*60 + minute)*60*1000;
 
 					vscode.window.showInformationMessage(`文章将在${hour}小时，${minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` + 
@@ -125,8 +144,10 @@ export class PublishService {
 						type: MediaTypes.article,
 						title,
 						date: date,
+						hash: md5(html + title),
 						handler: () => {
 							this.postArticle(html, title);
+							this.eventService.destroyEvent(md5(html + title));
 						}
 					});
 				} else {
