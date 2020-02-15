@@ -7,7 +7,7 @@ import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
 import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL, ZhuanlanURL } from "../const/URL";
-import { unescapeMd, escapeHtml } from "../util/md-html-utils";
+import { unescapeMd, escapeHtml, beautifyDate } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
@@ -27,7 +27,7 @@ interface TimeObject {
 	/**
 	 * interval in millisec
 	 */
-	interval: number
+	date: Date
 }
 
 export class PublishService {
@@ -79,10 +79,10 @@ export class PublishService {
 	}
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
-		
+
 		let text = textEdtior.document.getText();
 		const url: URL = this.shebangParser(text);
-		const timeObject: TimeObject = { hour: 0, interval: 0, minute: 0 };
+		const timeObject: TimeObject = { hour: 0, date: new Date(), minute: 0 };
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
@@ -90,12 +90,12 @@ export class PublishService {
 
 		const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
 			[
-				{ label: '立即发布', description: '', value: false},
-				{ label: '稍后发布', description: '', value: true}
+				{ label: '立即发布', description: '', value: false },
+				{ label: '稍后发布', description: '', value: true }
 			]
 		).then(item => item.value);
 
-		if (!pubLater) return;
+		if (pubLater == undefined) return;
 
 		if (pubLater) {
 			let timeStr: string | undefined = await vscode.window.showInputBox({
@@ -103,10 +103,10 @@ export class PublishService {
 				prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
 				placeHolder: "",
 				validateInput: (s: string) => {
-					if(!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
+					if (!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
 					return ''
-				} 
-			});	
+				}
+			});
 			if (!timeStr) return;
 			let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
 			timeStr = timeStr.trim();
@@ -117,21 +117,41 @@ export class PublishService {
 			/**
 			 * the time interval between now and the publish time in millisecs.
 			 */
-			timeObject.interval = (timeObject.hour*60 + timeObject.minute)*60*1000;
+			timeObject.date.setTime(Date.now() + (timeObject.hour * 60 + timeObject.minute) * 60 * 1000);
 		}
 
-		if (url) {
+		if (url) { // If url is provided
 			// just publish answer in terms of what shebang indicates
 			if (QuestionAnswerPathReg.test(url.pathname)) {
 				// answer link, update answer
 				let aId = url.pathname.replace(QuestionAnswerPathReg, '$2');
-				this.putAnswer(html, aId);
+				if (!this.eventService.registerEvent({
+					content: html,
+					type: MediaTypes.article,
+					date: timeObject.date,
+					hash: md5(html),
+					handler: () => {
+						this.putAnswer(html, aId);
+						this.eventService.destroyEvent(md5(html));
+					}
+				})) this.promptSameContentWarn() 
+				else this.promptEventRegistedInfo(timeObject)
 			} else if (QuestionPathReg.test(url.pathname)) {
 				// question link, post new answer
 				let qId = url.pathname.replace(QuestionPathReg, '$1');
-				this.postAnswer(html, qId);
+				if (!this.eventService.registerEvent({
+					content: html,
+					type: MediaTypes.question,
+					date: timeObject.date,
+					hash: md5(html),
+					handler: () => {
+						this.postAnswer(html, qId);
+						this.eventService.destroyEvent(md5(html));
+					}
+				})) this.promptSameContentWarn()
+				else this.promptEventRegistedInfo(timeObject)
 			}
-		} else {
+		} else { // url is not provided
 			const selectFrom: MediaTypes = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: MediaTypes }>(
 				[
 					{ label: '发布新文章', description: '', value: MediaTypes.article },
@@ -142,31 +162,25 @@ export class PublishService {
 			if (selectFrom === MediaTypes.article) {
 				// user select to publish new article
 
-				if (pubLater) {
-					let title: string | undefined = await this._getTitle();
-					if (!title) return;
-					this.promptEventRegistedInfo(timeObject);
-					let date = new Date();
-					date.setTime(Date.now() + timeObject.interval)
-					this.eventService.registerEvent({
-						content: html,
-						type: MediaTypes.article,
-						title,
-						date: date,
-						hash: md5(html + title),
-						handler: () => {
-							this.postArticle(html, title);
-							this.eventService.destroyEvent(md5(html + title));
-						}
-					});
-				} else {
-					this.postArticle(html);
-				}
+				let title: string | undefined = await this._getTitle();
+				if (!title) return;
+				this.promptEventRegistedInfo(timeObject);
+				if (!this.eventService.registerEvent({
+					content: html,
+					type: MediaTypes.article,
+					title,
+					date: timeObject.date,
+					hash: md5(html + title),
+					handler: () => {
+						this.postArticle(html, title);
+						this.eventService.destroyEvent(md5(html + title));
+					}
+				})) this.promptSameContentWarn();
+
 			} else if (selectFrom === MediaTypes.answer) {
 				// user select from collection
-
 				// shebang not found, then prompt a quick pick to select a question from collections
-				const selectedTarget: ICollectionItem | undefined= await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
+				const selectedTarget: ICollectionItem | undefined = await vscode.window.showQuickPick<vscode.QuickPickItem & ICollectionItem>(
 					this.collectionService.getTargets(MediaTypes.question).then(
 						(targets) => {
 							let items = targets.map(t => ({ label: t.title ? t.title : t.excerpt, description: t.excerpt, id: t.id, type: t.type }));
@@ -175,30 +189,30 @@ export class PublishService {
 					)
 				).then(item => (item ? { id: item.id, type: item.type } : undefined));
 				if (!selectedTarget) return;
-				if (pubLater) {
-					this.promptEventRegistedInfo(timeObject);
-					let date = new Date();
-					date.setTime(Date.now() + timeObject.interval)
-					this.eventService.registerEvent({
-						content: html,
-						type: MediaTypes.article,
-						date: date,
-						hash: md5(html),
-						handler: () => {
-							this.postAnswer(html, selectedTarget.id);
-							this.eventService.destroyEvent(md5(html));
-						}
-					});						
-				} else {
-					this.postAnswer(html, selectedTarget.id);
-				}
+				this.promptEventRegistedInfo(timeObject);
+				if (!this.eventService.registerEvent({
+					content: html,
+					type: MediaTypes.article,
+					date: timeObject.date,
+					hash: md5(html),
+					handler: () => {
+						this.postAnswer(html, selectedTarget.id);
+						this.eventService.destroyEvent(md5(html));
+					}
+				})) this.promptSameContentWarn();
 			}
 		}
 	}
 
 	private promptEventRegistedInfo(timeObject: TimeObject) {
-		vscode.window.showInformationMessage(`答案将在${timeObject.hour}小时，${timeObject.minute} 分钟后发布，请发布时保证VSCode处于打开状态，并` +
+		if (timeObject.date.getTime() > Date.now()) {
+			vscode.window.showInformationMessage(`答案将在 ${beautifyDate(timeObject.date)} 发布，请发布时保证VSCode处于打开状态，并` +
 			`激活知乎插件`);
+		}
+	}
+
+	private promptSameContentWarn() {
+		vscode.window.showWarningMessage(`你已经有一篇一模一样的内容还未发布！`);
 	}
 
 	private async _getTitle(): Promise<string | undefined> {
@@ -267,11 +281,11 @@ export class PublishService {
 
 	public async postArticle(content: string, title?: string) {
 		if (!title) {
-			 title = await vscode.window.showInputBox({
+			title = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
 				prompt: "输入文章标题：",
 				placeHolder: ""
-			})	
+			})
 		}
 		if (!title) return;
 
@@ -311,8 +325,8 @@ export class PublishService {
 	}
 
 	private promptSuccessMsg(url: string, title?: string) {
-		vscode.window.showInformationMessage(`${title ? '"' + title + '"' : ''} 发布成功！\n`, { modal: true }, 
-		previewActions.openInBrowser
+		vscode.window.showInformationMessage(`${title ? '"' + title + '"' : ''} 发布成功！\n`, { modal: true },
+			previewActions.openInBrowser
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}
 

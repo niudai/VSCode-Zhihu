@@ -35,18 +35,19 @@ function removeHtmlTag(text: string) {
 
 function removeSpace(text: string) {
 	let SpaceReg = /\s+/g;
-	return text.replace(SpaceReg, '');
+	return text.replace(SpaceReg, ' ');
 }
 
 /**
- * get human-readable time formate, like `5:24:24pm`
+ * get human-readable time formate, like `5:24 pm`
  * @param hour the hour to be converted
  */
-function convert24To12(hour: number, minute: number) {
+function beautifyDate(date: Date) {
+	let hour = date.getHours(), minute = date.getMinutes();
 	let isAm = hour < 12;
 	return `${isAm ? hour : hour - 12}:${minute < 10 ? '0' + minute : minute} ${isAm ? 'am' : 'pm'}`
 }
 
 
 
-export { escapeHtml, unescapeMd, removeHtmlTag, removeSpace, convert24To12 }
+export { escapeHtml, unescapeMd, removeHtmlTag, removeSpace, beautifyDate }

@@ -8,7 +8,7 @@ import { LinkableTreeItem } from './hotstory-treeview-provider';
 import { EventService, IEvent } from '../service/event.service';
 import { MediaTypes } from '../const/ENUM';
 import * as onChange from 'on-change';
-import { removeHtmlTag, removeSpace, convert24To12 } from '../util/md-html-utils';
+import { removeHtmlTag, removeSpace, beautifyDate } from '../util/md-html-utils';
 
 export interface FeedType {
 	type?: string;
@@ -161,7 +161,7 @@ export class EventTreeItem extends vscode.TreeItem {
 	}
 
 	get description(): string {
-		return convert24To12(this.event.date.getHours(), this.event.date.getMinutes());
+		return beautifyDate(this.event.date);
 	}
 
 	iconPath = false;
