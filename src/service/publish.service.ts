@@ -98,10 +98,10 @@ export class PublishService {
 		if (pubLater == undefined) return;
 
 		if (pubLater) {
-			let ClockReg = /^(\d\d?):(\d\d)\s*([ap]m)\s*$/i
+			let ClockReg = /^(\d\d?)[:：](\d\d)\s*([ap]m)\s*$/i
 			let timeStr: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
-				prompt: "输入发布时间，如 Fri 5:30 pm, Sat 6:40 am 等，只支持当天发布！",
+				prompt: "输入发布时间，如 Fri 5:30 pm, Sat 6:40 am 等，目前只支持当天发布！",
 				placeHolder: "",
 				validateInput: (s: string) => {
 					if (!ClockReg.test(s)) return '请输入正确的时间格式！'
@@ -112,12 +112,15 @@ export class PublishService {
 			let h = parseInt(timeStr.replace(ClockReg, '$1')), m = parseInt(timeStr.replace(ClockReg, '$2')), aOrPm = timeStr.replace(ClockReg, '$3'); 
 			if (!timeStr) return;
 			timeStr = timeStr.trim();
-			timeObject.hour =  aOrPm == 'am' ? h : h + 12;
 			/**
 			 * the time interval between now and the publish time in millisecs.
 			 */
 			timeObject.date.setHours(aOrPm == 'am' ? h : h + 12);
 			timeObject.date.setMinutes(m);
+			if (timeObject.date.getTime() < Date.now()) { 
+				vscode.window.showWarningMessage('不能选择比现在更早的时间！');
+				return;
+			}
 		}
 
 		if (url) { // If url is provided
