@@ -11,6 +11,26 @@ export enum SearchTypes {
 	article = 'article'
 }
 
+export enum Weekdays {
+	Mon = 'Mon',
+	Tue = 'Tue',
+	Wed = 'Wed',
+	Tur = 'Tur',
+	Fri = 'Fri',
+	Sat = 'Sat',
+	Sun = 'Sun'
+}
+
+export const WeekdaysDict = {
+	Mon: 1,
+	Tue: 2,
+	Wed: 3,
+	Tur: 4,
+	Fri: 5,
+	Sat: 6,
+	Sun: 7
+}
+
 export const LegalImageExt = [ '.jpg', '.jpeg', '.gif', '.png' ]; 
 
 export enum LoginEnum {

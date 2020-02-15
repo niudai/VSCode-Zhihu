@@ -98,26 +98,26 @@ export class PublishService {
 		if (pubLater == undefined) return;
 
 		if (pubLater) {
+			let ClockReg = /^(\d\d?):(\d\d)\s*([ap]m)\s*$/i
 			let timeStr: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
-				prompt: "输入格式为 'xxh xxm', 如 '3h 5m', '4h', '30m', 但不能是'3m 2h'",
+				prompt: "输入发布时间，如 Fri 5:30 pm, Sat 6:40 am 等，只支持当天发布！",
 				placeHolder: "",
 				validateInput: (s: string) => {
-					if (!/^((\d+)h)?\s*((\d+)m)?$/.test(s)) return '请输入正确的时间格式！'
+					if (!ClockReg.test(s)) return '请输入正确的时间格式！'
+					if (parseInt(s.replace(ClockReg, '$1')) > 12 || parseInt(s.replace(ClockReg, '$2')) > 60) return '请输入正确的时间格式！'
 					return ''
 				}
 			});
+			let h = parseInt(timeStr.replace(ClockReg, '$1')), m = parseInt(timeStr.replace(ClockReg, '$2')), aOrPm = timeStr.replace(ClockReg, '$3'); 
 			if (!timeStr) return;
-			let timeReg = /^((\d+)h)?\s*((\d+)m)?$/
 			timeStr = timeStr.trim();
-			timeObject.hour = parseInt(timeStr.replace(timeReg, '$2'));
-			if (!timeObject.hour) timeObject.hour = 0;
-			timeObject.minute = parseInt(timeStr.replace(timeReg, '$4'));
-			if (!timeObject.minute) timeObject.minute = 0;
+			timeObject.hour =  aOrPm == 'am' ? h : h + 12;
 			/**
 			 * the time interval between now and the publish time in millisecs.
 			 */
-			timeObject.date.setTime(Date.now() + (timeObject.hour * 60 + timeObject.minute) * 60 * 1000);
+			timeObject.date.setHours(aOrPm == 'am' ? h : h + 12);
+			timeObject.date.setMinutes(m);
 		}
 
 		if (url) { // If url is provided
@@ -161,10 +161,8 @@ export class PublishService {
 
 			if (selectFrom === MediaTypes.article) {
 				// user select to publish new article
-
 				let title: string | undefined = await this._getTitle();
 				if (!title) return;
-				this.promptEventRegistedInfo(timeObject);
 				if (!this.eventService.registerEvent({
 					content: html,
 					type: MediaTypes.article,
@@ -175,7 +173,8 @@ export class PublishService {
 						this.postArticle(html, title);
 						this.eventService.destroyEvent(md5(html + title));
 					}
-				})) this.promptSameContentWarn();
+				})) this.promptSameContentWarn()
+				else this.promptEventRegistedInfo(timeObject)
 
 			} else if (selectFrom === MediaTypes.answer) {
 				// user select from collection
@@ -189,7 +188,6 @@ export class PublishService {
 					)
 				).then(item => (item ? { id: item.id, type: item.type } : undefined));
 				if (!selectedTarget) return;
-				this.promptEventRegistedInfo(timeObject);
 				if (!this.eventService.registerEvent({
 					content: html,
 					type: MediaTypes.article,
@@ -200,6 +198,7 @@ export class PublishService {
 						this.eventService.destroyEvent(md5(html));
 					}
 				})) this.promptSameContentWarn();
+				else this.promptEventRegistedInfo(timeObject);
 			}
 		}
 	}
