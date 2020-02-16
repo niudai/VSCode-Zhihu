@@ -33,7 +33,7 @@ export class CollectionService {
 		} else return false;
 	}
 
-	deleteItem(item: ICollectionItem) {
+	deleteCollectionItem(item: ICollectionItem) {
 		this.collection = this.collection.filter(c => !(c.id == item.id && c.type == item.type))
 		this.persist();
 	}

@@ -110,9 +110,9 @@ export async function activate(context: vscode.ExtensionContext) {
 			)
 	);
 	vscode.commands.registerCommand(
-		"zhihu.deleteItem",
+		"zhihu.deleteCollectionItem",
 		(node: CollectionItem) => {
-			collectionService.deleteItem(node.item);
+			collectionService.deleteCollectionItem(node.item);
 			collectionTreeViewProvider.refresh(node.parent);
 			vscode.window.showInformationMessage('已从收藏夹移除');
 		}

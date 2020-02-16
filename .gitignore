@@ -8,8 +8,9 @@ captcha.jpg
 collection.json
 qrcode.png
 image.png 
+release_notes/images
 *.vsix
 dist
 README.pdf
 events.json
-images
+**/images

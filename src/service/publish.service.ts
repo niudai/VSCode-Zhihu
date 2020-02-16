@@ -101,7 +101,7 @@ export class PublishService {
 			let ClockReg = /^(\d\d?)[:：](\d\d)\s*([ap]m)\s*$/i
 			let timeStr: string | undefined = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
-				prompt: "输入发布时间，如 Fri 5:30 pm, Sat 6:40 am 等，目前只支持当天发布！",
+				prompt: "输入发布时间，如 5:30 pm, 6:40 am 等，目前只支持当天发布！",
 				placeHolder: "",
 				validateInput: (s: string) => {
 					if (!ClockReg.test(s)) return '请输入正确的时间格式！'

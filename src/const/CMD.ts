@@ -11,7 +11,7 @@ export enum HotstoriesCmds {
 export enum CollectionCmds {
 	refresh = 'zhihu.refreshCollection',
 	add = 'zhihu.collect',
-	delete = 'zhihu.deleteItem'
+	delete = 'zhihu.deleteCollectionItem'
 }
 
 export enum WebviewCmds {

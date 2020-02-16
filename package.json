@@ -92,14 +92,6 @@
 				}
 			},
 			{
-				"command": "zhihu.deleteItem",
-				"title": "Zhihu: Delete Collection Item",
-				"icon": {
-					"light": "res/media/light/delete.svg",
-					"dark": "res/media/dark/delete.svg"
-				}
-			},
-			{
 				"command": "zhihu.openWebView",
 				"title": "Zhihu: openWebView"
 			},
@@ -125,6 +117,14 @@
 				"icon": {
 					"light": "res/media/light/collect.svg",
 					"dark": "res/media/dark/collect.svg"
+				}
+			},
+			{
+				"command": "zhihu.deleteCollectionItem",
+				"title": "Zhihu: Delete Collection Item",
+				"icon": {
+					"light": "res/media/light/delete.svg",
+					"dark": "res/media/dark/delete.svg"
 				}
 			},
 			{
@@ -274,7 +274,7 @@
 					"group": "inline"
 				},
 				{
-					"command": "zhihu.deleteItem",
+					"command": "zhihu.deleteCollectionItem",
 					"when": "view == zhihu-collection && viewItem == collect-item",
 					"group": "inline"
 				}
