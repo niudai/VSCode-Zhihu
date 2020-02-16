@@ -17,3 +17,4 @@ out/test/**
 .gitignore
 tsconfig.json
 tslint.json
+release_notes/images

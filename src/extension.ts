@@ -20,6 +20,7 @@ import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collectio
 import { FeedTreeItem, FeedTreeViewProvider, EventTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
+import { ReleaseNotesService } from "./service/release-note.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -27,6 +28,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Dependency Injection
+	const releaseNotesService = new ReleaseNotesService(context);
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
 	const zhihuMdParser = new ZhihuMarkdownIt();
 	const defualtMdParser = new MarkdownIt();
