@@ -12,6 +12,11 @@ shareBtn.addEventListener('click', e => {
 		command: 'share'
 	})
 })
+openBtn.addEventListener('click', e => {
+	vscode.postMessage({
+		command: 'open'
+	})
+})
 
 
 

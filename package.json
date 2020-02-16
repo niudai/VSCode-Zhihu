@@ -128,6 +128,14 @@
 				}
 			},
 			{
+				"command": "zhihu.deleteEventItem",
+				"title": "Zhihu: Delete Event Item",
+				"icon": {
+					"light": "res/media/light/delete.svg",
+					"dark": "res/media/dark/delete.svg"
+				}
+			},
+			{
 				"command": "zhihu.preview",
 				"title": "Zhihu: Preview",
 				"icon": {
@@ -276,6 +284,11 @@
 				{
 					"command": "zhihu.deleteCollectionItem",
 					"when": "view == zhihu-collection && viewItem == collect-item",
+					"group": "inline"
+				},
+				{
+					"command": "zhihu.deleteEventItem",
+					"when": "view == zhihu-feed && viewItem == event",
 					"group": "inline"
 				}
 			]

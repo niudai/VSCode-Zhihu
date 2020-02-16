@@ -22,8 +22,8 @@ export const FEED_TYPES: FeedType[] = [
 
 export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<FeedTreeItem | undefined> = new vscode.EventEmitter<FeedTreeItem | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<FeedTreeItem | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
 
 	constructor(private context: vscode.ExtensionContext,
 		private accountService: AccountService,
@@ -32,7 +32,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 		private eventService: EventService) {
 	}
 
-	refresh(node?: FeedTreeItem): void {
+	refresh(node?: vscode.TreeItem): void {
 		this._onDidChangeTreeData.fire(node);
 	}
 
@@ -86,7 +86,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 				// 	this.refresh(element);
 				// }));
 				return Promise.resolve(this.eventService.getEvents().map(e => {
-					return new EventTreeItem(e, vscode.TreeItemCollapsibleState.None);
+					return new EventTreeItem(e, vscode.TreeItemCollapsibleState.None, element);
 				}))
 			}
 		} else {
@@ -152,8 +152,9 @@ export class EventTreeItem extends vscode.TreeItem {
 	constructor(
 		public readonly event: IEvent,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+		public readonly parent: vscode.TreeItem
 	) {
-		super(removeSpace(removeHtmlTag(event.content)).slice(0, 12) , collapsibleState);
+		super(removeSpace(removeHtmlTag(event.content)).slice(0, 12) + '...' , collapsibleState);
 	}
 
 	get tooltip(): string | undefined {

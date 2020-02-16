@@ -37,10 +37,9 @@ export class PasteService {
 			canSelectFiles: true,
 			canSelectFolders: false,
 			canSelectMany: false,
-			defaultUri: vscode.Uri.file(vscode.env.appRoot),
 			filters: {
 				'Images': ['png', 'jpg', 'gif']
-			},
+			}, 	
 			openLabel: '选择要上传的图片：'
 		}).then(uris => uris ? uris[0] : undefined);
 		this._uploadImageFromPath(imageUri.fsPath);

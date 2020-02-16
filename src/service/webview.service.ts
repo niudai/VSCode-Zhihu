@@ -87,7 +87,7 @@ export class WebviewService {
 					useVSTheme: useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.question, id: object.id }, `${QuestionURL}/${question.id}`);
+			this.registerEvent(panel, { type: MediaTypes.question, id: object.id }, `${QuestionURL}/${question.id}`);
 		} else if (object.type == MediaTypes.answer) {
 			let body: IQuestionAnswerTarget = await this.httpService.sendRequest({
 				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt`,
@@ -109,7 +109,7 @@ export class WebviewService {
 					useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.answer, id: object.id }, `${AnswerURL}/${body.id}`)
+			this.registerEvent(panel, { type: MediaTypes.answer, id: object.id }, `${AnswerURL}/${body.id}`)
 		} else if (object.type == MediaTypes.article) {
 			let article: IArticle = await this.httpService.sendRequest({
 				uri: object.url,
@@ -132,11 +132,11 @@ export class WebviewService {
 					useVSTheme
 				}
 			})
-			this.registerCollectEvent(panel, { type: MediaTypes.article, id: object.id }, `${ZhuanlanURL}${article.id}`)
+			this.registerEvent(panel, { type: MediaTypes.article, id: object.id }, `${ZhuanlanURL}${article.id}`)
 		}
 	}
 
-	private registerCollectEvent(panel: vscode.WebviewPanel, c: ICollectionItem, link?: string) {
+	private registerEvent(panel: vscode.WebviewPanel, c: ICollectionItem, link?: string) {
 		panel.webview.onDidReceiveMessage(e => {
 			if (e.command == WebviewEvents.collect) {
 				if (this.collectService.addItem(c)) {
@@ -145,11 +145,13 @@ export class WebviewService {
 					vscode.window.showWarningMessage('你已经收藏了它！');
 				}
 				this.collectionTreeviewProvider.refresh()
+			} else if (e.command == WebviewEvents.open) {
+				vscode.env.openExternal(vscode.Uri.parse(link));
 			} else if (e.command == WebviewEvents.share) {
 				vscode.env.clipboard.writeText(link).then(() => {
 					vscode.window.showInformationMessage('链接已复制至粘贴板。');
 				})
-			}
+			} 
 		}, undefined, this.context.subscriptions)
 	}
 

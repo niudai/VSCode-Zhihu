@@ -17,7 +17,7 @@ import { PublishService } from "./service/publish.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
-import { FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
+import { FeedTreeItem, FeedTreeViewProvider, EventTreeItem } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
 
@@ -115,6 +115,14 @@ export async function activate(context: vscode.ExtensionContext) {
 			collectionService.deleteCollectionItem(node.item);
 			collectionTreeViewProvider.refresh(node.parent);
 			vscode.window.showInformationMessage('已从收藏夹移除');
+		}
+	)
+	vscode.commands.registerCommand(
+		"zhihu.deleteEventItem",
+		(node: EventTreeItem) => {
+			eventService.destroyEvent(node.event.hash);
+			vscode.window.showInformationMessage(`已取消发布！`);
+			feedTreeViewProvider.refresh(node.parent);
 		}
 	)
 	vscode.commands.registerCommand(

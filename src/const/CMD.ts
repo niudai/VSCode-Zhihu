@@ -27,7 +27,8 @@ export enum AuthorCmds {
 	publish = 'zhihu.publish',
 	uploadImageFromClipboard = 'zhihu.uploadImageFromClipboard',
 	uploadImageFromPath = 'zhihu.uploadImageFromPath',
-	uploadImageFromExplorer = 'zhihu.uploadImageFromExplorer'
+	uploadImageFromExplorer = 'zhihu.uploadImageFromExplorer',
+	deleteEvent = 'zhihu.deleteEventItem'
 }
 
 export enum AuthCmds {
