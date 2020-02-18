@@ -159,8 +159,11 @@ export class WebviewService {
 				this.httpService.sendRequest({
 					uri: `${AnswerAPI}/${e.id}/voters`,
 					method: 'post',
-					headers: {}
+					headers: {},
+					json: true,
+					body: { type: "up" }
 				}).then(r => vscode.window.showInformationMessage('点赞成功！'))
+				.catch(r => vscode.window.showErrorMessage('点赞失败！'))
 			}
 		}, undefined, this.context.subscriptions)
 	}

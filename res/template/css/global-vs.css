@@ -98,12 +98,29 @@ p {
     padding: 12px;
 }
 
-div.voteup > button.true {
+svg.Zi.Zi--Share.Button-zi {
+    fill: #0084ff;
+    margin-top: 2px;
+}
+
+svg.Zi.Zi--Star.Button-zi {
+    vertical-align: bottom;
+    fill: #0084ff;
+}
+
+svg.Zi.Zi--LabelSpecial {
+    fill: #0084ff;
+}
+
+div.voteup > button {
+    cursor: pointer;
     border-style: none;
     border-radius: 5px;
     background: #0084ff;
     color: white;
     padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .container {
