@@ -4,13 +4,12 @@ import { compileFile } from "pug";
 import * as vscode from "vscode";
 import { MediaTypes, SettingEnum, WebviewEvents } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI, AnswerURL, QuestionURL, ZhuanlanURL } from "../const/URL";
+import { AnswerAPI, AnswerURL, QuestionAPI, QuestionURL, ZhuanlanURL } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target/target";
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { HttpService } from "./http.service";
-import { WebviewCmds } from "../const/CMD";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -57,7 +56,7 @@ export class WebviewService {
 	public async openWebview(object: ITarget & any) {
 		if (object.type == MediaTypes.question) {
 
-			const includeContent = "data[*].is_normal,content;";
+			const includeContent = "data[*].is_normal,content,voteup_count;";
 			let offset = 0;
 			let questionAPI = `${QuestionAPI}/${object.id}?include=detail%2cexcerpt`;
 			let answerAPI = `${QuestionAPI}/${object.id}/answers?include=${includeContent}?offset=${offset}`;
@@ -81,7 +80,10 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: body.data.map(t => { return this.actualSrcNormalize(t.content) }),
+					answers: body.data.map(t => {  
+						t.content = this.actualSrcNormalize(t.content);
+						return t;
+					}),
 					title: question.title,
 					subTitle: question.detail,
 					useVSTheme: useVSTheme
@@ -90,12 +92,12 @@ export class WebviewService {
 			this.registerEvent(panel, { type: MediaTypes.question, id: object.id }, `${QuestionURL}/${question.id}`);
 		} else if (object.type == MediaTypes.answer) {
 			let body: IQuestionAnswerTarget = await this.httpService.sendRequest({
-				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt`,
+				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt,voteup_count`,
 				json: true,
 				gzip: true
 			})
 			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
-
+			body.content = this.actualSrcNormalize(body.content);
 			let panel = this.renderHtml({
 				title: "知乎回答",
 				pugTemplatePath: path.join(
@@ -104,7 +106,9 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: [this.actualSrcNormalize(body.content)],
+					answers: [
+						body
+					],
 					title: object.question.name,
 					useVSTheme
 				}
@@ -112,7 +116,7 @@ export class WebviewService {
 			this.registerEvent(panel, { type: MediaTypes.answer, id: object.id }, `${AnswerURL}/${body.id}`)
 		} else if (object.type == MediaTypes.article) {
 			let article: IArticle = await this.httpService.sendRequest({
-				uri: object.url,
+				uri: `${object.url}?include=voteup_count`,
 				json: true,
 				gzip: true,
 				headers: null
@@ -151,11 +155,17 @@ export class WebviewService {
 				vscode.env.clipboard.writeText(link).then(() => {
 					vscode.window.showInformationMessage('链接已复制至粘贴板。');
 				})
-			} 
+			} else if (e.command == WebviewEvents.upvoteAnswer) {
+				this.httpService.sendRequest({
+					uri: `${AnswerAPI}/${e.id}/voters`,
+					method: 'post',
+					headers: {}
+				}).then(r => vscode.window.showInformationMessage('点赞成功！'))
+			}
 		}, undefined, this.context.subscriptions)
 	}
 
 	private actualSrcNormalize(html: string): string {
-		return html.replace(/<\/?noscript>/, '');
+		return html.replace(/<\/?noscript>/g, '');
 	}
 }

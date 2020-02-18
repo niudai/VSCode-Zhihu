@@ -52,5 +52,6 @@ export enum SettingEnum {
 export enum WebviewEvents {
 	collect = 'collect',
 	share = 'share',
-	open = 'open'
+	open = 'open',
+	upvoteAnswer = 'upvoteAnswer'
 }

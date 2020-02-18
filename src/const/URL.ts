@@ -54,7 +54,8 @@ export const HotStoryAPI = 'https://www.zhihu.com/api/v3/feed/topstory/hot-lists
 export const SelfProfileAPI = 'https://www.zhihu.com/api/v4/me';
 
 /**
- * AnswerAPI = 'https://www.zhihu.com/api/v4/answers/${answerId}'
+ * AnswerAPI = `https://www.zhihu.com/api/v4/answers/${answerId}`
+ * Voters = `https://www.zhihu.com/api/v4/answers/${answerId}/voters`
  */
 export const AnswerAPI = 'https://www.zhihu.com/api/v4/answers';
 
