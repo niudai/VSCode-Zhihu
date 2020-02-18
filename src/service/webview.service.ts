@@ -4,7 +4,7 @@ import { compileFile } from "pug";
 import * as vscode from "vscode";
 import { MediaTypes, SettingEnum, WebviewEvents } from "../const/ENUM";
 import { TemplatePath, ZhihuIconPath } from "../const/PATH";
-import { AnswerAPI, AnswerURL, QuestionAPI, QuestionURL, ZhuanlanURL } from "../const/URL";
+import { AnswerAPI, AnswerURL, QuestionAPI, QuestionURL, ZhuanlanURL, ArticleAPI } from "../const/URL";
 import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target/target";
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
@@ -122,7 +122,7 @@ export class WebviewService {
 				headers: null
 			});
 			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
-
+			article.content = this.actualSrcNormalize(article.content);
 			let panel = this.renderHtml({
 				title: "知乎文章",
 				pugTemplatePath: path.join(
@@ -131,7 +131,7 @@ export class WebviewService {
 					"article.pug"
 				),
 				pugObjects: {
-					content: this.actualSrcNormalize(article.content),
+					article: article,
 					title: article.title,
 					useVSTheme
 				}
@@ -161,9 +161,21 @@ export class WebviewService {
 					method: 'post',
 					headers: {},
 					json: true,
-					body: { type: "up" }
-				}).then(r => vscode.window.showInformationMessage('点赞成功！'))
-				.catch(r => vscode.window.showErrorMessage('点赞失败！'))
+					body: { type: "up" },
+					resolveWithFullResponse: true
+				}).then(r => {if(r.statusCode == 200) vscode.window.showInformationMessage('点赞成功！')
+				else if(r.statusCode == 403) vscode.window.showWarningMessage('你已经投过票了！')})
+			} else if (e.command == WebviewEvents.upvoteArticle) {
+				this.httpService.sendRequest({
+					uri: `${ArticleAPI}/${e.id}/voters`,
+					method: 'post',
+					headers: {},
+					json: true,
+					body: { voting: 1 },
+					resolveWithFullResponse: true
+				}).then(r => { if(r.statusCode == 200) vscode.window.showInformationMessage('点赞成功！')
+					else if(r.statusCode == 403) vscode.window.showWarningMessage('你已经投过票了！');
+				})
 			}
 		}, undefined, this.context.subscriptions)
 	}

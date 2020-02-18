@@ -53,5 +53,6 @@ export enum WebviewEvents {
 	collect = 'collect',
 	share = 'share',
 	open = 'open',
-	upvoteAnswer = 'upvoteAnswer'
+	upvoteAnswer = 'upvoteAnswer',
+	upvoteArticle = 'upvoteArticle'
 }

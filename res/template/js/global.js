@@ -9,7 +9,13 @@ function answerUpvote(id) {
 		command: 'upvoteAnswer',
 		id: id
 	})
-	console.log(`Hello Upvoter! ${s}`)
+}
+
+function articleUpvote(id) {
+	vscode.postMessage({
+		command: 'upvoteArticle',
+		id: id
+	})
 }
 
 favoriteBtn.addEventListener('click', e => {
