@@ -9,7 +9,8 @@ html
     div(class = 'container') 
       div(class = 'author') 
         span(class = 'avatar-span')
-          img(class = 'avatar-img', src = `${article.author.avatar_url}`)
+          a(href = `https://www.zhihu.com/people/${article.author.url_token}`)
+            img(class = 'avatar-img', src = `${article.author.avatar_url}`, )
         div(class = 'profile')
           div(class = 'author-name') #{article.author.name}
           div(class = 'author-headline') #{article.author.headline}

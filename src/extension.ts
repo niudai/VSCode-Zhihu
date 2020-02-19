@@ -27,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
 		fs.createWriteStream(path.join(context.extensionPath, './cookie.json')).end()
 	}
-
+	vscode.window.showInformationMessage('插件激活');
 	// Dependency Injection
 	const releaseNotesService = new ReleaseNotesService(context);
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
