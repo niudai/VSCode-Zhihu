@@ -48,6 +48,4 @@ function beautifyDate(date: Date) {
 	return `${isAm ? hour : hour - 12}:${minute < 10 ? '0' + minute : minute} ${isAm ? 'am' : 'pm'}`
 }
 
-
-
 export { escapeHtml, unescapeMd, removeHtmlTag, removeSpace, beautifyDate }

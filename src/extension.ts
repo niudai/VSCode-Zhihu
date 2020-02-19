@@ -21,6 +21,7 @@ import { FeedTreeItem, FeedTreeViewProvider, EventTreeItem } from "./treeview/fe
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
 import { ReleaseNotesService } from "./service/release-note.service";
+import * as markdown_it_zhihu from "markdown-it-zhihu";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -30,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Dependency Injection
 	const releaseNotesService = new ReleaseNotesService(context);
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
-	const zhihuMdParser = new ZhihuMarkdownIt();
+	const zhihuMdParser = new MarkdownIt().use(markdown_it_zhihu);
 	const defualtMdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
 	const httpService = new HttpService(context, cookieJar, store);

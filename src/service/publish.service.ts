@@ -11,7 +11,7 @@ import { unescapeMd, escapeHtml, beautifyDate } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
-import { QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
+import { QuestionAnswerPathReg, QuestionPathReg, ArticlePathReg } from "../const/REG";
 import { EventService } from "./event.service";
 import md5 = require("md5");
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
@@ -153,6 +153,21 @@ export class PublishService {
 					}
 				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
+			} else if (ArticlePathReg.test(url.pathname)) {
+				let arId = url.pathname.replace(ArticlePathReg, '$1');
+				let title = await this._getTitle();
+				if (!this.eventService.registerEvent({
+					content: html,
+					type: MediaTypes.question,
+					date: timeObject.date,
+					title: title,
+					hash: md5(html),
+					handler: () => {
+						this.putArticle(html, arId, title);
+						this.eventService.destroyEvent(md5(html));
+					}
+				})) this.promptSameContentWarn()
+				else this.promptEventRegistedInfo(timeObject)
 			}
 		} else { // url is not provided
 			const selectFrom: MediaTypes = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: MediaTypes }>(
@@ -271,7 +286,7 @@ export class PublishService {
 					}
 				);
 			} else {
-				if (resp.statusCode == 400) {
+				if (resp.statusCode == 400 || resp.statusCode == 403) {
 					vscode.window.showWarningMessage(`发布失败，你已经在该问题下发布过答案，请将头部链接更改为\
 					已回答的问题下的链接。`)
 				} else {
@@ -326,6 +341,43 @@ export class PublishService {
 		return resp;
 	}
 
+	public async putArticle(content: string, articleId: string, title?: string) {
+		if (!title) {
+			title = await vscode.window.showInputBox({
+				ignoreFocusOut: true,
+				prompt: "修改文章标题：",
+				placeHolder: ""
+			})
+		}
+		if (!title) return;
+
+		let patchResp = await this.httpService.sendRequest({
+			uri: `${ZhuanlanAPI}/${articleId}/draft`,
+			json: true,
+			method: 'patch',
+			body: {
+				content: content,
+				title: title
+			},
+			headers: {}
+		})
+
+		let resp = await this.httpService.sendRequest({
+			uri: `${ZhuanlanAPI}/${articleId}/publish`,
+			json: true,
+			method: 'put',
+			body: { "column": null, "commentPermission": "anyone" },
+			headers: {},
+			resolveWithFullResponse: true
+		})
+		if (resp.statusCode < 300) {
+			this.promptSuccessMsg(`${ZhuanlanURL}${articleId}`, title)
+		} else {
+			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
+		}
+		return resp;		
+	}
+
 	private promptSuccessMsg(url: string, title?: string) {
 		vscode.window.showInformationMessage(`${title ? '"' + title + '"' : ''} 发布成功！\n`, { modal: true },
 			previewActions.openInBrowser
@@ -340,7 +392,7 @@ export class PublishService {
 		let link = text.slice(0, lf - 1);
 		if (!shebangRegExp.test(link)) return undefined;
 		let url = new URL(link.replace(shebangRegExp, '$1'));
-		if (url.host === 'www.zhihu.com') return url;
+		if (/^(\w)+\.zhihu\.com$/.test(url.host)) return url;
 		else return undefined;
 		// shebangRegExp = /(https?:\/\/)/i
 	}

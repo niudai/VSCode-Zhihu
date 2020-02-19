@@ -98,6 +98,30 @@ p {
     padding: 12px;
 }
 
+.profile {
+    display: inline-block;
+    margin-left: 14px;
+}
+
+.author-name {
+    font-size: 1.3em;
+    font-weight: bolder;
+}
+
+.author {
+    border-bottom: #99ded8;
+    border-bottom-style: double;
+    border-bottom-width: 2px;
+    padding-bottom: 10px;
+    /* border-style: dashed; */
+}
+
+img.avatar-img {
+    border-radius: 10px;
+    width: 60px;
+    box-shadow: 0px 0px 5px #95cab6;
+}
+
 svg.Zi.Zi--Share.Button-zi {
     fill: #0084ff;
     margin-top: 2px;
