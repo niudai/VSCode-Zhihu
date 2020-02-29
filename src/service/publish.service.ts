@@ -15,6 +15,8 @@ import { QuestionAnswerPathReg, QuestionPathReg, ArticlePathReg } from "../const
 import { EventService } from "./event.service";
 import md5 = require("md5");
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
+import { ProfileService } from "./profile.service";
+import { IColumn } from "../model/publish/column.model";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -39,7 +41,8 @@ export class PublishService {
 		protected defualtMdParser: MarkdownIt,
 		protected webviewService: WebviewService,
 		protected collectionService: CollectionService,
-		protected eventService: EventService
+		protected eventService: EventService,
+		protected profileService: ProfileService
 	) {
 		this.registerPublishEvents();
 	}
@@ -156,6 +159,10 @@ export class PublishService {
 			} else if (ArticlePathReg.test(url.pathname)) {
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				let title = await this._getTitle();
+				let column = await this._selectColumn();
+				if (!column) {
+					vscode.window
+				}
 				if (!this.eventService.registerEvent({
 					content: html,
 					type: MediaTypes.question,
@@ -163,7 +170,7 @@ export class PublishService {
 					title: title,
 					hash: md5(html),
 					handler: () => {
-						this.putArticle(html, arId, title);
+						this.putArticle(html, arId, title, column);
 						this.eventService.destroyEvent(md5(html));
 					}
 				})) this.promptSameContentWarn()
@@ -180,6 +187,7 @@ export class PublishService {
 			if (selectFrom === MediaTypes.article) {
 				// user select to publish new article
 				let title: string | undefined = await this._getTitle();
+				let column = await this._selectColumn();
 				if (!title) return;
 				if (!this.eventService.registerEvent({
 					content: html,
@@ -188,7 +196,7 @@ export class PublishService {
 					date: timeObject.date,
 					hash: md5(html + title),
 					handler: () => {
-						this.postArticle(html, title);
+						this.postArticle(html, title, column);
 						this.eventService.destroyEvent(md5(html + title));
 					}
 				})) this.promptSameContentWarn()
@@ -239,6 +247,15 @@ export class PublishService {
 			placeHolder: "",
 		});
 	}
+
+	private async _selectColumn(): Promise<IColumn | undefined> {
+		const columns = await this.profileService.getColumns();
+		return vscode.window.showQuickPick<vscode.QuickPickItem & { value: IColumn}>(
+			[{label: '不发布到专栏', value: undefined}].concat(columns.map(c => ({ label: c.title, value: c}))), {
+				ignoreFocusOut: true
+			}
+		).then(item => item.value);
+	} 
 
 	public putAnswer(html: string, answerId: string) {
 		this.httpService.sendRequest({
@@ -296,7 +313,7 @@ export class PublishService {
 		})
 	}
 
-	public async postArticle(content: string, title?: string) {
+	public async postArticle(content: string, title?: string, column?: IColumn) {
 		if (!title) {
 			title = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
@@ -329,7 +346,7 @@ export class PublishService {
 			uri: `${ZhuanlanAPI}/${postResp.id}/publish`,
 			json: true,
 			method: 'put',
-			body: { "column": null, "commentPermission": "anyone" },
+			body: { "column": column, "commentPermission": "anyone" },
 			headers: {},
 			resolveWithFullResponse: true
 		})
@@ -341,7 +358,7 @@ export class PublishService {
 		return resp;
 	}
 
-	public async putArticle(content: string, articleId: string, title?: string) {
+	public async putArticle(content: string, articleId: string, title?: string, column?: IColumn) {
 		if (!title) {
 			title = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
@@ -366,7 +383,7 @@ export class PublishService {
 			uri: `${ZhuanlanAPI}/${articleId}/publish`,
 			json: true,
 			method: 'put',
-			body: { "column": null, "commentPermission": "anyone" },
+			body: { "column": column, "commentPermission": "anyone" },
 			headers: {},
 			resolveWithFullResponse: true
 		})

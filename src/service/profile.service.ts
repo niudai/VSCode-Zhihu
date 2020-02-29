@@ -1,9 +1,10 @@
 
 import * as vscode from "vscode";
-import { SelfProfileAPI } from "../const/URL";
+import { SelfProfileAPI, ColumnAPI } from "../const/URL";
 import { IProfile } from "../model/target/target";
 import { HttpService } from "./http.service";
 import { AccountService } from "./account.service";
+import { IColumn } from "../model/publish/column.model";
 
 export class ProfileService {
 	public profile: IProfile;
@@ -35,5 +36,20 @@ export class ProfileService {
 
 	get avatarUrl(): string {
 		return this.profile ? this.profile.avatar_url : undefined;
+	}
+
+	async getColumns(): Promise<IColumn[]> {
+		if (this.profile) {
+			return this.httpService.sendRequest({
+				uri: ColumnAPI(this.profile.url_token),
+				json: true,
+				gzip: true,
+				method: 'get'
+			}).then(resp => {
+				return resp.map(element => element.column);
+			})
+		} else {
+			return Promise.resolve(null);
+		}
 	}
 }

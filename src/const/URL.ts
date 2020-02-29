@@ -87,6 +87,14 @@ export const QuestionURL = 'https://www.zhihu.com/question'
 export const ZhuanlanAPI = 'https://zhuanlan.zhihu.com/api/articles';
 
 /**
+ * get columns info
+ * @param urltoken urlToken of people
+ */
+export function ColumnAPI(urltoken: string) {
+	return `https://www.zhihu.com/api/v4/members/${urltoken}/column-contributions?include=data%5B*%5D.column.intro%2Cfollowers%2Carticles_count&offset=0&limit=20`
+}
+
+/**
  * Html Page: 'https://zhuanlan.zhihu.com/p/${articleId}'
  */
 export const ZhuanlanURL = 'https://zhuanlan.zhihu.com/p/';

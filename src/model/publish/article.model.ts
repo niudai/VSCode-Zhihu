@@ -1,4 +1,5 @@
 import { ITarget, IAuthorTarget } from "../target/target";
+import { IColumn } from "./column.model";
 
 export interface IPostArticle {
 	
@@ -20,6 +21,8 @@ export interface IPostArticle {
 	 * inner html for content
 	 */
 	content: string;
+
+	column: IColumn;
 }
 
 export interface IPostArticleResp extends ITarget {

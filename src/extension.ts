@@ -1,11 +1,11 @@
 "use strict";
 
 import * as fs from "fs";
+import * as markdown_it_zhihu from "markdown-it-zhihu";
 import * as path from "path";
 import { CookieJar } from "tough-cookie";
 import * as FileCookieStore from "tough-cookie-filestore";
 import * as vscode from "vscode";
-import * as ZhihuMarkdownIt from "zhihu-markdown";
 import { AccountService } from "./service/account.service";
 import { AuthenticateService } from "./service/authenticate.service";
 import { CollectionService } from "./service/collection.service";
@@ -14,14 +14,13 @@ import { HttpService } from "./service/http.service";
 import { PasteService } from "./service/paste.service";
 import { ProfileService } from "./service/profile.service";
 import { PublishService } from "./service/publish.service";
+import { ReleaseNotesService } from "./service/release-note.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
-import { FeedTreeItem, FeedTreeViewProvider, EventTreeItem } from "./treeview/feed-treeview-provider";
+import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import MarkdownIt = require("markdown-it");
-import { ReleaseNotesService } from "./service/release-note.service";
-import * as markdown_it_zhihu from "markdown-it-zhihu";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
