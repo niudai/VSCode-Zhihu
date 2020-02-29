@@ -49,6 +49,7 @@ export class ProfileService {
 				return resp.data.map(element => element.column);
 			})
 		} else {
+			vscode.window.showWarningMessage('请先登录！');
 			return Promise.resolve(null);
 		}
 	}

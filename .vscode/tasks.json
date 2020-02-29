@@ -7,16 +7,32 @@
             "label": "Run Develop",
             "type": "npm",
             "script": "develop",
-            "problemMatcher": "$ts-webpack-watch",
             "isBackground": true,
             "presentation": {
-                "reveal": "always",
-                "panel": "new"
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
             },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "problemMatcher": {
+                "base": "$ts-webpack-watch",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "webpack is watching the files…",
+                    "endsPattern": "^Built at: .* PM"
+                    // Built at: 02/29/2020 5:33:30 PM
+                }
+            },
+            // "presentation": {
+            //     "reveal": "always",
+            //     "panel": "new"
+            // },
+            // "group": {
+            //     "kind": "build",
+            //     "isDefault": true
+            // }
         }
     ]
 }
