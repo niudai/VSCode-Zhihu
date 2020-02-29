@@ -84,6 +84,7 @@ export class PublishService {
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 
 		let text = textEdtior.document.getText();
+		console.log('Publishing........');
 		const url: URL = this.shebangParser(text);
 		const timeObject: TimeObject = { hour: 0, date: new Date(), minute: 0 };
 		// get rid of shebang line
@@ -112,7 +113,7 @@ export class PublishService {
 					return ''
 				}
 			});
-			let h = parseInt(timeStr.replace(ClockReg, '$1')), m = parseInt(timeStr.replace(ClockReg, '$2')), aOrPm = timeStr.replace(ClockReg, '$3'); 
+			let h = parseInt(timeStr.replace(ClockReg, '$1')), m = parseInt(timeStr.replace(ClockReg, '$2')), aOrPm = timeStr.replace(ClockReg, '$3');
 			if (!timeStr) return;
 			timeStr = timeStr.trim();
 			/**
@@ -120,7 +121,7 @@ export class PublishService {
 			 */
 			timeObject.date.setHours(aOrPm == 'am' ? h : h + 12);
 			timeObject.date.setMinutes(m);
-			if (timeObject.date.getTime() < Date.now()) { 
+			if (timeObject.date.getTime() < Date.now()) {
 				vscode.window.showWarningMessage('不能选择比现在更早的时间！');
 				return;
 			}
@@ -140,7 +141,7 @@ export class PublishService {
 						this.putAnswer(html, aId);
 						this.eventService.destroyEvent(md5(html));
 					}
-				})) this.promptSameContentWarn() 
+				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (QuestionPathReg.test(url.pathname)) {
 				// question link, post new answer
@@ -232,7 +233,7 @@ export class PublishService {
 	private promptEventRegistedInfo(timeObject: TimeObject) {
 		if (timeObject.date.getTime() > Date.now()) {
 			vscode.window.showInformationMessage(`答案将在 ${beautifyDate(timeObject.date)} 发布，请发布时保证VSCode处于打开状态，并` +
-			`激活知乎插件`);
+				`激活知乎插件`);
 		}
 	}
 
@@ -250,12 +251,12 @@ export class PublishService {
 
 	private async _selectColumn(): Promise<IColumn | undefined> {
 		const columns = await this.profileService.getColumns();
-		return vscode.window.showQuickPick<vscode.QuickPickItem & { value: IColumn}>(
-			[{label: '不发布到专栏', value: undefined}].concat(columns.map(c => ({ label: c.title, value: c}))), {
-				ignoreFocusOut: true
-			}
+		return vscode.window.showQuickPick<vscode.QuickPickItem & { value: IColumn }>(
+			[{ label: '不发布到专栏', value: undefined }].concat(columns.map(c => ({ label: c.title, value: c }))), {
+			ignoreFocusOut: true
+		}
 		).then(item => item.value);
-	} 
+	}
 
 	public putAnswer(html: string, answerId: string) {
 		this.httpService.sendRequest({
@@ -392,7 +393,7 @@ export class PublishService {
 		} else {
 			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
 		}
-		return resp;		
+		return resp;
 	}
 
 	private promptSuccessMsg(url: string, title?: string) {

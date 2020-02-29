@@ -1,16 +1,14 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-    "version": "0.2.0",
+    "version": "0.2.1",
     "configurations": [
-
-
-    {
-        "type": "node",
-        "request": "launch",
-        "name": "launch script",
-        "program": "${file}"
-        // "args": ["${file}"]
-    },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "launch script",
+            "program": "${file}"
+            // "args": ["${file}"]
+        },
         {
             "name": "Launch Extension",
             "type": "extensionHost",
@@ -20,13 +18,13 @@
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}"
                 // "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
-            ], 
+            ],
             "stopOnEntry": false,
             "sourceMaps": true,
             // "outFiles": [
-            //     "${workspaceRoot}/dist/*"
+            //     "${workspaceRoot}/dist/**"
             // ],
-            // "preLaunchTask": "npm: develop"
+            "preLaunchTask": "Run Develop"
         },
         {
             "type": "node",
@@ -36,7 +34,7 @@
             "port": 5870,
             "restart": true,
             "outFiles": [
-                "${workspaceRoot}/out/src"
+                "${workspaceRoot}/dist/*"
             ]
         }
     ]
