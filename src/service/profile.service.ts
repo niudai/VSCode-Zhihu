@@ -46,7 +46,7 @@ export class ProfileService {
 				gzip: true,
 				method: 'get'
 			}).then(resp => {
-				return resp.map(element => element.column);
+				return resp.data.map(element => element.column);
 			})
 		} else {
 			return Promise.resolve(null);

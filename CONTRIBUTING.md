@@ -35,6 +35,8 @@ run `npm install` first to install all deps and dev-deps.
 
 VSCode-Zhihu uses webpack as dev&prod tool. In order to build and run, you need to execute `npm run develop` first, which compiles the typescript code and bundles them together into a single big .js file in `\dist` folder, and since the webpack starts in **watch mode**, evertime you altered the source .ts file, webpack would recompile for you, so you don't have to compile it manually.
 
+> You don't need to execute `npm run develop` any more, cuz the `Launch Extenison` task do it for you.
+
 You could check the scripts in `package.json` to see what `develop` do, knowing some webpack concepts would be helpful.
 
 Since webpack is always used as bundler and minimizer in client side, the npm dependencies in this project would sometimes break the behavior of thoses packages used for front-end, which you will see later.

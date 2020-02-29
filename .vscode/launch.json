@@ -16,7 +16,7 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--disable-extensions",
-                "--extensionDevelopmentPath=${workspaceRoot}"
+                "--extensionDevelopmentPath=${workspaceRoot}",
                 // "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
             ],
             "stopOnEntry": false,
