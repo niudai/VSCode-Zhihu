@@ -7,7 +7,7 @@ import { WebviewService } from "./webview.service";
 import { join } from "path";
 import { TemplatePath } from "../const/PATH";
 import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL, ZhuanlanURL } from "../const/URL";
-import { unescapeMd, escapeHtml, beautifyDate } from "../util/md-html-utils";
+import { unescapeMd, escapeHtml, beautifyDate, removeHtmlTag } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { MediaTypes } from "../const/ENUM";
 import { PostAnswer } from "../model/publish/answer.model";
@@ -82,7 +82,7 @@ export class PublishService {
 	}
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
-
+		let title: string;
 		let text = textEdtior.document.getText();
 		console.log('Publishing........');
 		const url: URL = this.shebangParser(text);
@@ -91,6 +91,12 @@ export class PublishService {
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
+		let tokens: any[] = this.zhihuMdParser.parse(text, {});
+		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
+		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
+		if (openIndex >= 0) {
+			title = removeHtmlTag(this.zhihuMdParser.renderInline(tokens[openIndex+1].content));
+		}
 
 		const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
 			[
@@ -158,8 +164,12 @@ export class PublishService {
 				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (ArticlePathReg.test(url.pathname)) {
+				tokens = tokens.filter((t, i) => Math.abs(openIndex + 1 - i) > 1);
+				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
-				let title = await this._getTitle();
+				if (!title) {
+					title = await this._getTitle();
+				}
 				let column = await this._selectColumn();
 				if (!column) {
 					vscode.window
@@ -186,8 +196,13 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
+				tokens = tokens.filter((t, i) => Math.abs(openIndex + 1 - i) > 1);
+				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
+
 				// user select to publish new article
-				let title: string | undefined = await this._getTitle();
+				if (!title) {
+					title = await this._getTitle();					
+				}
 				let column = await this._selectColumn();
 				if (!title) return;
 				if (!this.eventService.registerEvent({
