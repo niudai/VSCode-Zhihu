@@ -83,6 +83,7 @@ export class PublishService {
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let title: string;
 		let titleImage: string;
+		let bgIndex: number;
 		let text = textEdtior.document.getText();
 		const url: URL = this.shebangParser(text);
 		const timeObject: TimeObject = { hour: 0, date: new Date(), minute: 0 };
@@ -101,6 +102,7 @@ export class PublishService {
 						if(c.type === 'image') {
 							let tmp = c.attrs.find(a => a[0] === 'src')
 							titleImage = tmp[1];
+							bgIndex = i;
 						}
 					}
 				}
@@ -173,7 +175,7 @@ export class PublishService {
 				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (ArticlePathReg.test(url.pathname)) {
-				tokens = tokens.filter((t, i) => Math.abs(openIndex + 1 - i) > 1);
+				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
@@ -205,7 +207,7 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
-				tokens = tokens.filter((t, i) => Math.abs(openIndex + 1 - i) > 1);
+				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 
 				// user select to publish new article
@@ -252,6 +254,10 @@ export class PublishService {
 				else this.promptEventRegistedInfo(timeObject);
 			}
 		}
+	}
+
+	private _removeTitleAndBg(openIndex: number, bgIndex: number) {
+		return (t, i) => Math.abs(openIndex + 1 - i) > 1 && bgIndex != i;
 	}
 
 	private promptEventRegistedInfo(timeObject: TimeObject) {

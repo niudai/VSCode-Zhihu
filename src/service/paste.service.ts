@@ -81,12 +81,12 @@ export class PasteService {
 			zhihu_agent.options.stsToken = prefetchBody.upload_token.access_token;
 			let client = new OSS(zhihu_agent.options);
 			console.log(prefetchBody);
-			this.insertImageLink(`${prefetchBody.upload_file.object_key}_hd${path.extname(filePath)}`);
+			this.insertImageLink(`${prefetchBody.upload_file.object_key}${path.extname(filePath)}`);
 			// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
 			let putResp = client.put(upload_file.object_key, filePath);
 			console.log(putResp)
 		} else {
-			this.insertImageLink(`v2-${hash}_hd${path.extname(filePath)}`);
+			this.insertImageLink(`v2-${hash}${path.extname(filePath)}`);
 		}
 		vscode.window.showInformationMessage('上传成功！')
 		return Promise.resolve(prefetchBody.upload_file.object_key);
