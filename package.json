@@ -305,7 +305,7 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Set true to enable full-sized background image"
-				}, 
+				},
 				"zhihu.useWaterMark": {
 					"type": "boolean",
 					"default": false,
@@ -353,7 +353,7 @@
 		"form-urlencoded": "^4.1.1",
 		"markdown-it": "^10.0.0",
 		"markdown-it-katex": "^2.0.3",
-		"markdown-it-zhihu": "^2.0.5",
+		"markdown-it-zhihu": "^2.0.6",
 		"md5": "^2.2.1",
 		"on-change": "^1.6.2",
 		"pug": "^2.0.4",

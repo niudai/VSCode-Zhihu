@@ -90,7 +90,6 @@ export class PublishService {
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
-		html = html.replace(/\n/g, '');
 		let tokens = this.zhihuMdParser.parse(text, {});
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
