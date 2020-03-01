@@ -90,6 +90,7 @@ export class PublishService {
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
+		html = html.replace(/\n/g, '');
 		let tokens = this.zhihuMdParser.parse(text, {});
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
@@ -275,10 +276,13 @@ export class PublishService {
 
 	private async _selectColumn(): Promise<IColumn | undefined> {
 		const columns = await this.profileService.getColumns();
+		if (!columns || columns.length === 0) return;
 		return vscode.window.showQuickPick<vscode.QuickPickItem & { value: IColumn }>(
-			[{ label: '不发布到专栏', value: undefined }].concat(columns.map(c => ({ label: c.title, value: c }))), {
-			ignoreFocusOut: true
-		}
+			[{ label: '不发布到专栏', value: undefined }].concat(columns.map(c => ({ label: c.title, value: c }))), 
+			{
+			ignoreFocusOut: true,
+		
+			}
 		).then(item => item.value);
 	}
 
@@ -364,7 +368,7 @@ export class PublishService {
 				content: content,
 				title: title,
 				titleImage,
-				isTitleImageFullScreen: vscode.workspace.getConfiguration(SettingEnum.isTitleImageFullScreen)
+				isTitleImageFullScreen: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.isTitleImageFullScreen)
 			},
 			headers: {}
 		})
@@ -403,7 +407,7 @@ export class PublishService {
 				content: content,
 				title: title,
 				titleImage,
-				isTitleImageFullScreen: vscode.workspace.getConfiguration(SettingEnum.isTitleImageFullScreen)
+				isTitleImageFullScreen: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.isTitleImageFullScreen)
 			},
 			headers: {}
 		})

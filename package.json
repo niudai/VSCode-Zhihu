@@ -305,6 +305,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Set true to enable full-sized background image"
+				}, 
+				"zhihu.useWaterMark": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set true to enable watermark"
 				}
 			}
 		},

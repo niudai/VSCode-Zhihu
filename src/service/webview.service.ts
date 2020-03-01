@@ -70,7 +70,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			});
-			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
+			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme);
 
 			let panel = this.renderHtml({
 				title: "知乎问题",
@@ -96,7 +96,7 @@ export class WebviewService {
 				json: true,
 				gzip: true
 			})
-			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
+			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme);
 			body.content = this.actualSrcNormalize(body.content);
 			let panel = this.renderHtml({
 				title: "知乎回答",
@@ -121,7 +121,7 @@ export class WebviewService {
 				gzip: true,
 				headers: null
 			});
-			let useVSTheme = vscode.workspace.getConfiguration(SettingEnum.useVSTheme);
+			let useVSTheme = vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme);
 			article.content = this.actualSrcNormalize(article.content);
 			let panel = this.renderHtml({
 				title: "知乎文章",

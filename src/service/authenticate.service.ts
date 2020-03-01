@@ -93,7 +93,7 @@ export class AuthenticateService {
 				pugObjects: {
 					title: '验证码',
 					captchaSrc: imgSrc.toString(),
-					useVSTheme: vscode.workspace.getConfiguration(SettingEnum.useVSTheme)
+					useVSTheme: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme)
 				}
 			}, panel)
 	
@@ -175,8 +175,10 @@ export class AuthenticateService {
 			if (loginResp.statusCode == '201') {
 				vscode.window.showInformationMessage(`你好，${this.profileService.name}`);
 				this.feedTreeViewProvider.refresh();
+			} else if (loginResp.statusCode == '401') {
+				vscode.window.showInformationMessage('密码错误！' + loginResp.statusCode);
 			} else {
-				vscode.window.showInformationMessage('登录失败！错误代码：' + loginResp.statusCode);
+				vscode.window.showInformationMessage('登录失败！错误代码' + loginResp.statusCode);
 			}
 		})
 	}
@@ -255,7 +257,7 @@ export class AuthenticateService {
 				pugObjects: {
 					title: '打开知乎 APP 扫一扫',
 					qrcodeSrc: imgSrc.toString(),
-					useVSTheme: vscode.workspace.getConfiguration(SettingEnum.useVSTheme)
+					useVSTheme: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme)
 				}
 			},
 			panel
