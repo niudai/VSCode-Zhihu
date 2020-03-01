@@ -1,22 +1,21 @@
 
-import * as vscode from "vscode";
-import { IProfile, ITarget } from "../model/target/target";
-import { HttpService } from "./http.service";
-import MarkdownIt = require("markdown-it");
-import { WebviewService } from "./webview.service";
 import { join } from "path";
+import * as vscode from "vscode";
+import { MediaTypes, SettingEnum } from "../const/ENUM";
 import { TemplatePath } from "../const/PATH";
-import { AnswerAPI, QuestionAPI, ZhuanlanAPI, AnswerURL, ZhuanlanURL } from "../const/URL";
-import { unescapeMd, escapeHtml, beautifyDate, removeHtmlTag } from "../util/md-html-utils";
-import { CollectionService, ICollectionItem } from "./collection.service";
-import { MediaTypes } from "../const/ENUM";
+import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
+import { AnswerAPI, AnswerURL, QuestionAPI, ZhuanlanAPI, ZhuanlanURL } from "../const/URL";
 import { PostAnswer } from "../model/publish/answer.model";
-import { QuestionAnswerPathReg, QuestionPathReg, ArticlePathReg } from "../const/REG";
-import { EventService } from "./event.service";
-import md5 = require("md5");
-import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { ProfileService } from "./profile.service";
 import { IColumn } from "../model/publish/column.model";
+import { IProfile, ITarget } from "../model/target/target";
+import { beautifyDate, removeHtmlTag } from "../util/md-html-utils";
+import { CollectionService, ICollectionItem } from "./collection.service";
+import { EventService } from "./event.service";
+import { HttpService } from "./http.service";
+import { ProfileService } from "./profile.service";
+import { WebviewService } from "./webview.service";
+import * as MarkdownIt from "markdown-it";
+import md5 = require("md5");
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -83,19 +82,29 @@ export class PublishService {
 
 	async publish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
 		let title: string;
+		let titleImage: string;
 		let text = textEdtior.document.getText();
-		console.log('Publishing........');
 		const url: URL = this.shebangParser(text);
 		const timeObject: TimeObject = { hour: 0, date: new Date(), minute: 0 };
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
 		let html = this.zhihuMdParser.render(text);
-		let tokens: any[] = this.zhihuMdParser.parse(text, {});
+		let tokens = this.zhihuMdParser.parse(text, {});
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
 		if (openIndex >= 0) {
 			title = removeHtmlTag(this.zhihuMdParser.renderInline(tokens[openIndex+1].content));
+			for (let i = 0; i < openIndex; i++) {
+				if(tokens[i].type === 'inline') {
+					for (let c of tokens[i].children) {
+						if(c.type === 'image') {
+							let tmp = c.attrs.find(a => a[0] === 'src')
+							titleImage = tmp[1];
+						}
+					}
+				}
+			}
 		}
 
 		const pubLater = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: boolean }>(
@@ -181,7 +190,7 @@ export class PublishService {
 					title: title,
 					hash: md5(html),
 					handler: () => {
-						this.putArticle(html, arId, title, column);
+						this.putArticle(html, arId, title, column, titleImage);
 						this.eventService.destroyEvent(md5(html));
 					}
 				})) this.promptSameContentWarn()
@@ -212,7 +221,7 @@ export class PublishService {
 					date: timeObject.date,
 					hash: md5(html + title),
 					handler: () => {
-						this.postArticle(html, title, column);
+						this.postArticle(html, title, column, titleImage);
 						this.eventService.destroyEvent(md5(html + title));
 					}
 				})) this.promptSameContentWarn()
@@ -329,7 +338,7 @@ export class PublishService {
 		})
 	}
 
-	public async postArticle(content: string, title?: string, column?: IColumn) {
+	public async postArticle(content: string, title?: string, column?: IColumn, titleImage?: string) {
 		if (!title) {
 			title = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
@@ -353,7 +362,9 @@ export class PublishService {
 			method: 'patch',
 			body: {
 				content: content,
-				title: title
+				title: title,
+				titleImage,
+				isTitleImageFullScreen: vscode.workspace.getConfiguration(SettingEnum.isTitleImageFullScreen)
 			},
 			headers: {}
 		})
@@ -374,7 +385,7 @@ export class PublishService {
 		return resp;
 	}
 
-	public async putArticle(content: string, articleId: string, title?: string, column?: IColumn) {
+	public async putArticle(content: string, articleId: string, title?: string, column?: IColumn, titleImage?: string) {
 		if (!title) {
 			title = await vscode.window.showInputBox({
 				ignoreFocusOut: true,
@@ -390,7 +401,9 @@ export class PublishService {
 			method: 'patch',
 			body: {
 				content: content,
-				title: title
+				title: title,
+				titleImage,
+				isTitleImageFullScreen: vscode.workspace.getConfiguration(SettingEnum.isTitleImageFullScreen)
 			},
 			headers: {}
 		})
@@ -419,7 +432,7 @@ export class PublishService {
 
 
 	shebangParser(text: string): URL {
-		let shebangRegExp = /#!\s*((https?:\/\/)?(.+))$/i
+		let shebangRegExp = /#[!！]\s*((https?:\/\/)?(.+))$/i
 		let lf = text.indexOf('\n');
 		if (lf < 0) lf = text.length;
 		let link = text.slice(0, lf - 1);

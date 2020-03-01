@@ -300,6 +300,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Use VSCode default theme color, set false to disable"
+				},
+				"zhihu.isTitleImageFullScreen": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set true to enable full-sized background image"
 				}
 			}
 		},

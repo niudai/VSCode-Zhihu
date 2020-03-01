@@ -47,6 +47,7 @@ export const LoginTypes = [
 
 export enum SettingEnum {
 	useVSTheme = 'zhihu.useVSTheme',
+	isTitleImageFullScreen = 'zhihu.isTitleImageFullScreen'
 }
 
 export enum WebviewEvents {
