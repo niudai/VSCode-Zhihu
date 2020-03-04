@@ -25,4 +25,8 @@
         "statusBar.foreground": "#e7e7e7"
     },
     "peacock.color": "#eb5424",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.tslint": true
+    },
+    
 }

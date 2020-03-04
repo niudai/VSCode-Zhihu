@@ -43,10 +43,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
 	const eventService = new EventService(context);
 	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService, eventService);
-	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService);
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 	const pasteService = new PasteService(context, httpService);
+	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {
