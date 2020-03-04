@@ -4,6 +4,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as md5 from "md5";
 import * as OSS from "ali-oss";
+import * as request from "request";
 import { ShellScriptPath } from "../const/PATH";
 import { ImageUpload, ImageHostAPI } from "../const/URL";
 import { HttpService } from "./http.service";
@@ -50,7 +51,7 @@ export class PasteService {
 	 * @param filePath path of file to be uploaded, use path from clipboard if not provided.
 	 * @return a promise to resolve the generated object_name on OSS.
 	 */
-	private async _uploadImageFromPath(filePath: string): Promise<string> {
+	private async _uploadImageFromPath(filePath: string, insert?: boolean): Promise<string> {
 		let zhihu_agent = ZhihuOSSAgent;
 
 		let hash = md5(fs.readFileSync(filePath))
@@ -86,12 +87,68 @@ export class PasteService {
 			let putResp = client.put(upload_file.object_key, filePath);
 			console.log(putResp)
 		} else {
+			if (insert)
 			this.insertImageLink(`v2-${hash}${path.extname(filePath)}`);
 		}
 		vscode.window.showInformationMessage('上传成功！')
 		return Promise.resolve(prefetchBody.upload_file.object_key);
 	}
 
+	/**
+	 * upload image from other domains or relative link specified by `link`, and return the resolved zhihu link
+	 * @param link the outer link
+	 */
+	public async uploadImageFromLink(link: string): Promise<string> {
+		let zhihu_agent = ZhihuOSSAgent;
+		let outerPic = /^https:\/\/.*/g
+		let buffer;
+		if(outerPic.test(link)) {
+			buffer = await this.httpService.sendRequest({
+				uri: link,
+				gzip: false,
+				encoding: null
+			})
+		} else {
+			buffer = fs.readFileSync(link);
+		}
+		let hash = md5(buffer)
+
+		var options = {
+			method: "POST",
+			uri: ImageUpload,
+			body: {
+				image_hash: hash,
+				source: "answer"
+			},
+			headers: {},
+			json: true,
+			resolveWithFullResponse: true,
+			simple: false
+		};
+
+		let prefetchResp = await this.httpService.sendRequest(options)
+		if (prefetchResp.statusCode == 401) {
+			vscode.window.showWarningMessage('登录之后才可上传图片！');
+			return;
+		}
+		let prefetchBody: IImageUploadToken = prefetchResp.body;
+		let upload_file = prefetchBody.upload_file;
+		if (prefetchBody.upload_token) {
+			zhihu_agent.options.accessKeyId = prefetchBody.upload_token.access_id;
+			zhihu_agent.options.accessKeySecret = prefetchBody.upload_token.access_key;
+			zhihu_agent.options.stsToken = prefetchBody.upload_token.access_token;
+			let client = new OSS(zhihu_agent.options);
+			console.log(prefetchBody);
+			this.insertImageLink(`${prefetchBody.upload_file.object_key}${path.extname(link)}`);
+			// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
+			let putResp = client.put(upload_file.object_key, link);
+			console.log(putResp)
+		} else {
+			this.insertImageLink(`v2-${hash}${path.extname(link)}`);
+		}
+		// vscode.window.showInformationMessage('上传成功！')
+		return Promise.resolve(`${ImageHostAPI}/v2-${hash}${path.extname(link)}`);		
+	}
 	/**
 	 * ### @zhihu.uploadImageFromPath
 	 * 

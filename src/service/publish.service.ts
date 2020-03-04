@@ -3,7 +3,7 @@ import { join } from "path";
 import * as vscode from "vscode";
 import { MediaTypes, SettingEnum } from "../const/ENUM";
 import { TemplatePath } from "../const/PATH";
-import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
+import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg, ZhihuPicReg } from "../const/REG";
 import { AnswerAPI, AnswerURL, QuestionAPI, ZhuanlanAPI, ZhuanlanURL } from "../const/URL";
 import { PostAnswer } from "../model/publish/answer.model";
 import { IColumn } from "../model/publish/column.model";
@@ -16,6 +16,7 @@ import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
 import * as MarkdownIt from "markdown-it";
 import md5 = require("md5");
+import { PasteService } from "./paste.service";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -41,7 +42,8 @@ export class PublishService {
 		protected webviewService: WebviewService,
 		protected collectionService: CollectionService,
 		protected eventService: EventService,
-		protected profileService: ProfileService
+		protected profileService: ProfileService,
+		protected pasteService: PasteService
 	) {
 		this.registerPublishEvents();
 	}
@@ -176,6 +178,8 @@ export class PublishService {
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (ArticlePathReg.test(url.pathname)) {
 				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
+				let images = this.findCorsImage(tokens);
+				images.forEach(img => img.attrs[0][1] = this.pasteService.uploadImageFromLink(img.attrs[0][1]));
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
@@ -437,6 +441,22 @@ export class PublishService {
 		vscode.window.showInformationMessage(`${title ? '"' + title + '"' : ''} 发布成功！\n`, { modal: true },
 			previewActions.openInBrowser
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
+	}
+
+	private findCorsImage(tokens: Array<any>) {
+		let images = [];
+		tokens.forEach(t => images.concat(this._findCorsImage(t)));
+		return images;
+	}
+	private _findCorsImage(token) {
+		let images = [];
+		if (token.type == 'image') {
+			if (!ZhihuPicReg.test(token.attrs[0][1]))
+			images.push(token);
+		};
+		if (token.children) {
+			token.children.forEach(t => this.findCorsImage(t))
+		}
 	}
 
 

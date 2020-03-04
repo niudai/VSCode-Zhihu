@@ -17,7 +17,7 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                // "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
+                "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -26,6 +26,18 @@
             // ],
             "preLaunchTask": "Run Develop"
         },
+        {
+			"name": "Run Extension Tests",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+			],
+			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+			"preLaunchTask": "npm: pretest"
+		},
         {
             "type": "node",
             "request": "attach",

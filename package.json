@@ -322,7 +322,9 @@
 		"vscode:prepublish": "webpack --mode production",
 		"develop": "webpack --mode none --watch",
 		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./"
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile",
+		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/ali-oss": "^6.0.4",
@@ -353,7 +355,7 @@
 		"form-urlencoded": "^4.1.1",
 		"markdown-it": "^10.0.0",
 		"markdown-it-katex": "^2.0.3",
-		"markdown-it-zhihu": "^2.0.7",
+		"markdown-it-zhihu": "^2.0.8",
 		"md5": "^2.2.1",
 		"on-change": "^1.6.2",
 		"pug": "^2.0.4",
