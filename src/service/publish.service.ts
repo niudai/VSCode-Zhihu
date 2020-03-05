@@ -180,7 +180,9 @@ export class PublishService {
 			} else if (ArticlePathReg.test(url.pathname)) {
 				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
 				let images = this.findCorsImage(tokens);
-				images.forEach(async img => img.attrs[0][1] = await this.pasteService.uploadImageFromLink(img.attrs[0][1]));
+				for (let img of images) {
+					img.attrs[0][1] = await this.pasteService.uploadImageFromLink(img.attrs[0][1]);
+				}
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
