@@ -17,7 +17,6 @@
             "args": [
                 "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/suite/index"
             ],
             "stopOnEntry": false,
             "sourceMaps": true,

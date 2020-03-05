@@ -17,6 +17,7 @@ import { WebviewService } from "./webview.service";
 import * as MarkdownIt from "markdown-it";
 import md5 = require("md5");
 import { PasteService } from "./paste.service";
+import Token = require("markdown-it/lib/token");
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -179,7 +180,7 @@ export class PublishService {
 			} else if (ArticlePathReg.test(url.pathname)) {
 				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
 				let images = this.findCorsImage(tokens);
-				images.forEach(img => img.attrs[0][1] = this.pasteService.uploadImageFromLink(img.attrs[0][1]));
+				images.forEach(async img => img.attrs[0][1] = await this.pasteService.uploadImageFromLink(img.attrs[0][1]));
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
@@ -443,9 +444,9 @@ export class PublishService {
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}
 
-	private findCorsImage(tokens: Array<any>) {
+	private findCorsImage(tokens: Token[]) {
 		let images = [];
-		tokens.forEach(t => images.concat(this._findCorsImage(t)));
+		tokens.forEach(t => images = images.concat(this._findCorsImage(t)));
 		return images;
 	}
 	private _findCorsImage(token) {
@@ -455,8 +456,9 @@ export class PublishService {
 			images.push(token);
 		};
 		if (token.children) {
-			token.children.forEach(t => this.findCorsImage(t))
+			token.children.forEach(t => images = images.concat(this._findCorsImage(t)))
 		}
+		return images;
 	}
 
 

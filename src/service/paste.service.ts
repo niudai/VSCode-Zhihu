@@ -1,16 +1,15 @@
+import * as OSS from "ali-oss";
 import * as childProcess from "child_process";
 import * as fs from "fs";
+import * as md5 from "md5";
 import * as path from "path";
 import * as vscode from "vscode";
-import * as md5 from "md5";
-import * as OSS from "ali-oss";
-import * as request from "request";
-import { ShellScriptPath } from "../const/PATH";
-import { ImageUpload, ImageHostAPI } from "../const/URL";
-import { HttpService } from "./http.service";
-import { ZhihuOSSAgent } from "../const/HTTP";
-import { IImageUploadToken } from "../model/publish/image.model"
 import { LegalImageExt } from "../const/ENUM";
+import { ZhihuOSSAgent } from "../const/HTTP";
+import { ShellScriptPath } from "../const/PATH";
+import { ImageHostAPI, ImageUpload } from "../const/URL";
+import { IImageUploadToken } from "../model/publish/image.model";
+import { HttpService } from "./http.service";
 
 
 export class PasteService {
@@ -109,7 +108,9 @@ export class PasteService {
 				encoding: null
 			})
 		} else {
-			buffer = fs.readFileSync(link);
+			let _dir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath)
+			let _path = path.join(_dir, link);
+			buffer = fs.readFileSync(_path);
 		}
 		let hash = md5(buffer)
 
