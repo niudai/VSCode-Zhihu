@@ -23,7 +23,7 @@
             // "outFiles": [
             //     "${workspaceRoot}/dist/**"
             // ],
-            "preLaunchTask": "Run Develop"
+            // "preLaunchTask": "Run Develop"
         },
         {
 			"name": "Run Extension Tests",
