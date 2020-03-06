@@ -94,10 +94,19 @@ export class PublishService {
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
-		let html = this.zhihuMdParser.render(text);
+		// let html = this.zhihuMdParser.render(text);
 		let tokens = this.zhihuMdParser.parse(text, {});
+		let pipePromise = this.pipeService.sanitizeMdTokens(tokens);
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Window,
+			cancellable: false,
+			title: '文章发布中...'
+		}, (progress, token) => {
+			return Promise.resolve(pipePromise);
+		})
+		await pipePromise;
 		await this.pipeService.sanitizeMdTokens(tokens);
-
+		let html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
 		if (openIndex >= 0) {
@@ -443,24 +452,6 @@ export class PublishService {
 			previewActions.openInBrowser
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}
-
-	private findCorsImage(tokens) {
-		let images = [];
-		tokens.forEach(t => images = images.concat(this._findCorsImage(t)));
-		return images;
-	}
-	private _findCorsImage(token) {
-		let images = [];
-		if (token.type == 'image') {
-			if (!ZhihuPicReg.test(token.attrs[0][1]))
-			images.push(token);
-		};
-		if (token.children) {
-			token.children.forEach(t => images = images.concat(this._findCorsImage(t)))
-		}
-		return images;
-	}
-
 
 	shebangParser(text: string): URL {
 		let shebangRegExp = /#[!！]\s*((https?:\/\/)?(.+))$/i

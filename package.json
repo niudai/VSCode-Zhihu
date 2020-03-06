@@ -338,7 +338,7 @@
 		"@types/pug": "^2.0.4",
 		"@types/request": "^2.48.4",
 		"@types/request-promise": "^4.1.45",
-		"@types/vscode": "^1.41.0",
+		"@types/vscode": "^1.39.0",
 		"mocha": "^7.0.1",
 		"ts-loader": "^6.2.1",
 		"tslint": "^5.20.1",
