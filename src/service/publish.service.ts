@@ -17,7 +17,7 @@ import { WebviewService } from "./webview.service";
 import * as MarkdownIt from "markdown-it";
 import md5 = require("md5");
 import { PasteService } from "./paste.service";
-import Token = require("markdown-it/lib/token");
+import { PipeService } from "./pipe.service";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -44,7 +44,8 @@ export class PublishService {
 		protected collectionService: CollectionService,
 		protected eventService: EventService,
 		protected profileService: ProfileService,
-		protected pasteService: PasteService
+		protected pasteService: PasteService,
+		protected pipeService: PipeService
 	) {
 		this.registerPublishEvents();
 	}
@@ -95,6 +96,8 @@ export class PublishService {
 
 		let html = this.zhihuMdParser.render(text);
 		let tokens = this.zhihuMdParser.parse(text, {});
+		await this.pipeService.sanitizeMdTokens(tokens);
+
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');
 		if (openIndex >= 0) {
@@ -178,11 +181,6 @@ export class PublishService {
 				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (ArticlePathReg.test(url.pathname)) {
-				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
-				let images = this.findCorsImage(tokens);
-				for (let img of images) {
-					img.attrs[0][1] = await this.pasteService.uploadImageFromLink(img.attrs[0][1]);
-				}
 				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
@@ -446,7 +444,7 @@ export class PublishService {
 		).then(r => r ? vscode.env.openExternal(vscode.Uri.parse(url)) : undefined);
 	}
 
-	private findCorsImage(tokens: Token[]) {
+	private findCorsImage(tokens) {
 		let images = [];
 		tokens.forEach(t => images = images.concat(this._findCorsImage(t)));
 		return images;

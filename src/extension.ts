@@ -21,6 +21,7 @@ import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collectio
 import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import * as MarkdownIt from "markdown-it";
+import { PipeService } from "./service/pipe.service";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
@@ -46,7 +47,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	const searchService = new SearchService(context, webviewService);
 	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
 	const pasteService = new PasteService(context, httpService);
-	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService);
+	const pipeService = new PipeService(context, pasteService);
+	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService, pipeService);
+
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("zhihu.openWebView", async (object) => {

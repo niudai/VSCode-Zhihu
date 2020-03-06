@@ -320,7 +320,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
-		"develop": "webpack --mode none --watch",
+		"develop": "webpack --mode development --watch",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile",

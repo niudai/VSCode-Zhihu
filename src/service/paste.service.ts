@@ -141,7 +141,7 @@ export class PasteService {
 			let client = new OSS(zhihu_agent.options);
 			console.log(prefetchBody);
 			// object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
-			let putResp = client.put(upload_file.object_key, link);
+			let putResp = client.put(upload_file.object_key, buffer);
 			console.log(putResp)
 		}
 		// vscode.window.showInformationMessage('上传成功！')

@@ -21,7 +21,7 @@
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "webpack is watching the files…",
-                    "endsPattern": "^Built at: .* PM"
+                    "endsPattern": "^Built at: .* [AP]M"
                     // Built at: 02/29/2020 5:33:30 PM
                 }
             },

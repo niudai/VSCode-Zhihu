@@ -23,7 +23,7 @@
             // "outFiles": [
             //     "${workspaceRoot}/dist/**"
             // ],
-            "preLaunchTask": "Run Develop"
+            // "preLaunchTask": "Run Develop"
         },
         {
 			"name": "Run Extension Tests",
@@ -33,7 +33,8 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
-			],
+            ],
+            "stopOnEntry": false,
 			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
 			"preLaunchTask": "npm: pretest"
 		},
