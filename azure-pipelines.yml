@@ -30,7 +30,7 @@ steps:
 
 - bash: |
     echo ">>> run tests"
-    npm test
+    npm install && npm test
   displayName: Run Tests
   env:
     DISPLAY: ':99.0'
