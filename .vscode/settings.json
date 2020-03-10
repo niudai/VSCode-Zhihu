@@ -11,6 +11,7 @@
     "editor.insertSpaces": false,
     "workbench.colorCustomizations": {
         "activityBar.background": "#ef7853",
+        "activityBar.activeBackground": "#ef7853",
         "activityBar.activeBorder": "#8af4a3",
         "activityBar.foreground": "#15202b",
         "activityBar.inactiveForeground": "#15202b99",

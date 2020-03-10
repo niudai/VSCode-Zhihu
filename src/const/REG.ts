@@ -4,4 +4,4 @@ export const QuestionAnswerPathReg = /^\/question\/(\d+)\/answer\/(\d+)$/i
 
 export const ArticlePathReg = /^\/p\/(\d+)$/i
 
-export const ZhihuPicReg = /^https:\/\/pic4.zhimg.com/g
+export const ZhihuPicReg = /^http[s]?:\/\/pic4.zhimg.com/g

@@ -14,3 +14,5 @@ dist
 README.pdf
 events.json
 **/images
+.vscode-test
+*.log

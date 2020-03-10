@@ -36,7 +36,7 @@
             ],
             "stopOnEntry": false,
 			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-			"preLaunchTask": "npm: pretest"
+			"preLaunchTask": "npm: compile"
 		},
         {
             "type": "node",
