@@ -1,33 +1,6 @@
-// Place your settings in this file to overwrite default and user settings.
 {
-    "files.exclude": {
-        "out": false // set this to true to hide the "out" folder with the compiled JS files
-    },
-    "search.exclude": {
-        "out": true // set this to false to include "out" folder in search results
-    },
-    "typescript.tsdk": "./node_modules/typescript/lib", // we want to use the TS server from our node_modules folder to control its version
-    "typescript.tsc.autoDetect": "off",
-    "editor.insertSpaces": false,
-    "workbench.colorCustomizations": {
-        "activityBar.background": "#ef7853",
-        "activityBar.activeBackground": "#ef7853",
-        "activityBar.activeBorder": "#8af4a3",
-        "activityBar.foreground": "#15202b",
-        "activityBar.inactiveForeground": "#15202b99",
-        "activityBarBadge.background": "#8af4a3",
-        "activityBarBadge.foreground": "#15202b",
-        "titleBar.activeBackground": "#eb5424",
-        "titleBar.inactiveBackground": "#eb542499",
-        "titleBar.activeForeground": "#e7e7e7",
-        "titleBar.inactiveForeground": "#e7e7e799",
-        "statusBar.background": "#eb5424",
-        "statusBarItem.hoverBackground": "#ef7853",
-        "statusBar.foreground": "#e7e7e7"
-    },
-    "peacock.color": "#eb5424",
+    "files.eol":"\n",
     "editor.codeActionsOnSave": {
-        "source.fixAll.tslint": true
-    },
-    
+        "source.fixAll": true
+    }
 }

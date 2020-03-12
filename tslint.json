@@ -1,13 +1,3 @@
 {
-	"extends": "tslint:all",
-	"rules": {
-		"indent": [
-			true,
-			"tabs"
-		],
-		"semicolon": [
-			true,
-			"always"
-		]
-	}
+	"extends": "tslint:recommended"
 }

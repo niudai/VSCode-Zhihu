@@ -22,17 +22,13 @@
                     "activeOnStart": true,
                     "beginsPattern": "webpack is watching the files…",
                     "endsPattern": "^Built at: .* [AP]M"
-                    // Built at: 02/29/2020 5:33:30 PM
                 }
-            },
-            // "presentation": {
-            //     "reveal": "always",
-            //     "panel": "new"
-            // },
-            // "group": {
-            //     "kind": "build",
-            //     "isDefault": true
-            // }
+            }
+        },
+        {
+            "type": "npm",
+            "script": "lint",
+            "problemMatcher": ["$eslint-stylish"]
         }
     ]
 }

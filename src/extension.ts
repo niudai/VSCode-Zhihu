@@ -1,6 +1,7 @@
 "use strict";
 
 import * as fs from "fs";
+import * as MarkdownIt from "markdown-it";
 import * as markdown_it_zhihu from "markdown-it-zhihu";
 import * as path from "path";
 import { CookieJar } from "tough-cookie";
@@ -12,6 +13,7 @@ import { CollectionService } from "./service/collection.service";
 import { EventService } from "./service/event.service";
 import { HttpService } from "./service/http.service";
 import { PasteService } from "./service/paste.service";
+import { PipeService } from "./service/pipe.service";
 import { ProfileService } from "./service/profile.service";
 import { PublishService } from "./service/publish.service";
 import { ReleaseNotesService } from "./service/release-note.service";
@@ -20,10 +22,9 @@ import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
 import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
-import * as MarkdownIt from "markdown-it";
-import { PipeService } from "./service/pipe.service";
 
 export async function activate(context: vscode.ExtensionContext) {
+	fs.writeFileSync(path.join(context.extensionPath, './context.json'), JSON.stringify(context));
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
 		fs.createWriteStream(path.join(context.extensionPath, './cookie.json')).end()
 	}
@@ -75,7 +76,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.window.registerTreeDataProvider(
 		"zhihu-collection",
-		collectionTreeViewProvider
+		collectionTreeViewProvider,
 	)
 	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
 		publishService.publish(textEditor, edit);
