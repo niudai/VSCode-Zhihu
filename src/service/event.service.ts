@@ -4,6 +4,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { MediaTypes } from "../const/ENUM";
 import { EventsPath } from "../const/PATH";
+import { getExtensionPath } from "../global/globalVar";
 
 export interface IEvent {
 
@@ -42,10 +43,9 @@ export interface IEvent {
 
 export class EventService {
 	private events: IEvent[];
-	constructor (
-		protected context: vscode.ExtensionContext) {
-		if(fs.existsSync(path.join(context.extensionPath, EventsPath))) {
-			let _events: any[] = JSON.parse(fs.readFileSync(path.join(context.extensionPath, EventsPath), 'utf8'));
+	constructor () {
+		if(fs.existsSync(path.join(getExtensionPath(), EventsPath))) {
+			let _events: any[] = JSON.parse(fs.readFileSync(path.join(getExtensionPath(), EventsPath), 'utf8'));
 			this.events = _events.map(e => { e.date = new Date(e.date);
 				return e});
 		} else {
@@ -92,7 +92,7 @@ export class EventService {
 	}
 
 	persist() {
-		fs.writeFileSync(path.join(this.context.extensionPath, EventsPath), JSON.stringify(this.events, (k, v) => {
+		fs.writeFileSync(path.join(getExtensionPath(), EventsPath), JSON.stringify(this.events, (k, v) => {
 			if (k == 'timeoutId') return undefined;
 			else return v;
 		}), 'utf8');

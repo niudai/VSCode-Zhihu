@@ -22,34 +22,34 @@ import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
 import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
+import { setContext } from "./global/globalVar";
 
 export async function activate(context: vscode.ExtensionContext) {
-	fs.writeFileSync(path.join(context.extensionPath, './context.json'), JSON.stringify(context));
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
 		fs.createWriteStream(path.join(context.extensionPath, './cookie.json')).end()
 	}
-	vscode.window.showInformationMessage('插件激活');
+	setContext(context);
 	// Dependency Injection
 	const releaseNotesService = new ReleaseNotesService(context);
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
 	const defualtMdParser = new MarkdownIt();
 	const cookieJar = new CookieJar(store);
-	const httpService = new HttpService(context, cookieJar, store);
-	const accountService = new AccountService(context, httpService);
-	const profileService = new ProfileService(context, httpService, accountService);
+	const httpService = new HttpService(cookieJar, store);
+	const accountService = new AccountService(httpService);
+	const profileService = new ProfileService(httpService, accountService);
 	await profileService.fetchProfile();
-	const collectionService = new CollectionService(context, httpService);
+	const collectionService = new CollectionService(httpService);
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
-	const collectionTreeViewProvider = new CollectionTreeviewProvider(context, profileService, collectionService)
-	const webviewService = new WebviewService(context, httpService, collectionService, collectionTreeViewProvider);
-	const eventService = new EventService(context);
-	const feedTreeViewProvider = new FeedTreeViewProvider(context, accountService, profileService, httpService, eventService);
-	const searchService = new SearchService(context, webviewService);
-	const authenticateService = new AuthenticateService(context, profileService, accountService, feedTreeViewProvider, httpService, webviewService);
-	const pasteService = new PasteService(context, httpService);
-	const pipeService = new PipeService(context, pasteService);
-	const publishService = new PublishService(context, httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService, pipeService);
+	const collectionTreeViewProvider = new CollectionTreeviewProvider(profileService, collectionService)
+	const webviewService = new WebviewService(httpService, collectionService, collectionTreeViewProvider);
+	const eventService = new EventService();
+	const feedTreeViewProvider = new FeedTreeViewProvider(accountService, profileService, httpService, eventService);
+	const searchService = new SearchService(webviewService);
+	const authenticateService = new AuthenticateService(profileService, accountService, feedTreeViewProvider, httpService, webviewService);
+	const pasteService = new PasteService(httpService);
+	const pipeService = new PipeService(pasteService);
+	const publishService = new PublishService(httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService, pipeService);
 
 
 	context.subscriptions.push(

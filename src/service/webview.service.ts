@@ -10,6 +10,7 @@ import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { HttpService } from "./http.service";
+import { getExtensionPath, getSubscriptions } from "../global/globalVar";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -24,7 +25,6 @@ export interface IWebviewPugRender {
 export class WebviewService {
 
 	constructor(
-		protected context: vscode.ExtensionContext,
 		protected httpService: HttpService,
 		protected collectService: CollectionService,
 		protected collectionTreeviewProvider: CollectionTreeviewProvider
@@ -47,7 +47,7 @@ export class WebviewService {
 			w.pugTemplatePath
 		);
 		panel.iconPath = vscode.Uri.file(w.iconPath ? w.iconPath : path.join(
-			this.context.extensionPath,
+			getExtensionPath(),
 			ZhihuIconPath));
 		panel.webview.html = compiledFunction(w.pugObjects);
 		return panel;
@@ -75,7 +75,7 @@ export class WebviewService {
 			let panel = this.renderHtml({
 				title: "知乎问题",
 				pugTemplatePath: path.join(
-					this.context.extensionPath,
+					getExtensionPath(),
 					TemplatePath,
 					"questions-answers.pug"
 				),
@@ -101,7 +101,7 @@ export class WebviewService {
 			let panel = this.renderHtml({
 				title: "知乎回答",
 				pugTemplatePath: path.join(
-					this.context.extensionPath,
+					getExtensionPath(),
 					TemplatePath,
 					"questions-answers.pug"
 				),
@@ -126,7 +126,7 @@ export class WebviewService {
 			let panel = this.renderHtml({
 				title: "知乎文章",
 				pugTemplatePath: path.join(
-					this.context.extensionPath,
+					getExtensionPath(),
 					TemplatePath,
 					"article.pug"
 				),
@@ -177,7 +177,7 @@ export class WebviewService {
 					else if(r.statusCode == 403) vscode.window.showWarningMessage('你已经投过票了！');
 				})
 			}
-		}, undefined, this.context.subscriptions)
+		}, undefined, getSubscriptions())
 	}
 
 	private actualSrcNormalize(html: string): string {

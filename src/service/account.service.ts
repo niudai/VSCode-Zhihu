@@ -8,8 +8,7 @@ import { HttpService } from "./http.service";
 export class AccountService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext, 
-		protected httpService: HttpService) {
+	constructor (protected httpService: HttpService) {
 	}
 
 	async fetchProfile() {

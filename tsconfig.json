@@ -4,11 +4,15 @@
 		"target": "es6",
 		"outDir": "out",
 		"sourceMap": true,
-		"rootDir": "src",
 		// "strict": true   /* enable all strict type-checking options */
 	},
+	"include": [
+		"test/**/*.ts",
+		"test/*.ts"
+	],
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"src/**/*"
 	]
 }

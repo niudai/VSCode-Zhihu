@@ -25,7 +25,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 	private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
 
-	constructor(private context: vscode.ExtensionContext,
+	constructor(
 		private accountService: AccountService,
 		private profileService: ProfileService,
 		private httpService: HttpService,
@@ -79,7 +79,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 						}
 					});
 					resolve(deps);
-				}) 
+				})
 			} else if (element.type == 'event') {
 				let events = this.eventService.getEvents();
 				// this.eventService.setEvents(onChange(events, (path, value, previousValue) => {
@@ -154,7 +154,7 @@ export class EventTreeItem extends vscode.TreeItem {
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
 		public readonly parent: vscode.TreeItem
 	) {
-		super(removeSpace(removeHtmlTag(event.content)).slice(0, 12) + '...' , collapsibleState);
+		super(removeSpace(removeHtmlTag(event.content)).slice(0, 12) + '...', collapsibleState);
 	}
 
 	get tooltip(): string | undefined {

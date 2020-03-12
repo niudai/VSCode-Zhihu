@@ -8,8 +8,7 @@ import Token = require("markdown-it/lib/token");
 export class PipeService {
 	public profile: IProfile;
 
-	constructor(protected context: vscode.ExtensionContext,
-		protected pasteService: PasteService) {
+	constructor(protected pasteService: PasteService) {
 	}
 
 	/**

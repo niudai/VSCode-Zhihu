@@ -13,12 +13,12 @@ import { AccountService } from "./account.service";
 import { HttpService } from "./http.service";
 import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
+import { getExtensionPath } from "../global/globalVar";
 
 var formurlencoded = require('form-urlencoded').default;
 
 export class AuthenticateService {
 	constructor(
-		protected context: vscode.ExtensionContext,
 		protected profileService: ProfileService,
 		protected accountService: AccountService,
 		protected feedTreeViewProvider: FeedTreeViewProvider,
@@ -29,7 +29,7 @@ export class AuthenticateService {
 		try {
 			this.httpService.clearCookie();
 			this.feedTreeViewProvider.refresh();
-			// fs.writeFileSync(path.join(this.context.extensionPath, 'cookie.txt'), '');
+			// fs.writeFileSync(path.join(getExtensionPath(), 'cookie.txt'), '');
 		} catch(error) {
 			console.log(error);
 		}
@@ -73,10 +73,10 @@ export class AuthenticateService {
 				gzip: true
 			});
 			let base64Image = captchaImg['img_base64'].replace('\n', '');
-			fs.writeFileSync(path.join(this.context.extensionPath, './captcha.jpg'), base64Image, 'base64');
+			fs.writeFileSync(path.join(getExtensionPath(), './captcha.jpg'), base64Image, 'base64');
 			const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
 			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
-				path.join(this.context.extensionPath, './captcha.jpg')
+				path.join(getExtensionPath(), './captcha.jpg')
 			));
 			
 			this.webviewService.renderHtml({
@@ -86,7 +86,7 @@ export class AuthenticateService {
 					preserveFocus: true
 				},
 				pugTemplatePath: path.join(
-					this.context.extensionPath,
+					getExtensionPath(),
 					TemplatePath,
 					'captcha.pug'
 				),
@@ -237,10 +237,10 @@ export class AuthenticateService {
 			uri: `${QRCodeAPI}/${resp.token}/image`,
 			encoding: null
 		});
-		fs.writeFileSync(path.join(this.context.extensionPath, 'qrcode.png'), qrcode);
+		fs.writeFileSync(path.join(getExtensionPath(), 'qrcode.png'), qrcode);
 		const panel = vscode.window.createWebviewPanel("zhihu", "验证码", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
 		const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, './qrcode.png')
+			path.join(getExtensionPath(), './qrcode.png')
 		))
 		this.webviewService.renderHtml(
 			{
@@ -250,7 +250,7 @@ export class AuthenticateService {
 					preserveFocus: true
 				},
 				pugTemplatePath: path.join(
-					this.context.extensionPath,
+					getExtensionPath(),
 					TemplatePath,
 					'qrcode.pug'
 				),

@@ -21,8 +21,7 @@ export class CollectionTreeviewProvider implements vscode.TreeDataProvider<Colle
 	private _onDidChangeTreeData: vscode.EventEmitter<CollectionItem | undefined> = new vscode.EventEmitter<CollectionItem | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<CollectionItem | undefined> = this._onDidChangeTreeData.event;
 
-	constructor(private context: vscode.ExtensionContext, 
-		private profileService: ProfileService,
+	constructor(private profileService: ProfileService,
 		private collectionService: CollectionService) {
 	}
 

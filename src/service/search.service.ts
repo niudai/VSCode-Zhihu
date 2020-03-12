@@ -14,7 +14,6 @@ export const SearchDict = [
 
 export class SearchService {
 	constructor(
-		protected context: vscode.ExtensionContext,
 		protected webviewService: WebviewService) { }
 
 	public async getSearchResults(keyword: string, searchType: string): Promise<ISearchItem[]> {

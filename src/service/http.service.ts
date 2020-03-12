@@ -11,7 +11,6 @@ export class HttpService {
 	public xsrfToken: string;
 
 	constructor (
-		protected context: vscode.ExtensionContext,
 		protected cookieJar: CookieJar,
 		protected store: Store
 		) {

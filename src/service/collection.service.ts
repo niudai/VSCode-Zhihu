@@ -7,6 +7,7 @@ import { MediaTypes } from "../const/ENUM";
 import { HttpService } from "./http.service";
 import { AnswerAPI, QuestionAPI, ArticleAPI } from "../const/URL";
 import { ITarget } from "../model/target/target";
+import { getExtensionPath } from "../global/globalVar";
 
 export interface ICollectionItem {
 	type: MediaTypes,
@@ -16,10 +17,9 @@ export interface ICollectionItem {
 export class CollectionService {
 	public collection: ICollectionItem[];
 	constructor (
-		protected context: vscode.ExtensionContext,
 		protected httpService: HttpService) {
-		if(fs.existsSync(path.join(context.extensionPath, CollectionPath))) {
-			this.collection = JSON.parse(fs.readFileSync(path.join(context.extensionPath, 'collection.json'), 'utf8'));
+		if(fs.existsSync(path.join(getExtensionPath(), CollectionPath))) {
+			this.collection = JSON.parse(fs.readFileSync(path.join(getExtensionPath(), 'collection.json'), 'utf8'));
 		} else {
 			this.collection = []
 		}
@@ -71,7 +71,7 @@ export class CollectionService {
 	}
 
 	persist() {
-		fs.writeFileSync(path.join(this.context.extensionPath, CollectionPath), JSON.stringify(this.collection), 'utf8');
+		fs.writeFileSync(path.join(getExtensionPath(), CollectionPath), JSON.stringify(this.collection), 'utf8');
 	}
 
 }

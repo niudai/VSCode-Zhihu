@@ -29,10 +29,17 @@ const config = {
   ],
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   module: {
     rules: [
+      {
+        test: /\.test\.ts$/,
+          exclude: /node_modules/,
+            use: [
+              { loader: 'ignore-loader'}
+            ]
+      },
       {
         test: /\.ts$/,
           exclude: /node_modules/,
@@ -44,5 +51,6 @@ const config = {
       }
     ]
   }
+  
 };
 module.exports = config;

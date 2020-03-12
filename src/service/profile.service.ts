@@ -9,17 +9,16 @@ import { IColumn } from "../model/publish/column.model";
 export class ProfileService {
 	public profile: IProfile;
 
-	constructor (protected context: vscode.ExtensionContext, 
-		protected httpService: HttpService,
+	constructor(protected httpService: HttpService,
 		protected accountService: AccountService) {
 	}
 
 	public async fetchProfile() {
-		if(await this.accountService.isAuthenticated()) {
-			this.profile  = await this.httpService.sendRequest({
+		if (await this.accountService.isAuthenticated()) {
+			this.profile = await this.httpService.sendRequest({
 				uri: SelfProfileAPI,
 				json: true
-			});	
+			});
 		} else {
 			this.profile = undefined;
 		}

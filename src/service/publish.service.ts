@@ -18,6 +18,7 @@ import * as MarkdownIt from "markdown-it";
 import md5 = require("md5");
 import { PasteService } from "./paste.service";
 import { PipeService } from "./pipe.service";
+import { getExtensionPath } from "../global/globalVar";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -36,7 +37,7 @@ interface TimeObject {
 export class PublishService {
 	public profile: IProfile;
 
-	constructor(protected context: vscode.ExtensionContext,
+	constructor(
 		protected httpService: HttpService,
 		protected zhihuMdParser: MarkdownIt,
 		protected defualtMdParser: MarkdownIt,
@@ -72,7 +73,7 @@ export class PublishService {
 		let html = this.zhihuMdParser.render(text);
 		this.webviewService.renderHtml({
 			title: '预览',
-			pugTemplatePath: join(this.context.extensionPath, TemplatePath, 'pre-publish.pug'),
+			pugTemplatePath: join(getExtensionPath(), TemplatePath, 'pre-publish.pug'),
 			pugObjects: {
 				title: '答案预览',
 				content: html
