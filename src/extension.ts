@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 	setContext(context);
 	// Dependency Injection
-	const releaseNotesService = new ReleaseNotesService(context);
+	const releaseNotesService = new ReleaseNotesService();
 	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
 	const defualtMdParser = new MarkdownIt();

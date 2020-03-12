@@ -13,3 +13,7 @@ export function getExtensionPath() {
 export function getSubscriptions() {
     return context.subscriptions;
 }
+
+export function getGlobalState() {
+    return context.globalState;
+}
