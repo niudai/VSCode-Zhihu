@@ -23,9 +23,9 @@ export interface ISmsData {
 // clientId: "c3cef7c66a1843f8b3a9e6a1e3160e20"
 // grantType: "password"
 // lang: "cn"
-// password: "niudai123."
+// passwo"rd: "niudai123."
 // refSource: "other_https://www.zhihu.com/signin?next=%2F"
 // signature: "f2cb75687f5c493e8bc34f7cc430e7e985250c35"
 // source: "com.zhihu.web"
 // timestamp: 1572186675095
-// username: "+8618324748963"
+// username: "+8618324748963
