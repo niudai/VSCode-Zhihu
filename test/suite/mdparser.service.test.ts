@@ -6,23 +6,20 @@ import * as markdown_it_zhihu from "markdown-it-zhihu";
 import * as vscode from 'vscode';
 
 const testMdFile = `
-# 图片都来自外域
-
-![Image](https://tourscanner.co/blog/wp-content/uploads/2019/05/Tanah-Lot-Temple-1.png?x47719)
-
 \`\`\`java
 
 public class Apple {
     hello();
 }
 \`\`\`
-
-$$
-    \\sqrt5\\sqrt6
-$$ 
-
-行内 Latex：$\\sqrt5$
 `
+
+const testHtml = `<pre lang="java">
+public class Apple {
+    hello();
+}
+</pre>`
+
 
 
 import md5 = require('md5');
@@ -36,8 +33,8 @@ suite('Markdown Parser Test', async () => {
 	// Dependency Injection
 
 	test('parse test', () => {
-        let resultHtml =  zhihuMdParser.parse(testMdFile, {});
-		assert.equal(resultHtml, 'hello');
+        let resultHtml =  zhihuMdParser.render(testMdFile, {});
+		assert.equal(resultHtml, testHtml);
 	});
 
 });
