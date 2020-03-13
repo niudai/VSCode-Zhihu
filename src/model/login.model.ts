@@ -9,7 +9,7 @@ export interface ILogin {
 	utm_source: '';
 	captcha: any;
 	timestamp: number; // instant.now()
-	signature: string; // "f2cb75687f5c493e8bc34f7cc430e7e985250c35"
+	signature: string; 
 }
 
 export interface ISmsData {

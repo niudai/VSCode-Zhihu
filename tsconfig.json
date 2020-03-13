@@ -8,11 +8,10 @@
 	},
 	"include": [
 		"test/**/*.ts",
-		"test/*.ts"
+		"src/**/*"
 	],
 	"exclude": [
 		"node_modules",
 		".vscode-test",
-		"src/**/*"
 	]
 }

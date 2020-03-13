@@ -6,6 +6,7 @@ import { ReleaseNotesPath } from "../const/PATH";
 import { getGlobalState, getExtensionPath } from "../global/globalVar";
 
 
+
 export class ReleaseNotesService {
 	constructor() {
 		this.showReleaseNote();
@@ -29,4 +30,3 @@ export class ReleaseNotesService {
 		}
 	}
 }
-
