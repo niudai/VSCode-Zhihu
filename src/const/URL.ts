@@ -94,6 +94,10 @@ export function ColumnAPI(urltoken: string) {
 	return `https://www.zhihu.com/api/v4/members/${urltoken}/column-contributions?include=data%5B*%5D.column.intro%2Cfollowers%2Carticles_count&offset=0&limit=20`
 }
 
+export function TopicsAPI(searchToken: string) {
+	return `https://zhuanlan.zhihu.com/api/autocomplete/topics?token=${searchToken}&max_matches=5&use_similar=0&topic_filter=1`
+}
+
 /**
  * Html Page: 'https://zhuanlan.zhihu.com/p/${articleId}'
  */

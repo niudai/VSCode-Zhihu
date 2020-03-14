@@ -23,6 +23,7 @@ import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collectio
 import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import { setContext } from "./global/globalVar";
+import { Output } from "./global/logger";
 
 export async function activate(context: vscode.ExtensionContext) {
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {

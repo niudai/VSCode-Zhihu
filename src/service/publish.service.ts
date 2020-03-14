@@ -7,7 +7,7 @@ import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg, ZhihuPicReg } f
 import { AnswerAPI, AnswerURL, QuestionAPI, ZhuanlanAPI, ZhuanlanURL } from "../const/URL";
 import { PostAnswer } from "../model/publish/answer.model";
 import { IColumn } from "../model/publish/column.model";
-import { IProfile, ITarget } from "../model/target/target";
+import { IProfile, ITarget, ITopicTarget } from "../model/target/target";
 import { beautifyDate, removeHtmlTag } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { EventService } from "./event.service";
@@ -292,6 +292,10 @@ export class PublishService {
 			prompt: "输入标题：",
 			placeHolder: "",
 		});
+	}
+
+	private async _getTopics(): Promise<ITopicTarget[] | undefined> {
+		vscode.window.showQuickPick();
 	}
 
 	private async _selectColumn(): Promise<IColumn | undefined> {
