@@ -7,7 +7,7 @@
 		// "strict": true   /* enable all strict type-checking options */
 	},
 	"include": [
-		"test/**/*.ts",
+		"test/**/*",
 		"src/**/*"
 	],
 	"exclude": [
