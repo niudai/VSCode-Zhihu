@@ -105,16 +105,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.refreshCollection", () => {
 		collectionTreeViewProvider.refresh();
 	})
-	vscode.commands.registerCommand("zhihu.addEntry", () =>
-		vscode.window.showInformationMessage(`Successfully called add entry.`)
-	);
-	vscode.commands.registerCommand(
-		"zhihu.editEntry",
-		(node: FeedTreeItem) =>
-			vscode.window.showInformationMessage(
-				`Successfully called edit entry on ${node.label}.`
-			)
-	);
 	vscode.commands.registerCommand(
 		"zhihu.deleteCollectionItem",
 		(node: CollectionItem) => {
