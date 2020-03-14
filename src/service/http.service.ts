@@ -5,6 +5,8 @@ import * as vscode from "vscode";
 import { DefaultHTTPHeader } from "../const/HTTP";
 import { ZhihuDomain } from "../const/URL";
 import { IProfile } from "../model/target/target";
+import { Output } from "../global/logger";
+import { ZhihuPicReg } from "../const/REG";
 
 export class HttpService {
 	public profile: IProfile;
@@ -54,6 +56,7 @@ export class HttpService {
 			}	
 		} catch (error) {
 			// vscode.window.showInformationMessage('请求错误');
+			Output(error);
 			return Promise.resolve(null);
 		}
 		if (returnBody) {

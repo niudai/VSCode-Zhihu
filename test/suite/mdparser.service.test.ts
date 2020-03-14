@@ -33,7 +33,6 @@ const samplesPath = join(fixturePath, 'publishTest');
 suite('Markdown Parser Test', async () => {
 	vscode.window.showInformationMessage('Start all tests.');
     const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
-
 	// Dependency Injection
 
 	test('parse test', () => {

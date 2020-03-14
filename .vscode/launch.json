@@ -35,7 +35,7 @@
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
             ],
             "stopOnEntry": false,
-			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+			// "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
 			"preLaunchTask": "npm: compile"
 		},
         {

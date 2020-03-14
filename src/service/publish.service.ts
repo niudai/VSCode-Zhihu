@@ -106,6 +106,7 @@ export class PublishService {
 			return Promise.resolve(pipePromise);
 		})
 		await pipePromise;
+		
 		let html = this.zhihuMdParser.renderer.render(tokens, {}, {});
 		const openIndex = tokens.findIndex(t => t.type == 'heading_open' && t.tag == 'h1');
 		const endIndex = tokens.findIndex(t => t.type == 'heading_close' && t.tag == 'h1');

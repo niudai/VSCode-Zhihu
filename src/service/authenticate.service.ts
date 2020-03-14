@@ -14,6 +14,7 @@ import { HttpService } from "./http.service";
 import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
 import { getExtensionPath } from "../global/globalVar";
+import { Output } from "../global/logger";
 
 var formurlencoded = require('form-urlencoded').default;
 
@@ -121,7 +122,7 @@ export class AuthenticateService {
 					vscode.window.showWarningMessage('请输入正确的验证码')
 				}
 			} while (resp.statusCode != 201);
-			vscode.window.showInformationMessage('验证码正确。')
+			Output('验证码正确。', 'info')
 			panel.dispose()
 		}
 
@@ -173,12 +174,12 @@ export class AuthenticateService {
 
 		this.profileService.fetchProfile().then(() => {
 			if (loginResp.statusCode == '201') {
-				vscode.window.showInformationMessage(`你好，${this.profileService.name}`);
+				Output(`你好，${this.profileService.name}`, 'info');
 				this.feedTreeViewProvider.refresh();
 			} else if (loginResp.statusCode == '401') {
-				vscode.window.showInformationMessage('密码错误！' + loginResp.statusCode);
+				Output('密码错误！' + loginResp.statusCode, 'warn');
 			} else {
-				vscode.window.showInformationMessage('登录失败！错误代码' + loginResp.statusCode);
+				Output('登录失败！错误代码' + loginResp.statusCode, 'warn');
 			}
 		})
 	}
