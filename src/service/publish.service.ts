@@ -18,7 +18,7 @@ import * as MarkdownIt from "markdown-it";
 import md5 = require("md5");
 import { PasteService } from "./paste.service";
 import { PipeService } from "./pipe.service";
-import { getExtensionPath } from "../global/globalVar";
+import { getExtensionPath } from "../global/globa-var";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -294,9 +294,16 @@ export class PublishService {
 		});
 	}
 
-	private async _getTopics(): Promise<ITopicTarget[] | undefined> {
-		vscode.window.showQuickPick();
-	}
+	// private async _getTopics(): Promise<ITopicTarget[] | undefined> {
+	// 	topics
+	// 	vscode.window.showQuickPick<vscode.QuickPickItem & { value: ITopicTarget }>(
+	// 		[{ label: '不发布到专栏', value: undefined }].concat(columns.map(c => ({ label: c.title, value: c }))), 
+	// 		{
+	// 		ignoreFocusOut: true,
+		
+	// 		}
+	// 	).then(item => item.value);
+	// }
 
 	private async _selectColumn(): Promise<IColumn | undefined> {
 		const columns = await this.profileService.getColumns();

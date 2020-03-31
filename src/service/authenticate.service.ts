@@ -13,7 +13,7 @@ import { AccountService } from "./account.service";
 import { HttpService } from "./http.service";
 import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
-import { getExtensionPath } from "../global/globalVar";
+import { getExtensionPath } from "../global/globa-var";
 import { Output } from "../global/logger";
 
 var formurlencoded = require('form-urlencoded').default;

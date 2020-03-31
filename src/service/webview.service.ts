@@ -9,8 +9,8 @@ import { IArticle } from "../model/article/article-detail";
 import { IQuestionAnswerTarget, IQuestionTarget, ITarget } from "../model/target/target";
 import { CollectionTreeviewProvider } from "../treeview/collection-treeview-provider";
 import { CollectionService, ICollectionItem } from "./collection.service";
-import { HttpService } from "./http.service";
-import { getExtensionPath, getSubscriptions } from "../global/globalVar";
+import { HttpService, sendRequest } from "./http.service";
+import { getExtensionPath, getSubscriptions } from "../global/globa-var";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -25,7 +25,6 @@ export interface IWebviewPugRender {
 export class WebviewService {
 
 	constructor(
-		protected httpService: HttpService,
 		protected collectService: CollectionService,
 		protected collectionTreeviewProvider: CollectionTreeviewProvider
 	) {
@@ -60,12 +59,12 @@ export class WebviewService {
 			let offset = 0;
 			let questionAPI = `${QuestionAPI}/${object.id}?include=detail%2cexcerpt`;
 			let answerAPI = `${QuestionAPI}/${object.id}/answers?include=${includeContent}?offset=${offset}`;
-			let question: IQuestionTarget = await this.httpService.sendRequest({
+			let question: IQuestionTarget = await sendRequest({
 				uri: questionAPI,
 				json: true,
 				gzip: true
 			});
-			let body: { data: IQuestionAnswerTarget[] } = await this.httpService.sendRequest({
+			let body: { data: IQuestionAnswerTarget[] } = await sendRequest({
 				uri: answerAPI,
 				json: true,
 				gzip: true
@@ -91,7 +90,7 @@ export class WebviewService {
 			})
 			this.registerEvent(panel, { type: MediaTypes.question, id: object.id }, `${QuestionURL}/${question.id}`);
 		} else if (object.type == MediaTypes.answer) {
-			let body: IQuestionAnswerTarget = await this.httpService.sendRequest({
+			let body: IQuestionAnswerTarget = await sendRequest({
 				uri: `${AnswerAPI}/${object.id}?include=data[*].content,excerpt,voteup_count`,
 				json: true,
 				gzip: true
@@ -115,7 +114,7 @@ export class WebviewService {
 			})
 			this.registerEvent(panel, { type: MediaTypes.answer, id: object.id }, `${AnswerURL}/${body.id}`)
 		} else if (object.type == MediaTypes.article) {
-			let article: IArticle = await this.httpService.sendRequest({
+			let article: IArticle = await sendRequest({
 				uri: `${object.url}?include=voteup_count`,
 				json: true,
 				gzip: true,
@@ -156,7 +155,7 @@ export class WebviewService {
 					vscode.window.showInformationMessage('链接已复制至粘贴板。');
 				})
 			} else if (e.command == WebviewEvents.upvoteAnswer) {
-				this.httpService.sendRequest({
+				sendRequest({
 					uri: `${AnswerAPI}/${e.id}/voters`,
 					method: 'post',
 					headers: {},
@@ -166,7 +165,7 @@ export class WebviewService {
 				}).then(r => {if(r.statusCode == 200) vscode.window.showInformationMessage('点赞成功！')
 				else if(r.statusCode == 403) vscode.window.showWarningMessage('你已经投过票了！')})
 			} else if (e.command == WebviewEvents.upvoteArticle) {
-				this.httpService.sendRequest({
+				sendRequest({
 					uri: `${ArticleAPI}/${e.id}/voters`,
 					method: 'post',
 					headers: {},

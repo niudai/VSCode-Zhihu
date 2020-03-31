@@ -4,10 +4,10 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { CollectionPath } from "../const/PATH";
 import { MediaTypes } from "../const/ENUM";
-import { HttpService } from "./http.service";
+import { HttpService, sendRequest } from "./http.service";
 import { AnswerAPI, QuestionAPI, ArticleAPI } from "../const/URL";
 import { ITarget } from "../model/target/target";
-import { getExtensionPath } from "../global/globalVar";
+import { getExtensionPath } from "../global/globa-var";
 
 export interface ICollectionItem {
 	type: MediaTypes,
@@ -16,8 +16,7 @@ export interface ICollectionItem {
 
 export class CollectionService {
 	public collection: ICollectionItem[];
-	constructor (
-		protected httpService: HttpService) {
+	constructor () {
 		if(fs.existsSync(path.join(getExtensionPath(), CollectionPath))) {
 			this.collection = JSON.parse(fs.readFileSync(path.join(getExtensionPath(), 'collection.json'), 'utf8'));
 		} else {
@@ -47,19 +46,19 @@ export class CollectionService {
 		for (c of _collection) {
 			var t;
 			if (c.type == MediaTypes.answer) {
-				t = await this.httpService.sendRequest({
+				t = await sendRequest({
 					uri: `${AnswerAPI}/${c.id}?include=data[*].content,excerpt`,
 					json: true,
 					gzip: true
 				})
 			} else if (c.type == MediaTypes.question) {
-				t = await this.httpService.sendRequest({
+				t = await sendRequest({
 					uri: `${QuestionAPI}/${c.id}`,
 					json: true,
 					gzip: true
 				})
 			} else if (c.type == MediaTypes.article) {
-				t = await this.httpService.sendRequest({
+				t = await sendRequest({
 					uri: `${ArticleAPI}/${c.id}`,
 					json: true,
 					gzip: true

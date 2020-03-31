@@ -2,17 +2,16 @@
 import * as vscode from "vscode";
 import { SelfProfileAPI, SignUpRedirectPage } from "../const/URL";
 import { IProfile } from "../model/target/target";
-import { HttpService } from "./http.service";
+import { HttpService, sendRequest } from "./http.service";
 
 
 export class AccountService {
 	public profile: IProfile;
 
-	constructor (protected httpService: HttpService) {
-	}
+	constructor () {}
 
 	async fetchProfile() {
-		this.profile  = await this.httpService.sendRequest({
+		this.profile  = await sendRequest({
 			uri: SelfProfileAPI,
 			json: true
 		});
@@ -22,7 +21,7 @@ export class AccountService {
 
 		let checkIfSignedIn;
 		try {
-			checkIfSignedIn = await this.httpService.sendRequest({
+			checkIfSignedIn = await sendRequest({
 				uri: SignUpRedirectPage,
 				followRedirect: false,
 				followAllRedirects: false,

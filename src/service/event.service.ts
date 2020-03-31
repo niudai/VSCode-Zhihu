@@ -4,7 +4,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { MediaTypes } from "../const/ENUM";
 import { EventsPath } from "../const/PATH";
-import { getExtensionPath } from "../global/globalVar";
+import { getExtensionPath } from "../global/globa-var";
 
 export interface IEvent {
 

@@ -22,25 +22,24 @@ import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
 import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/feed-treeview-provider";
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
-import { setContext } from "./global/globalVar";
+import { setContext } from "./global/globa-var";
 import { Output } from "./global/logger";
 
 export async function activate(context: vscode.ExtensionContext) {
+	Output('Extension Activated')
 	if(!fs.existsSync(path.join(context.extensionPath, './cookie.json'))) {
 		fs.createWriteStream(path.join(context.extensionPath, './cookie.json')).end()
 	}
 	setContext(context);
 	// Dependency Injection
 	const releaseNotesService = new ReleaseNotesService();
-	const store = new FileCookieStore(path.join(context.extensionPath, './cookie.json'));
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
 	const defualtMdParser = new MarkdownIt();
-	const cookieJar = new CookieJar(store);
-	const httpService = new HttpService(cookieJar, store);
-	const accountService = new AccountService(httpService);
-	const profileService = new ProfileService(httpService, accountService);
+	const httpService = new HttpService();
+	const accountService = new AccountService();
+	const profileService = new ProfileService(accountService);
 	await profileService.fetchProfile();
-	const collectionService = new CollectionService(httpService);
+	const collectionService = new CollectionService();
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(profileService, collectionService)
 	const webviewService = new WebviewService(httpService, collectionService, collectionTreeViewProvider);

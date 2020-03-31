@@ -10,7 +10,7 @@ import { ShellScriptPath } from "../const/PATH";
 import { ImageHostAPI, ImageUpload } from "../const/URL";
 import { IImageUploadToken } from "../model/publish/image.model";
 import { HttpService } from "./http.service";
-import { getExtensionPath } from "../global/globalVar";
+import { getExtensionPath } from "../global/globa-var";
 import { Output } from "../global/logger";
 
 /**
