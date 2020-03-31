@@ -10,7 +10,7 @@ import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
 import { AccountService } from "./account.service";
-import { HttpService } from "./http.service";
+import { HttpService, clearCookie, sendRequest } from "./http.service";
 import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
 import { getExtensionPath } from "../global/globa-var";
@@ -23,12 +23,11 @@ export class AuthenticateService {
 		protected profileService: ProfileService,
 		protected accountService: AccountService,
 		protected feedTreeViewProvider: FeedTreeViewProvider,
-		protected httpService: HttpService,
 		protected webviewService: WebviewService) {
 	}
 	public logout() {
 		try {
-			this.httpService.clearCookie();
+			clearCookie();
 			this.feedTreeViewProvider.refresh();
 			// fs.writeFileSync(path.join(getExtensionPath(), 'cookie.txt'), '');
 		} catch(error) {
@@ -59,7 +58,7 @@ export class AuthenticateService {
 	}
 
 	public async passwordLogin() {
-		let resp = await this.httpService.sendRequest({
+		let resp = await sendRequest({
 			uri: CaptchaAPI,
 			method: 'get',
 			gzip: true,
@@ -67,7 +66,7 @@ export class AuthenticateService {
 		});
 
 		if (resp.show_captcha) {
-			let captchaImg = await this.httpService.sendRequest({ 
+			let captchaImg = await sendRequest({ 
 				uri: CaptchaAPI,
 				method: 'put',
 				json: true,
@@ -107,7 +106,7 @@ export class AuthenticateService {
 				if (!captcha) return
 				let headers = DefaultHTTPHeader;
 				headers['cookie'] = fs.readFileSync
-				resp = await this.httpService.sendRequest({
+				resp = await sendRequest({
 					method: 'POST',
 					uri: CaptchaAPI,
 					form: {
@@ -161,7 +160,7 @@ export class AuthenticateService {
 
 		let encryptedFormData = zhihuEncrypt.loginEncrypt(formurlencoded(loginData));
 
-		var loginResp = await this.httpService.sendRequest(
+		var loginResp = await sendRequest(
 			{
 				uri: LoginAPI,
 				method: 'post',
@@ -185,7 +184,7 @@ export class AuthenticateService {
 	}
 
 	public async smsLogin() {
-		await this.httpService.sendRequest({
+		await sendRequest({
 			uri: 'https://www.zhihu.com/signin'
 		})
 		const phoneNumber: string | undefined = await vscode.window.showInputBox({
@@ -204,7 +203,7 @@ export class AuthenticateService {
 		let encryptedFormData = zhihuEncrypt.smsEncrypt(formurlencoded(smsData));
 
 		// phone_no%3D%252B8618324748963%26sms_type%3Dtext
-		var loginResp = await this.httpService.sendRequest(
+		var loginResp = await sendRequest(
 			{
 				uri: SMSAPI,
 				method: 'post',
@@ -223,18 +222,18 @@ export class AuthenticateService {
 	}
 
 	public async qrcodeLogin() {
-		await this.httpService.sendRequest({
+		await sendRequest({
 			uri: UDIDAPI,
 			method: 'post'
 		});
-		let resp = await this.httpService.sendRequest({
+		let resp = await sendRequest({
 			uri: QRCodeAPI,
 			method: 'post',
 			json: true,
 			gzip: true,
 			header: QRCodeOptionHeader
 		});
-		let qrcode = await this.httpService.sendRequest({
+		let qrcode = await sendRequest({
 			uri: `${QRCodeAPI}/${resp.token}/image`,
 			encoding: null
 		});
@@ -264,7 +263,7 @@ export class AuthenticateService {
 			panel
 		);
 		let intervalId = setInterval(() => {
-			this.httpService.sendRequest({
+			sendRequest({
 				uri: `${QRCodeAPI}/${resp.token}/scan_info`,
 				json: true,
 				gzip: true

@@ -7,11 +7,19 @@ import { getCookieJar, getCookieStore } from "../global/cookie";
 import { Output } from "../global/logger";
 import { IProfile } from "../model/target/target";
 
+interface CacheItem {
+	url: string,
+	data: any
+}
+
+
 export class HttpService {
 	public profile: IProfile;
 	public xsrfToken: string;
+	public cache = {};
 
-	constructor() {}
+	constructor() {
+	}
 
 
 	public async sendRequest(options): Promise<any> {
@@ -39,16 +47,26 @@ export class HttpService {
 		options.simple = false;
 
 		var resp;
+		if (!this.cache) this.cache = {}
 		try {
-			resp = await httpClient(options);
-			if (resp.headers['set-cookie']) {
-				resp.headers['set-cookie'].map(c => Cookie.parse(c))
-					.forEach(c => {
-						getCookieJar().setCookieSync(c, options.uri)
-						getCookieStore().findCookie(ZhihuDomain, '/', '_xsrf', (err, c) => {
-							this.xsrfToken = c.value
-						})
-					});
+			if (this.cache[options.uri]) {
+				// cache hit
+				resp = this.cache[options.uri]
+			} else {
+				// cache miss
+				resp = await httpClient(options);
+				if (resp.headers['set-cookie']) {
+					resp.headers['set-cookie'].map(c => Cookie.parse(c))
+						.forEach(c => {
+							getCookieJar().setCookieSync(c, options.uri)
+							getCookieStore().findCookie(ZhihuDomain, '/', '_xsrf', (err, c) => {
+								this.xsrfToken = c.value
+							})
+						});
+				}
+				if (options.enableCache) {
+					this.cache[options.uri] = resp;
+				}	
 			}
 		} catch (error) {
 			// vscode.window.showInformationMessage('请求错误');
@@ -68,9 +86,14 @@ export class HttpService {
 			getCookieStore().removeCookies(ZhihuDomain, null, err => console.log(err));
 		}
 	}
+
+	public clearCache() {
+		this.cache = {}
+	}
 }
 
 var httpService = new HttpService()
 
 export const sendRequest = httpService.sendRequest;
 export const clearCookie = httpService.clearCookie;
+export const clearCache = httpService.clearCache;

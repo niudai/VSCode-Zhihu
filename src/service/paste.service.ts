@@ -8,18 +8,18 @@ import { LegalImageExt } from "../const/ENUM";
 import { ZhihuOSSAgent } from "../const/HTTP";
 import { ShellScriptPath } from "../const/PATH";
 import { ImageHostAPI, ImageUpload } from "../const/URL";
-import { IImageUploadToken } from "../model/publish/image.model";
-import { HttpService } from "./http.service";
 import { getExtensionPath } from "../global/globa-var";
 import { Output } from "../global/logger";
+import { IImageUploadToken } from "../model/publish/image.model";
+import { sendRequest } from "./http.service";
+import { getCache, setCache } from "../global/cache";
 
 /**
  * Paste Service for image upload
  */
 export class PasteService {
-
+    
     public constructor(
-        protected readonly httpService: HttpService
     ) {
     }
     /**
@@ -30,7 +30,7 @@ export class PasteService {
     public uploadImageFromClipboard() {
         const imagePath = path.join(getExtensionPath(), "image.png");
         this.saveClipboardImageToFileAndGetPath(imagePath, () => {
-            this._uploadImageFromPath(imagePath, true);
+            this.uploadImageFromLink(imagePath, true);
         });
     }
 
@@ -47,81 +47,36 @@ export class PasteService {
             return uris ? uris[0] : undefined
                 ;
         });
-        this._uploadImageFromPath(imageUri.fsPath, true);
-    }
-
-    /**
-	 * Upload file specified by `filePath` to zhihu OSS provided by aliyun
-	 * @param filePath path of file to be uploaded, use path from clipboard if not provided.
-	 * @return a promise to resolve the generated object_name on OSS.
-	 */
-    public async _uploadImageFromPath(filePath: string, insert?: boolean): Promise<string> {
-        const zhihu_agent = ZhihuOSSAgent;
-
-        const hash = md5(fs.readFileSync(filePath));
-
-        const options = {
-            method: "POST",
-            uri: ImageUpload,
-            body: {
-                image_hash: hash,
-                source: "answer",
-            },
-            headers: {},
-            json: true,
-            resolveWithFullResponse: true,
-            simple: false,
-        };
-
-        const prefetchResp = await this.httpService.sendRequest(options);
-        if (prefetchResp.statusCode == 401) {
-            vscode.window.showWarningMessage("登录之后才可上传图片！");
-
-            return;
-        }
-        const prefetchBody: IImageUploadToken = prefetchResp.body;
-        const uploadFile: any = prefetchBody.upload_file;
-        if (prefetchBody.upload_token) {
-            zhihu_agent.options.accessKeyId = prefetchBody.upload_token.access_id;
-            zhihu_agent.options.accessKeySecret = prefetchBody.upload_token.access_key;
-            zhihu_agent.options.stsToken = prefetchBody.upload_token.access_token;
-            const client = new OSS(zhihu_agent.options);
-            console.log(prefetchBody);
-            if (insert === undefined || insert) {
-                this.insertImageLink(`${prefetchBody.upload_file.object_key}${path.extname(filePath)}`);
-            }
-
-            // Object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
-            const putResp = client.put(uploadFile.object_key, filePath);
-            console.log(putResp);
-        } else {
-            if (insert === undefined || insert) {
-                this.insertImageLink(`v2-${hash}${path.extname(filePath)}`);
-            }
-        }
-        vscode.window.showInformationMessage("上传成功！");
-
-        return Promise.resolve(prefetchBody.upload_file.object_key);
+        this.uploadImageFromLink(imageUri.fsPath, true);
     }
 
     /**
 	 * Upload image from other domains or relative link specified by `link`, and return the resolved zhihu link
 	 * @param link the outer link
 	 */
-    public async uploadImageFromLink(link: string): Promise<string> {
+    public async uploadImageFromLink(link: string, insert?: boolean): Promise<string> {
+        if (getCache(link)) {
+            if (insert) {
+                this.insertImageLink(getCache(link), true);
+            }
+            return Promise.resolve(getCache(link));
+        }
         const zhihu_agent = ZhihuOSSAgent;
         const outerPic = /^https:\/\/.*/g;
         let buffer;
         if (outerPic.test(link)) {
-            buffer = await this.httpService.sendRequest({
+            buffer = await sendRequest({
                 uri: link,
                 gzip: false,
                 encoding: null,
+                enableCache: true
             });
         } else {
-            const _dir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath);
-            const _path = path.join(_dir, link);
-            buffer = fs.readFileSync(_path);
+            if(!path.isAbsolute(link)) {
+                let _dir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath);
+                link = path.join(_dir, link);    
+            }
+            buffer = fs.readFileSync(link);
         }
         if (!buffer) {
             Output(`${link} 图片获取异常，请调整链接再试！`, 'warn')
@@ -142,7 +97,7 @@ export class PasteService {
             simple: false,
         };
 
-        const prefetchResp = await this.httpService.sendRequest(options);
+        const prefetchResp = await sendRequest(options);
         if (prefetchResp.statusCode == 401) {
             vscode.window.showWarningMessage("登录之后才可上传图片！");
 
@@ -159,9 +114,19 @@ export class PasteService {
             // Object表示上传到OSS的Object名称，localfile表示本地文件或者文件路径
             const putResp = client.put(upload_file.object_key, buffer);
             console.log(putResp);
+            putResp.then(r => {
+                if (insert) {
+                    this.insertImageLink(`${prefetchBody.upload_file.object_key}${path.extname(link)}`);
+                }
+            }).catch(e => {
+                Output(`上传图片${link}失败！`, 'warn')
+            })
+        } else {
+            if (insert) {
+                this.insertImageLink(`v2-${hash}${path.extname(link)}`);
+            }
         }
-
-        // Vscode.window.showInformationMessage('上传成功！')
+        setCache(link, `${ImageHostAPI}/v2-${hash}${path.extname(link)}`);
         return Promise.resolve(`${ImageHostAPI}/v2-${hash}${path.extname(link)}`);
     }
     /**
@@ -177,11 +142,11 @@ export class PasteService {
         }
         if (LegalImageExt.includes(path.extname(_path))) {
             if (path.isAbsolute(_path)) {
-                this._uploadImageFromPath(_path, true);
+                this.uploadImageFromLink(_path, true);
             } else {
                 const workspaceFolders = vscode.workspace.workspaceFolders;
                 if (workspaceFolders) {
-                    this._uploadImageFromPath(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, _path), true);
+                    this.uploadImageFromLink(path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, _path), true);
                 } else {
                     vscode.window.showWarningMessage("上传图片前请先打开一个文件夹！");
                 }
@@ -196,7 +161,7 @@ export class PasteService {
 	 * Insert Markdown inline image in terms of filename
 	 * @param filename
 	 */
-    private insertImageLink(filename: string) {
+    private insertImageLink(filename: string, absolute?: boolean) {
         const editor = vscode.window.activeTextEditor;
         const uri = editor.document.uri;
         if (uri.scheme === "untitled") {
@@ -206,7 +171,11 @@ export class PasteService {
         }
         editor.edit(e => {
             const current = editor.selection;
-            e.insert(current.start, `![Image](${ImageHostAPI}/${filename})`);
+            if (absolute) {
+                e.insert(current.start, filename)
+            } else {
+                e.insert(current.start, `![Image](${ImageHostAPI}/${filename})`);
+            }
         });
 
     }

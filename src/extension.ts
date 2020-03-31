@@ -11,12 +11,12 @@ import { AccountService } from "./service/account.service";
 import { AuthenticateService } from "./service/authenticate.service";
 import { CollectionService } from "./service/collection.service";
 import { EventService } from "./service/event.service";
-import { HttpService } from "./service/http.service";
+import { HttpService, clearCache } from "./service/http.service";
 import { PasteService } from "./service/paste.service";
 import { PipeService } from "./service/pipe.service";
 import { ProfileService } from "./service/profile.service";
 import { PublishService } from "./service/publish.service";
-import { ReleaseNotesService } from "./service/release-note.service";
+import { showReleaseNote } from "./service/release-note.service";
 import { SearchService } from "./service/search.service";
 import { WebviewService } from "./service/webview.service";
 import { CollectionItem, CollectionTreeviewProvider } from "./treeview/collection-treeview-provider";
@@ -24,6 +24,7 @@ import { EventTreeItem, FeedTreeItem, FeedTreeViewProvider } from "./treeview/fe
 import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider";
 import { setContext } from "./global/globa-var";
 import { Output } from "./global/logger";
+import * as CacheManager from "./global/cache"
 
 export async function activate(context: vscode.ExtensionContext) {
 	Output('Extension Activated')
@@ -32,24 +33,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 	setContext(context);
 	// Dependency Injection
-	const releaseNotesService = new ReleaseNotesService();
+	showReleaseNote()
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
 	const defualtMdParser = new MarkdownIt();
-	const httpService = new HttpService();
 	const accountService = new AccountService();
 	const profileService = new ProfileService(accountService);
 	await profileService.fetchProfile();
 	const collectionService = new CollectionService();
 	const hotStoryTreeViewProvider = new HotStoryTreeViewProvider();
 	const collectionTreeViewProvider = new CollectionTreeviewProvider(profileService, collectionService)
-	const webviewService = new WebviewService(httpService, collectionService, collectionTreeViewProvider);
+	const webviewService = new WebviewService(collectionService, collectionTreeViewProvider);
 	const eventService = new EventService();
-	const feedTreeViewProvider = new FeedTreeViewProvider(accountService, profileService, httpService, eventService);
+	const feedTreeViewProvider = new FeedTreeViewProvider(accountService, profileService, eventService);
 	const searchService = new SearchService(webviewService);
-	const authenticateService = new AuthenticateService(profileService, accountService, feedTreeViewProvider, httpService, webviewService);
-	const pasteService = new PasteService(httpService);
+	const authenticateService = new AuthenticateService(profileService, accountService, feedTreeViewProvider, webviewService);
+	const pasteService = new PasteService();
 	const pipeService = new PipeService(pasteService);
-	const publishService = new PublishService(httpService, zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService, pipeService);
+	const publishService = new PublishService(zhihuMdParser, defualtMdParser, webviewService, collectionService, eventService, profileService, pasteService, pipeService);
 
 
 	context.subscriptions.push(
@@ -60,6 +60,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.search", async () => 
 		await searchService.getSearchItems()
 	);
+	vscode.commands.registerCommand("zhihu.clearCache", () => {
+		clearCache()
+		CacheManager.clearCache()
+	})
 	vscode.commands.registerCommand("zhihu.login", () => 
 		authenticateService.login()
 	);

@@ -11,7 +11,7 @@ import { IProfile, ITarget, ITopicTarget } from "../model/target/target";
 import { beautifyDate, removeHtmlTag } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { EventService } from "./event.service";
-import { HttpService } from "./http.service";
+import { HttpService, sendRequest } from "./http.service";
 import { ProfileService } from "./profile.service";
 import { WebviewService } from "./webview.service";
 import * as MarkdownIt from "markdown-it";
@@ -38,7 +38,6 @@ export class PublishService {
 	public profile: IProfile;
 
 	constructor(
-		protected httpService: HttpService,
 		protected zhihuMdParser: MarkdownIt,
 		protected defualtMdParser: MarkdownIt,
 		protected webviewService: WebviewService,
@@ -97,6 +96,7 @@ export class PublishService {
 
 		// let html = this.zhihuMdParser.render(text);
 		let tokens = this.zhihuMdParser.parse(text, {});
+		// convert local and outer link to zhihu link
 		let pipePromise = this.pipeService.sanitizeMdTokens(tokens);
 		vscode.window.withProgress({
 			location: vscode.ProgressLocation.Window,
@@ -318,7 +318,7 @@ export class PublishService {
 	}
 
 	public putAnswer(html: string, answerId: string) {
-		this.httpService.sendRequest({
+		sendRequest({
 			uri: `${AnswerAPI}/${answerId}`,
 			method: 'put',
 			body: {
@@ -333,7 +333,7 @@ export class PublishService {
 				let newUrl = `${AnswerURL}/${answerId}`;
 				this.promptSuccessMsg(newUrl);
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true }).then(
+				sendRequest({ uri: `${AnswerURL}/${answerId}`, gzip: true }).then(
 					resp => {
 						pane.webview.html = resp
 					}
@@ -345,7 +345,7 @@ export class PublishService {
 	}
 
 	public postAnswer(html: string, questionId: string) {
-		this.httpService.sendRequest({
+		sendRequest({
 			uri: `${QuestionAPI}/${questionId}/answers`,
 			method: 'post',
 			body: new PostAnswer(html),
@@ -357,7 +357,7 @@ export class PublishService {
 				let newUrl = `${AnswerURL}/${resp.body.id}`;
 				this.promptSuccessMsg(newUrl);
 				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				this.httpService.sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
+				sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
 					resp => {
 						pane.webview.html = resp
 					}
@@ -383,7 +383,7 @@ export class PublishService {
 		}
 		if (!title) return;
 
-		let postResp: ITarget = await this.httpService.sendRequest({
+		let postResp: ITarget = await sendRequest({
 			uri: `${ZhuanlanAPI}/drafts`,
 			json: true,
 			method: 'post',
@@ -391,7 +391,7 @@ export class PublishService {
 			headers: {}
 		})
 
-		let patchResp = await this.httpService.sendRequest({
+		let patchResp = await sendRequest({
 			uri: `${ZhuanlanAPI}/${postResp.id}/draft`,
 			json: true,
 			method: 'patch',
@@ -404,7 +404,7 @@ export class PublishService {
 			headers: {}
 		})
 
-		let resp = await this.httpService.sendRequest({
+		let resp = await sendRequest({
 			uri: `${ZhuanlanAPI}/${postResp.id}/publish`,
 			json: true,
 			method: 'put',
@@ -430,7 +430,7 @@ export class PublishService {
 		}
 		if (!title) return;
 
-		let patchResp = await this.httpService.sendRequest({
+		let patchResp = await sendRequest({
 			uri: `${ZhuanlanAPI}/${articleId}/draft`,
 			json: true,
 			method: 'patch',
@@ -443,7 +443,7 @@ export class PublishService {
 			headers: {}
 		})
 
-		let resp = await this.httpService.sendRequest({
+		let resp = await sendRequest({
 			uri: `${ZhuanlanAPI}/${articleId}/publish`,
 			json: true,
 			method: 'put',

@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { FeedStoryAPI } from '../const/URL';
 import { IArticleTarget, IQuestionAnswerTarget, ITarget, IFeedTarget } from '../model/target/target';
 import { AccountService } from '../service/account.service';
-import { HttpService } from '../service/http.service';
+import { HttpService, sendRequest } from '../service/http.service';
 import { ProfileService } from '../service/profile.service';
 import { LinkableTreeItem } from './hotstory-treeview-provider';
 import { EventService, IEvent } from '../service/event.service';
@@ -28,7 +28,6 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 	constructor(
 		private accountService: AccountService,
 		private profileService: ProfileService,
-		private httpService: HttpService,
 		private eventService: EventService) {
 	}
 
@@ -53,7 +52,7 @@ export class FeedTreeViewProvider implements vscode.TreeDataProvider<vscode.Tree
 						return resolve([new FeedTreeItem('(请先登录，查看个性内容)', '', vscode.TreeItemCollapsibleState.None)]);
 					}
 					let feedAPI = `${FeedStoryAPI}?page_number=${element.page}&limit=10&action=down`;
-					let feedResp = await this.httpService.sendRequest(
+					let feedResp = await sendRequest(
 						{
 							uri: feedAPI,
 							json: true,

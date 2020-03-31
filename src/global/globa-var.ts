@@ -1,6 +1,5 @@
-import * as vscode from 'vscode';
 import * as path from "path";
-import { OutgoingMessage } from 'http';
+import * as vscode from 'vscode';
 import { Output } from './logger';
 
 var context: vscode.ExtensionContext;
@@ -11,7 +10,6 @@ export function setContext(c: vscode.ExtensionContext) {
 }
 
 export function getExtensionPath() {
-    Output(path.join(__dirname, '..'))
     return context ? context.extensionPath : path.join(__dirname, '../../') ;
 }
 

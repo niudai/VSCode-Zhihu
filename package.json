@@ -96,6 +96,10 @@
 				"title": "Zhihu: openWebView"
 			},
 			{
+				"command": "zhihu.clearCache",
+				"title": "Zhihu: Clear Cache"
+			},
+			{
 				"command": "zhihu.search",
 				"title": "Zhihu: Search Items",
 				"icon": {
