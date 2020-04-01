@@ -63,7 +63,8 @@ button#favorite, button#share, button#open {
 
 img.qrcode {
     margin: 0 auto;
-    margin-top: 180px;
+    width: 200px;
+    /* margin-top: 180px; */
     box-shadow: 0px 0px 9px rgba(76, 49, 40, 1);
 }
 

@@ -3,9 +3,10 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as zhihuEncrypt from "zhihu-encrypt";
+import * as cheerio from "cheerio";
 import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader } from "../const/HTTP";
 import { TemplatePath } from "../const/PATH";
-import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
@@ -54,7 +55,9 @@ export class AuthenticateService {
 			this.smsLogin();
 		} else if (selectedLoginType == LoginEnum.qrcode) {
 			this.qrcodeLogin();
-		} 
+		} else if (selectedLoginType == LoginEnum.weixin) {
+			this.weixinLogin();
+		}
 	}
 
 	public async passwordLogin() {
@@ -155,7 +158,8 @@ export class AuthenticateService {
 		};
 
 		loginData.signature = crypto.createHmac('sha1', 'd1b964811afb40118a12068ff74a12f4')
-			.update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
+			// .update(loginData.grant_type + loginData.client_id + loginData.source + loginData.timestamp.toString())
+			.update("password" + loginData.client_id + loginData.source + loginData.timestamp.toString())
 			.digest('hex');
 
 		let encryptedFormData = zhihuEncrypt.loginEncrypt(formurlencoded(loginData));
@@ -286,5 +290,37 @@ export class AuthenticateService {
 			console.log('Window is disposed')
 			clearInterval(intervalId)
 		})
+	}
+
+	public async weixinLogin() {
+		let uri = WeixinLoginPageAPI();
+		let html = await sendRequest({
+			uri,
+			gzip: true
+		})
+		const $ = cheerio.load(html)
+		const panel = vscode.window.createWebviewPanel("zhihu", "微信登录", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
+		const imgSrc = WeixinLoginQRCodeAPI($('img')[0].attribs['src']);
+		this.webviewService.renderHtml(
+			{
+				title: '二维码',
+				showOptions: {
+					viewColumn: vscode.ViewColumn.One,
+					preserveFocus: true
+				},
+				pugTemplatePath: path.join(
+					getExtensionPath(),
+					TemplatePath,
+					'qrcode.pug'
+				),
+				pugObjects: {
+					title: '打开微信 APP 扫一扫',
+					qrcodeSrc: imgSrc,
+					useVSTheme: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme)
+				}
+			},
+			panel
+		);
+
 	}
 }

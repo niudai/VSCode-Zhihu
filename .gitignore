@@ -13,6 +13,7 @@ release_notes/images
 dist
 README.pdf
 events.json
+cache.json
 **/images
 .vscode-test
 *.log

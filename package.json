@@ -357,8 +357,10 @@
 		"webpack-cli": "^3.3.10"
 	},
 	"dependencies": {
+		"@types/cheerio": "^0.22.17",
 		"Base64": "^1.1.0",
 		"ali-oss": "^6.5.1",
+		"cheerio": "^1.0.0-rc.3",
 		"crypto": "^1.0.1",
 		"form-urlencoded": "^4.1.1",
 		"markdown-it": "^10.0.0",
