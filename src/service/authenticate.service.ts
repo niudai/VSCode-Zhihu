@@ -293,10 +293,7 @@ export class AuthenticateService {
 
 	public async weixinLogin() {
 		await sendRequest({
-			uri: CaptchaAPI,
-			method: 'get',
-			gzip: true,
-			json: true
+			uri: 'https://www.zhihu.com/signin?next=%2F',
 		});
 		let uri = WeixinLoginPageAPI();
 		let html = await sendRequest({

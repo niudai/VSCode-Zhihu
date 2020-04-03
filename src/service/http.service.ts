@@ -23,6 +23,7 @@ export class HttpService {
 
 
 	public async sendRequest(options): Promise<any> {
+
 		if (options.headers == undefined) {
 			options.headers = DefaultHTTPHeader;
 			try {
@@ -35,7 +36,6 @@ export class HttpService {
 			options.headers['x-xsrftoken'] = this.xsrfToken;
 		}
 		options.headers['cookie'] = getCookieJar().getCookieStringSync(options.uri);
-		if (this.xsrfToken) options.headers['cookie'] = options.headers['cookie'].concat(`; _xsrf=${this.xsrfToken}`);
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
 		var returnBody;
 		if (options.resolveWithFullResponse == undefined || options.resolveWithFullResponse == false) {
@@ -59,9 +59,10 @@ export class HttpService {
 				if (resp.headers['set-cookie']) {
 					resp.headers['set-cookie'].map(c => Cookie.parse(c))
 						.forEach(c => {
+							delete c.domain
 							getCookieJar().setCookieSync(c, options.uri)
 							getCookieStore().findCookie(ZhihuDomain, '/', '_xsrf', (err, c) => {
-								this.xsrfToken = c.value
+								if(c) { this.xsrfToken = c.value }
 							})
 						});
 				}
@@ -86,6 +87,7 @@ export class HttpService {
 		if (domain == undefined) {
 			getCookieStore().removeCookies(ZhihuDomain, null, err => console.log(err));
 		}
+		this.xsrfToken = undefined;
 	}
 
 	public clearCache() {

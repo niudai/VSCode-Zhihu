@@ -119,8 +119,8 @@ export const SearchAPI: string = "https://www.zhihu.com/api/v4/search_v3";
  */
 export function WeixinLoginQRCodeAPI(qrId: string) {
 	return `https://open.weixin.qq.com${qrId}` + 
-	"?appid=wx268fcfe924dcb171&redirect_uri=https://www.zhihu.com/oauth/callback/wechat?action=login" +
-	"&from=&response_type=code&scope=snsapi_login&state=" +
+	"?appid=wx268fcfe924dcb171&redirect_uri=https%3A%2F%2Fwww.zhihu.com%2Foauth%2Fcallback%2Fwechat%3Faction%3Dlogin%26from%3D" +
+	"&response_type=code&scope=snsapi_login&state=" +
 	WeixinState +
 	"#wechat"
 
@@ -130,10 +130,9 @@ export const WeixinState = "564c6550647442736e4552394f795a37474d4b4f4d4a794e7a65
 
 export function WeixinLoginPageAPI(): string {
 	return "https://open.weixin.qq.com/connect/qrconnect" + 
-	"?appid=wx268fcfe924dcb171&redirect_uri=https://www.zhihu.com/oauth/callback/wechat?action=login" +
-	"&from=&response_type=code&scope=snsapi_login&state=" +
-	WeixinState +
-	"#wechat"
+	"?appid=wx268fcfe924dcb171&redirect_uri=https%3A%2F%2Fwww.zhihu.com%2Foauth%2Fcallback%2Fwechat%3Faction%3Dlogin%26from%3D" +
+	"&response_type=code&scope=snsapi_login&state=" +
+	WeixinState
 }
 
 /**
