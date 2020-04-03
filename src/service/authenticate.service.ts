@@ -4,9 +4,9 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as zhihuEncrypt from "zhihu-encrypt";
 import * as cheerio from "cheerio";
-import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader } from "../const/HTTP";
+import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader, WeixinLoginHeader } from "../const/HTTP";
 import { TemplatePath } from "../const/PATH";
-import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI, WeixinState } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
@@ -31,24 +31,23 @@ export class AuthenticateService {
 			clearCookie();
 			this.feedTreeViewProvider.refresh();
 			// fs.writeFileSync(path.join(getExtensionPath(), 'cookie.txt'), '');
-		} catch(error) {
+		} catch (error) {
 			console.log(error);
 		}
 		vscode.window.showInformationMessage('注销成功！');
 	}
 
 	public async login() {
-	
 		if (await this.accountService.isAuthenticated()) {
 			vscode.window.showInformationMessage(`你已经登录了哦~ ${this.profileService.name}`);
 			return;
 		}
-		
+		clearCookie()
 		const selectedLoginType: LoginEnum = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: LoginEnum }>(
 			LoginTypes.map(type => ({ value: type.value, label: type.ch, description: '' })),
 			{ placeHolder: "选择登录方式: " }
 		).then(item => item.value);
-	
+
 		if (selectedLoginType == LoginEnum.password) {
 			this.passwordLogin();
 		} else if (selectedLoginType == LoginEnum.sms) {
@@ -69,7 +68,7 @@ export class AuthenticateService {
 		});
 
 		if (resp.show_captcha) {
-			let captchaImg = await sendRequest({ 
+			let captchaImg = await sendRequest({
 				uri: CaptchaAPI,
 				method: 'put',
 				json: true,
@@ -81,7 +80,7 @@ export class AuthenticateService {
 			const imgSrc = panel.webview.asWebviewUri(vscode.Uri.file(
 				path.join(getExtensionPath(), './captcha.jpg')
 			));
-			
+
 			this.webviewService.renderHtml({
 				title: '验证码',
 				showOptions: {
@@ -99,7 +98,7 @@ export class AuthenticateService {
 					useVSTheme: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme)
 				}
 			}, panel)
-	
+
 			do {
 				var captcha: string | undefined = await vscode.window.showInputBox({
 					prompt: "输入验证码",
@@ -120,7 +119,7 @@ export class AuthenticateService {
 					gzip: true,
 					resolveWithFullResponse: true,
 				});
-				if (resp.statusCode != 201) { 
+				if (resp.statusCode != 201) {
 					vscode.window.showWarningMessage('请输入正确的验证码')
 				}
 			} while (resp.statusCode != 201);
@@ -203,7 +202,7 @@ export class AuthenticateService {
 			phone_no: '+86' + phoneNumber,
 			sms_type: 'text'
 		};
-		
+
 		let encryptedFormData = zhihuEncrypt.smsEncrypt(formurlencoded(smsData));
 
 		// phone_no%3D%252B8618324748963%26sms_type%3Dtext
@@ -222,7 +221,7 @@ export class AuthenticateService {
 			ignoreFocusOut: true,
 			prompt: "输入短信验证码：",
 			placeHolder: "",
-		});		
+		});
 	}
 
 	public async qrcodeLogin() {
@@ -280,27 +279,34 @@ export class AuthenticateService {
 						panel.dispose();
 						this.profileService.fetchProfile().then(() => {
 							vscode.window.showInformationMessage(`你好，${this.profileService.name}`);
-							this.feedTreeViewProvider.refresh();	
+							this.feedTreeViewProvider.refresh();
 						})
 					}
 				}
 			);
 		}, 1000)
-		panel.onDidDispose(() => { 
+		panel.onDidDispose(() => {
 			console.log('Window is disposed')
 			clearInterval(intervalId)
 		})
 	}
 
 	public async weixinLogin() {
+		await sendRequest({
+			uri: CaptchaAPI,
+			method: 'get',
+			gzip: true,
+			json: true
+		});
 		let uri = WeixinLoginPageAPI();
 		let html = await sendRequest({
 			uri,
-			gzip: true
+			gzip: true,
 		})
 		const $ = cheerio.load(html)
 		const panel = vscode.window.createWebviewPanel("zhihu", "微信登录", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
 		const imgSrc = WeixinLoginQRCodeAPI($('img')[0].attribs['src']);
+		const uuid = imgSrc.match(/\/connect\/qrcode\/([\w\d]*)/)[1];
 		this.webviewService.renderHtml(
 			{
 				title: '二维码',
@@ -322,5 +328,46 @@ export class AuthenticateService {
 			panel
 		);
 
+		var p = "https://lp.open.weixin.qq.com";
+
+		this.weixinPolling(p, uuid, panel);
+	}
+
+	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel) {
+		let weixinResp = await sendRequest({
+			uri: p + `/connect/l/qrconnect?uuid=${uuid}`,
+			timeout: 6e4,
+			resolveWithFullResponse: true,
+			// headers: WeixinLoginHeader(WeixinLoginPageAPI())
+		});
+		let wx_errcode = weixinResp.body.match(/window\.wx_errcode=(\d+)/)[1];
+		let wx_code = weixinResp.body.match(/window\.wx_code='(.*)'/)[1];
+		var g = parseInt(wx_errcode);
+		switch (g) {
+			case 405:
+				var h = "https://www.zhihu.com/oauth/callback/wechat?action=login&amp;from=";
+				h = h.replace(/&amp;/g, "&"),
+					h += (h.indexOf("?") > -1 ? "&" : "?") + "code=" + wx_code + `&state=${WeixinState}`;
+				let r = await sendRequest({
+					uri: h,
+					resolveWithFullResponse: true,
+					gzip: true,
+					headers: WeixinLoginHeader(WeixinLoginPageAPI())
+				})
+				console.log(r)
+				this.profileService.fetchProfile().then(() => {
+					Output(`你好，${this.profileService.name}`, 'info');
+					this.feedTreeViewProvider.refresh();
+				});
+				panel.onDidDispose(() => {
+					console.log('Window is disposed');
+				});
+				break;
+			case undefined:
+				this.weixinPolling(p, uuid, panel)
+			default:
+				Output('请在微信上扫码， 点击确认！', 'info');
+				this.weixinPolling(p, uuid, panel)
+		}
 	}
 }

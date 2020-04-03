@@ -35,6 +35,7 @@ export class HttpService {
 			options.headers['x-xsrftoken'] = this.xsrfToken;
 		}
 		options.headers['cookie'] = getCookieJar().getCookieStringSync(options.uri);
+		if (this.xsrfToken) options.headers['cookie'] = options.headers['cookie'].concat(`; _xsrf=${this.xsrfToken}`);
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
 		var returnBody;
 		if (options.resolveWithFullResponse == undefined || options.resolveWithFullResponse == false) {
