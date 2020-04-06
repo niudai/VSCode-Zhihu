@@ -166,7 +166,6 @@ export class PasteService {
         const uri = editor.document.uri;
         if (uri.scheme === "untitled") {
             vscode.window.showWarningMessage("请先保存当前编辑文件！");
-
             return;
         }
         editor.edit(e => {

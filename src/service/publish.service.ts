@@ -164,7 +164,7 @@ export class PublishService {
 			// just publish answer in terms of what shebang indicates
 			if (QuestionAnswerPathReg.test(url.pathname)) {
 				// answer link, update answer
-				let aId = url.pathname.replace(QuestionAnswerPathReg, '$2');
+				let aId = url.pathname.replace(QuestionAnswerPathReg, '$3');
 				if (!this.eventService.registerEvent({
 					content: html,
 					type: MediaTypes.article,
@@ -191,7 +191,7 @@ export class PublishService {
 				})) this.promptSameContentWarn()
 				else this.promptEventRegistedInfo(timeObject)
 			} else if (ArticlePathReg.test(url.pathname)) {
-				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
+				({ tokens, html } = this.removeTitleAndBgFromContent(tokens, openIndex, bgIndex, html));
 				let arId = url.pathname.replace(ArticlePathReg, '$1');
 				if (!title) {
 					title = await this._getTitle();
@@ -222,8 +222,7 @@ export class PublishService {
 			).then(item => item.value);
 
 			if (selectFrom === MediaTypes.article) {
-				tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
-				html = this.zhihuMdParser.renderer.render(tokens, {}, {});
+				({ tokens, html } = this.removeTitleAndBgFromContent(tokens, openIndex, bgIndex, html));
 
 				// user select to publish new article
 				if (!title) {
@@ -269,6 +268,12 @@ export class PublishService {
 				else this.promptEventRegistedInfo(timeObject);
 			}
 		}
+	}
+
+	private removeTitleAndBgFromContent(tokens, openIndex: number, bgIndex: number, html: string) {
+		tokens = tokens.filter(this._removeTitleAndBg(openIndex, bgIndex));
+		html = this.zhihuMdParser.renderer.render(tokens, {}, {});
+		return { tokens, html };
 	}
 
 	private _removeTitleAndBg(openIndex: number, bgIndex: number) {
@@ -356,12 +361,17 @@ export class PublishService {
 			if (resp.statusCode == 200) {
 				let newUrl = `${AnswerURL}/${resp.body.id}`;
 				this.promptSuccessMsg(newUrl);
-				const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
-				sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
-					resp => {
-						pane.webview.html = resp
-					}
-				);
+				// const pane = vscode.window.createWebviewPanel('zhihu', 'zhihu', vscode.ViewColumn.One, { enableScripts: true, enableCommandUris: true, enableFindWidget: true });
+				// sendRequest({ uri: `${AnswerURL}/${resp.body.id}`, gzip: true }).then(
+				// 	resp => {
+				// 		pane.webview.html = resp
+				// 	}
+				// );
+				const editor = vscode.window.activeTextEditor;
+				const uri = editor.document.uri;
+				editor.edit(e => {
+					e.replace(editor.document.lineAt(0).range, `#! ${newUrl}\n`)
+				})
 			} else {
 				if (resp.statusCode == 400 || resp.statusCode == 403) {
 					vscode.window.showWarningMessage(`发布失败，你已经在该问题下发布过答案，请将头部链接更改为\
@@ -388,7 +398,16 @@ export class PublishService {
 			json: true,
 			method: 'post',
 			body: { "title": "h", "delta_time": 0 },
-			headers: {}
+			headers: {
+				'authority': 'zhuanlan.zhihu.com',
+				'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4101.0 Safari/537.36 Edg/83.0.474.0',
+				'origin': 'https://zhuanlan.zhihu.com',
+				'sec-fetch-site': 'same-origin',
+				'sec-fetch-mode': 'cors',
+				'sec-fetch-dest': 'empty',
+				'referer': 'https://zhuanlan.zhihu.com/write',
+				'x-requested-with': 'fetch'
+			}
 		})
 
 		let patchResp = await sendRequest({
@@ -413,6 +432,10 @@ export class PublishService {
 			resolveWithFullResponse: true
 		})
 		if (resp.statusCode < 300) {
+			const editor = vscode.window.activeTextEditor;
+			editor.edit(e => {
+				e.insert(new vscode.Position(0, 0), `#! ${ZhuanlanURL}${postResp.id}\n`)
+			})
 			this.promptSuccessMsg(`${ZhuanlanURL}${postResp.id}`, title)
 		} else {
 			vscode.window.showWarningMessage(`文章发布失败，错误代码${resp.statusCode}`)
@@ -469,7 +492,7 @@ export class PublishService {
 		let shebangRegExp = /#[!！]\s*((https?:\/\/)?(.+))$/i
 		let lf = text.indexOf('\n');
 		if (lf < 0) lf = text.length;
-		let link = text.slice(0, lf - 1);
+		let link = text.slice(0, lf);
 		if (!shebangRegExp.test(link)) return undefined;
 		let url = new URL(link.replace(shebangRegExp, '$1'));
 		if (/^(\w)+\.zhihu\.com$/.test(url.host)) return url;

@@ -36,6 +36,7 @@ export class HttpService {
 			options.headers['x-xsrftoken'] = this.xsrfToken;
 		}
 		options.headers['cookie'] = getCookieJar().getCookieStringSync(options.uri);
+		// options.headers['cookie'] = getCookieJar().getCookieStringSync('www.zhihu.com');
 		// headers['cookie'] = cookieService.getCookieString(options.uri);
 		var returnBody;
 		if (options.resolveWithFullResponse == undefined || options.resolveWithFullResponse == false) {
@@ -59,7 +60,7 @@ export class HttpService {
 				if (resp.headers['set-cookie']) {
 					resp.headers['set-cookie'].map(c => Cookie.parse(c))
 						.forEach(c => {
-							delete c.domain
+							// delete c.domain
 							getCookieJar().setCookieSync(c, options.uri)
 							getCookieStore().findCookie(ZhihuDomain, '/', '_xsrf', (err, c) => {
 								if(c) { this.xsrfToken = c.value }
