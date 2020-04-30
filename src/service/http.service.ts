@@ -3,7 +3,7 @@ import * as httpClient from "request-promise";
 import { Cookie, CookieJar, Store } from "tough-cookie";
 import { DefaultHTTPHeader } from "../const/HTTP";
 import { ZhihuDomain } from "../const/URL";
-import { getCookieJar, getCookieStore } from "../global/cookie";
+import { getCookieJar, getCookieStore, clearCookieStore } from "../global/cookie";
 import { Output } from "../global/logger";
 import { IProfile } from "../model/target/target";
 
@@ -87,6 +87,7 @@ export class HttpService {
 	public clearCookie(domain?: string) {
 		if (domain == undefined) {
 			getCookieStore().removeCookies(ZhihuDomain, null, err => console.log(err));
+			clearCookieStore();
 		}
 		this.xsrfToken = undefined;
 	}

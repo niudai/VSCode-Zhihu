@@ -493,6 +493,7 @@ export class PublishService {
 		let lf = text.indexOf('\n');
 		if (lf < 0) lf = text.length;
 		let link = text.slice(0, lf);
+		link = link.indexOf('\r') > 0 ? link.slice(0, link.length - 1) : link;
 		if (!shebangRegExp.test(link)) return undefined;
 		let url = new URL(link.replace(shebangRegExp, '$1'));
 		if (/^(\w)+\.zhihu\.com$/.test(url.host)) return url;

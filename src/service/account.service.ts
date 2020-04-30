@@ -1,8 +1,7 @@
 
-import * as vscode from "vscode";
 import { SelfProfileAPI, SignUpRedirectPage } from "../const/URL";
 import { IProfile } from "../model/target/target";
-import { HttpService, sendRequest } from "./http.service";
+import { sendRequest } from "./http.service";
 
 
 export class AccountService {
