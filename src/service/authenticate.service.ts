@@ -6,7 +6,7 @@ import * as zhihuEncrypt from "zhihu-encrypt";
 import * as cheerio from "cheerio";
 import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader, WeixinLoginHeader } from "../const/HTTP";
 import { TemplatePath } from "../const/PATH";
-import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI, WeixinState } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI, WeixinState, WeixinLoginRedirectAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
 import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
@@ -295,11 +295,21 @@ export class AuthenticateService {
 		await sendRequest({
 			uri: 'https://www.zhihu.com/signin?next=%2F',
 		});
-		let uri = WeixinLoginPageAPI();
-		let html = await sendRequest({
+		let uri = WeixinLoginRedirectAPI();
+		let prefetch = await sendRequest({
 			uri,
 			gzip: true,
+			followRedirect: false,
+			followAllRedirects: false,
+			resolveWithFullResponse: true
 		})
+		uri = prefetch.headers['location'];
+		let html = await sendRequest({
+			uri,
+			gzip: true
+		})
+		var reg = /state=(\w+)/g;
+		const state = uri.match(reg)[0].replace(reg, '$1');
 		const $ = cheerio.load(html)
 		const panel = vscode.window.createWebviewPanel("zhihu", "微信登录", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
 		const imgSrc = WeixinLoginQRCodeAPI($('img')[0].attribs['src']);
@@ -327,15 +337,15 @@ export class AuthenticateService {
 
 		var p = "https://lp.open.weixin.qq.com";
 
-		this.weixinPolling(p, uuid, panel);
+		this.weixinPolling(p, uuid, panel, state);
 	}
 
-	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel) {
+	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel, state: string) {
 		let weixinResp = await sendRequest({
 			uri: p + `/connect/l/qrconnect?uuid=${uuid}`,
 			timeout: 6e4,
 			resolveWithFullResponse: true,
-			// headers: WeixinLoginHeader(WeixinLoginPageAPI())
+			headers: WeixinLoginHeader(WeixinLoginPageAPI())
 		});
 		let wx_errcode = weixinResp.body.match(/window\.wx_errcode=(\d+)/)[1];
 		let wx_code = weixinResp.body.match(/window\.wx_code='(.*)'/)[1];
@@ -344,11 +354,11 @@ export class AuthenticateService {
 			case 405:
 				var h = "https://www.zhihu.com/oauth/callback/wechat?action=login&amp;from=";
 				h = h.replace(/&amp;/g, "&"),
-					h += (h.indexOf("?") > -1 ? "&" : "?") + "code=" + wx_code + `&state=${WeixinState}`;
+					h += (h.indexOf("?") > -1 ? "&" : "?") + "code=" + wx_code + `&state=${state}`;
 				let r = await sendRequest({
 					uri: h,
 					resolveWithFullResponse: true,
-					gzip: true,
+					// gzip: true,
 					headers: WeixinLoginHeader(WeixinLoginPageAPI())
 				})
 				console.log(r)
@@ -361,10 +371,10 @@ export class AuthenticateService {
 				});
 				break;
 			case undefined:
-				this.weixinPolling(p, uuid, panel)
+				this.weixinPolling(p, uuid, panel, state)
 			default:
 				Output('请在微信上扫码， 点击确认！', 'info');
-				this.weixinPolling(p, uuid, panel)
+				this.weixinPolling(p, uuid, panel, state)
 		}
 	}
 }

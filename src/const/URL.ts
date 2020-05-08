@@ -126,13 +126,17 @@ export function WeixinLoginQRCodeAPI(qrId: string) {
 
 }
 
-export const WeixinState = "564c6550647442736e4552394f795a37474d4b4f4d4a794e7a6570414b394632";
+export const WeixinState = "35623532396136362d663237392d343964352d613131652d343037363062383430663164";
 
 export function WeixinLoginPageAPI(): string {
 	return "https://open.weixin.qq.com/connect/qrconnect" + 
 	"?appid=wx268fcfe924dcb171&redirect_uri=https%3A%2F%2Fwww.zhihu.com%2Foauth%2Fcallback%2Fwechat%3Faction%3Dlogin%26from%3D" +
 	"&response_type=code&scope=snsapi_login&state=" +
 	WeixinState
+}
+
+export function WeixinLoginRedirectAPI(): string {
+	return "https://www.zhihu.com/oauth/redirect/login/wechat?next=/oauth/account_callback&ref_source=other_https://www.zhihu.com/signin?next=%2F";
 }
 
 /**

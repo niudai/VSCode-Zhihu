@@ -12,7 +12,6 @@ interface CacheItem {
 	data: any
 }
 
-
 export class HttpService {
 	public profile: IProfile;
 	public xsrfToken: string;

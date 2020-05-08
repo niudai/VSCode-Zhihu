@@ -2,7 +2,7 @@
 	"name": "vscode-zhihu",
 	"displayName": "Zhihu On VSCode",
 	"description": "Zhihu VSCode Extension",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"publisher": "niudai",
 	"enableProposedApi": false,
 	"engines": {
