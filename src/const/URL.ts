@@ -135,6 +135,7 @@ export function WeixinLoginPageAPI(): string {
 	WeixinState
 }
 
+
 export function WeixinLoginRedirectAPI(): string {
 	return "https://www.zhihu.com/oauth/redirect/login/wechat?next=/oauth/account_callback&ref_source=other_https://www.zhihu.com/signin?next=%2F";
 }
@@ -148,3 +149,8 @@ export const SMSAPI = 'https://www.zhihu.com/api/v3/oauth/sign_in/digits';
  *  default zhihu domain
  */
 export const ZhihuDomain = 'zhihu.com'
+
+
+export function AtAutoCompleteURL(token: string): string {
+	return encodeURI(`https://www.zhihu.com/people/autocomplete?token=${token}&max_matches=10&use_similar=0`);
+}
