@@ -336,11 +336,20 @@ export class AuthenticateService {
 		);
 
 		var p = "https://lp.open.weixin.qq.com";
+		
+		var intervalId = setInterval(() => {
+			this.weixinPolling(p, uuid, panel, state).then(r => {
+				if (r == true) {
+					clearInterval(intervalId);
+				}
+			})
 
-		this.weixinPolling(p, uuid, panel, state);
+		}, 1000)
+		
+		// this.weixinPolling(p, uuid, panel, state);
 	}
 
-	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel, state: string) {
+	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel, state: string): Promise<boolean> {
 		let weixinResp = await sendRequest({
 			uri: p + `/connect/l/qrconnect?uuid=${uuid}`,
 			timeout: 6e4,
@@ -361,7 +370,6 @@ export class AuthenticateService {
 					// gzip: true,
 					headers: WeixinLoginHeader(WeixinLoginPageAPI())
 				})
-				console.log(r)
 				this.profileService.fetchProfile().then(() => {
 					Output(`你好，${this.profileService.name}`, 'info');
 					this.feedTreeViewProvider.refresh();
@@ -369,12 +377,15 @@ export class AuthenticateService {
 				panel.onDidDispose(() => {
 					console.log('Window is disposed');
 				});
+				return Promise.resolve(true);
 				break;
 			case undefined:
 				this.weixinPolling(p, uuid, panel, state)
+				return Promise.resolve(false);
 			default:
 				Output('请在微信上扫码， 点击确认！', 'info');
-				this.weixinPolling(p, uuid, panel, state)
+				return Promise.resolve(false);
+				// this.weixinPolling(p, uuid, panel, state)
 		}
 	}
 }
