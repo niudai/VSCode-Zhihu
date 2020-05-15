@@ -384,7 +384,7 @@ export class AuthenticateService {
 				return Promise.resolve(false);
 			default:
 				Output('请在微信上扫码， 点击确认！', 'info');
-				return Promise.resolve(false);
+					return Promise.resolve(false);
 				// this.weixinPolling(p, uuid, panel, state)
 		}
 	}

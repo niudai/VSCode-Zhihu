@@ -26,6 +26,7 @@
 		"onCommand:zhihu.uploadImageFromClipboard",
 		"onCommand:zhihu.uploadImageFromPath",
 		"onCommand:zhihu.uploadImageFromExplorer",
+		"onCommand:zhihu.atPeople",
 		"onView:zhihu-explorer",
 		"onLanguage:markdown"
 	],
@@ -158,6 +159,10 @@
 			{
 				"command": "zhihu.uploadImageFromExplorer",
 				"title": "Zhihu: Upload Image From Explorer"
+			},
+			{
+				"command": "zhihu.atPeople",
+				"title": "Zhihu: @ Zhihuer"
 			},
 			{
 				"command": "zhihu.login",

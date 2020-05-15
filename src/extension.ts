@@ -25,7 +25,7 @@ import { HotStoryTreeViewProvider } from "./treeview/hotstory-treeview-provider"
 import { setContext } from "./global/globa-var";
 import { Output } from "./global/logger";
 import * as CacheManager from "./global/cache"
-import { ZhihuCompletionProvider } from "./lang/completion-provider";
+import { ZhihuCompletionProvider, AtPeople } from "./lang/completion-provider";
 
 export async function activate(context: vscode.ExtensionContext) {
 	Output('Extension Activated')
@@ -110,8 +110,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.refreshCollection", () => {
 		collectionTreeViewProvider.refresh();
 	})
+	vscode.commands.registerCommand("zhihu.atPeople", () => {
+		AtPeople()
+	})
 	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('markdown', new ZhihuCompletionProvider 
-	));
+	, '@'));
 
 	vscode.commands.registerCommand(
 		"zhihu.deleteCollectionItem",
