@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
-import { sendRequest } from "../service/http.service";
 import { AtAutoCompleteURL } from "../const/URL";
-import { Output } from "../global/logger";
+import { sendRequest } from "../service/http.service";
 
 
 
@@ -54,7 +53,7 @@ export async function AtPeople() {
      * ]
      */
     const selectedPeople: any[] = await vscode.window.showQuickPick<vscode.QuickPickItem & { user: [] }>(
-        respArray.map(item => ({ user: item, id: item[2], label: item[1], description: item[5] })),
+        respArray.slice(1).map(item => ({ user: item, id: item[2], label: item[1], description: item[5] })),
         { placeHolder: "选择你想要的结果:" }
     ).then(r => r ? r.user : undefined);
     if (!selectedPeople) return
