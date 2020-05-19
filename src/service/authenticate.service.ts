@@ -6,10 +6,10 @@ import * as zhihuEncrypt from "zhihu-encrypt";
 import * as cheerio from "cheerio";
 import { DefaultHTTPHeader, LoginPostHeader, QRCodeOptionHeader, WeixinLoginHeader } from "../const/HTTP";
 import { TemplatePath } from "../const/PATH";
-import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI, WeixinState, WeixinLoginRedirectAPI } from "../const/URL";
+import { CaptchaAPI, LoginAPI, SMSAPI, QRCodeAPI, UDIDAPI, WeixinLoginPageAPI, WeixinLoginQRCodeAPI, WeixinState, WeixinLoginRedirectAPI, JianshuWeixinLoginRedirectAPI } from "../const/URL";
 import { ILogin, ISmsData } from "../model/login.model";
 import { FeedTreeViewProvider } from "../treeview/feed-treeview-provider";
-import { LoginEnum, LoginTypes, SettingEnum } from "../const/ENUM";
+import { LoginEnum, LoginTypes, SettingEnum, JianshuLoginTypes } from "../const/ENUM";
 import { AccountService } from "./account.service";
 import { HttpService, clearCookie, sendRequest } from "./http.service";
 import { ProfileService } from "./profile.service";
@@ -56,6 +56,17 @@ export class AuthenticateService {
 			this.qrcodeLogin();
 		} else if (selectedLoginType == LoginEnum.weixin) {
 			this.weixinLogin();
+		}
+	}
+
+	public async jianshuLogin() {
+		const selectedLoginType: LoginEnum = await vscode.window.showQuickPick<vscode.QuickPickItem & { value: LoginEnum }>(
+			JianshuLoginTypes.map(type => ({ value: type.value, label: type.ch, description: '' })),
+			{ placeHolder: "选择登录方式: " }
+		).then(item => item.value);
+
+		if (selectedLoginType == LoginEnum.weixin) {
+			this.jianshuWeixinLogin();
 		}
 	}
 
@@ -341,12 +352,77 @@ export class AuthenticateService {
 			this.weixinPolling(p, uuid, panel, state).then(r => {
 				if (r == true) {
 					clearInterval(intervalId);
+					panel.dispose()
 				}
 			})
 
 		}, 1000)
+
+		panel.onDidDispose(l => {
+			clearInterval(intervalId);
+		})
 		
 		// this.weixinPolling(p, uuid, panel, state);
+	}
+
+	public async jianshuWeixinLogin() {
+		let uri = JianshuWeixinLoginRedirectAPI();
+		let prefetch = await sendRequest({
+			uri,
+			gzip: true,
+			followRedirect: false,
+			followAllRedirects: false,
+			resolveWithFullResponse: true
+		})
+		uri = prefetch.headers['location'];
+		let html = await sendRequest({
+			uri,
+			gzip: true
+		})
+		var reg = /state=([\w%]+)/g;
+		const state = uri.match(reg)[0].replace(reg, '$1');
+		const $ = cheerio.load(html)
+		const panel = vscode.window.createWebviewPanel("zhihu", "微信登录", { viewColumn: vscode.ViewColumn.One, preserveFocus: true });
+		const imgSrc = WeixinLoginQRCodeAPI($('img')[0].attribs['src']);
+		const uuid = imgSrc.match(/\/connect\/qrcode\/([\w\d]*)/)[1];
+		this.webviewService.renderHtml(
+			{
+				title: '二维码',
+				showOptions: {
+					viewColumn: vscode.ViewColumn.One,
+					preserveFocus: true
+				},
+				pugTemplatePath: path.join(
+					getExtensionPath(),
+					TemplatePath,
+					'qrcode.pug'
+				),
+				pugObjects: {
+					title: '打开微信 APP 扫一扫',
+					qrcodeSrc: imgSrc,
+					useVSTheme: vscode.workspace.getConfiguration('zhihu').get(SettingEnum.useVSTheme)
+				}
+			},
+			panel
+		);
+
+		var p = "https://lp.open.weixin.qq.com";
+		
+		var intervalId = setInterval(() => {
+			this.jianshuWeixinPolling(p, uuid, panel, state).then(r => {
+				if (r == true) {
+					clearInterval(intervalId);
+					panel.dispose()
+				}
+			})
+
+		}, 1000)
+
+		panel.onDidDispose(l => {
+			clearInterval(intervalId)
+			panel.dispose()
+		})
+
 	}
 
 	private async weixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel, state: string): Promise<boolean> {
@@ -356,8 +432,13 @@ export class AuthenticateService {
 			resolveWithFullResponse: true,
 			headers: WeixinLoginHeader(WeixinLoginPageAPI())
 		});
-		let wx_errcode = weixinResp.body.match(/window\.wx_errcode=(\d+)/)[1];
-		let wx_code = weixinResp.body.match(/window\.wx_code='(.*)'/)[1];
+		let wx_errcode = ""
+		let wx_code = ""
+
+		// if (weixinResp.body && weixinResp.body.length > 0) {
+			wx_errcode = weixinResp.body.match(/window\.wx_errcode=(\d+)/)[1];
+			wx_code = weixinResp.body.match(/window\.wx_code='(.*)'/)[1];	
+		// }
 		var g = parseInt(wx_errcode);
 		switch (g) {
 			case 405:
@@ -387,5 +468,58 @@ export class AuthenticateService {
 					return Promise.resolve(false);
 				// this.weixinPolling(p, uuid, panel, state)
 		}
+	}
+
+	private async jianshuWeixinPolling(p: string, uuid: string, panel: vscode.WebviewPanel, state: string): Promise<boolean> {
+		let weixinResp = await sendRequest({
+			uri: p + `/connect/l/qrconnect?uuid=${uuid}`,
+			timeout: 6e4,
+			resolveWithFullResponse: true,
+			headers: WeixinLoginHeader(WeixinLoginPageAPI())
+		});
+		let wx_code = ""
+		let wx_errcode = ""
+		if (weixinResp.body && weixinResp.body.length > 0) {
+			wx_errcode = weixinResp.body.match(/window\.wx_errcode=(\d+)/)[1];
+			wx_code = weixinResp.body.match(/window\.wx_code='(.*)'/)[1];	
+		}
+		var g = parseInt(wx_errcode);
+		switch (g) {
+			// "https://open.weixin.qq.com/connect/qrconnect?appid=wxe9199d568fe57fdd&client_id=wxe9199d568fe57fdd&redirect_uri=http%3A%2F%2Fwww.jianshu.com%2Fusers%2Fauth%2Fwechat%2Fcallback&response_type=code&scope=snsapi_login&state=%257B%257D"
+			case 405:
+				var h = "http://www.jianshu.com/users/auth/wechat/callback";
+				// "http://www.jianshu.com/users/auth/wechat/callback?code=021jPsAa1isZkM1Z5zza1turAa1jPsAi&state=%7B%7D"
+				h = h.replace(/&amp;/g, "&"),
+					h += (h.indexOf("?") > -1 ? "&" : "?") + "code=" + wx_code + `&state=${state}`;
+				let r = await sendRequest({
+					uri: h,
+					resolveWithFullResponse: true,
+					gzip: true,
+					// headers: WeixinLoginHeader(WeixinLoginPageAPI())
+				})
+				// request twice, don't know why, but jianshu does this way.
+				r = await sendRequest({
+					uri: h,
+					resolveWithFullResponse: true,
+					gzip: true,
+					// headers: WeixinLoginHeader(WeixinLoginPageAPI())
+				})
+				this.profileService.fetchProfile().then(() => {
+					Output(`你好，简书登录成功`, 'info');
+					this.feedTreeViewProvider.refresh();
+				});
+				panel.onDidDispose(() => {
+					console.log('Window is disposed');
+				});
+				return Promise.resolve(true);
+				break;
+			case undefined:
+				// this.weixinPolling(p, uuid, panel, state)
+				return Promise.resolve(false);
+			default:
+				Output('请在微信上扫码， 点击确认！', 'info');
+					return Promise.resolve(false);
+				// this.weixinPolling(p, uuid, panel, state)
+		}		
 	}
 }

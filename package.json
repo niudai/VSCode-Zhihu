@@ -2,7 +2,7 @@
 	"name": "vscode-zhihu",
 	"displayName": "Zhihu On VSCode",
 	"description": "Zhihu VSCode Extension",
-	"version": "0.3.2",
+	"version": "0.4.0",
 	"publisher": "niudai",
 	"enableProposedApi": false,
 	"engines": {
@@ -17,6 +17,7 @@
 		"onCommand:zhihu.refreshCollection",
 		"onCommand:zhihu.openWebView",
 		"onCommand:zhihu.publish",
+		"onCommand:zhihu.jianshuPublish",
 		"onCommand:zhihu.preview",
 		"onCommand:zhihu.search",
 		"onCommand:zhihu.login",
@@ -27,6 +28,7 @@
 		"onCommand:zhihu.uploadImageFromPath",
 		"onCommand:zhihu.uploadImageFromExplorer",
 		"onCommand:zhihu.atPeople",
+		"onCommand:zhihu.jianshuLogin",
 		"onView:zhihu-explorer",
 		"onLanguage:markdown"
 	],
@@ -83,6 +85,10 @@
 					"light": "res/media/light/refresh.svg",
 					"dark": "res/media/dark/refresh.svg"
 				}
+			},
+			{
+				"command": "zhihu.jianshuLogin",
+				"title": "Jianshu: Login"
 			},
 			{
 				"command": "zhihu.refreshCollection",

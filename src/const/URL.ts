@@ -140,6 +140,10 @@ export function WeixinLoginRedirectAPI(): string {
 	return "https://www.zhihu.com/oauth/redirect/login/wechat?next=/oauth/account_callback&ref_source=other_https://www.zhihu.com/signin?next=%2F";
 }
 
+export function JianshuWeixinLoginRedirectAPI(): string {
+	return "https://www.jianshu.com/users/auth/wechat"
+}
+
 /**
  *  get sms
  */

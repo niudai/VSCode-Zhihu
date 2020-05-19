@@ -68,6 +68,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.login", () => 
 		authenticateService.login()
 	);
+	vscode.commands.registerCommand("zhihu.jianshuLogin", () => {
+		authenticateService.jianshuLogin()
+	});
 	vscode.commands.registerCommand("zhihu.logout", () => 
 		authenticateService.logout()
 	);

@@ -47,6 +47,10 @@ export const LoginTypes = [
 	// { value: LoginEnum.password, ch: '密码' },
 ];
 
+export const JianshuLoginTypes = [
+	{ value: LoginEnum.weixin, ch: '微信'  }
+]
+
 export enum SettingEnum {
 	useVSTheme = 'useVSTheme',
 	isTitleImageFullScreen = 'isTitleImageFullScreen'
