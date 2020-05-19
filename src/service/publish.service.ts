@@ -1,24 +1,28 @@
 
+import * as MarkdownIt from "markdown-it";
 import { join } from "path";
 import * as vscode from "vscode";
 import { MediaTypes, SettingEnum } from "../const/ENUM";
 import { TemplatePath } from "../const/PATH";
-import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg, ZhihuPicReg } from "../const/REG";
-import { AnswerAPI, AnswerURL, QuestionAPI, ZhuanlanAPI, ZhuanlanURL } from "../const/URL";
+import { ArticlePathReg, QuestionAnswerPathReg, QuestionPathReg } from "../const/REG";
+import { AnswerAPI, AnswerURL, JianshuGetNotebooksAPI, QuestionAPI, ZhuanlanAPI, ZhuanlanURL, JianshuCreateNoteAPI, JianshuPutNoteAPI, JianshuPostNoteAPI } from "../const/URL";
+import { getExtensionPath } from "../global/globa-var";
 import { PostAnswer } from "../model/publish/answer.model";
 import { IColumn } from "../model/publish/column.model";
-import { IProfile, ITarget, ITopicTarget } from "../model/target/target";
+import { IProfile, ITarget } from "../model/target/target";
 import { beautifyDate, removeHtmlTag } from "../util/md-html-utils";
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { EventService } from "./event.service";
-import { HttpService, sendRequest } from "./http.service";
-import { ProfileService } from "./profile.service";
-import { WebviewService } from "./webview.service";
-import * as MarkdownIt from "markdown-it";
-import md5 = require("md5");
+import { sendRequest } from "./http.service";
 import { PasteService } from "./paste.service";
 import { PipeService } from "./pipe.service";
-import { getExtensionPath } from "../global/globa-var";
+import { ProfileService } from "./profile.service";
+import { WebviewService } from "./webview.service";
+import md5 = require("md5");
+import * as Types from "../model/target/target";
+import { gzip } from "zlib";
+import { Output } from "../global/logger";
+import { JianshuDefaultHeader } from "../const/HTTP";
 
 enum previewActions {
 	openInBrowser = '去看看'
@@ -268,6 +272,57 @@ export class PublishService {
 				})) this.promptSameContentWarn();
 				else this.promptEventRegistedInfo(timeObject);
 			}
+		}
+	}
+
+	async jianshuPublish(textEdtior: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+		// get notebooks
+		var noteBooks: Types.IJNotebook[] = await sendRequest({
+			uri: JianshuGetNotebooksAPI,
+			gzip: true,
+			header: JianshuDefaultHeader
+		})
+		if (noteBooks.length > 0) {
+			var book = noteBooks[0];
+			var newNote: Types.IJCreateNote = {
+				notebook_id: book.id.toString(),
+				at_bottom: true,
+				title: '简书第一篇文'
+			}
+			// create note
+			var createNoteResp: Types.IJNote = await sendRequest({
+				uri: JianshuCreateNoteAPI(),
+				method: 'post',
+				gzip: true,
+				body: newNote,
+				header: JianshuDefaultHeader
+			})
+			let text = textEdtior.document.getText();
+			let html = this.zhihuMdParser.render(text, {});
+			let content: Types.IJPutNote = {
+				content: html,
+				id: createNoteResp.id.toString(),
+				autosave_control: 16,
+				title: '简书测试文章',
+			}
+			// put content to server
+			await sendRequest({
+				uri: JianshuPutNoteAPI(createNoteResp.id),
+				gzip: true,
+				method: 'put',
+				body: content,
+				header: JianshuDefaultHeader
+			})
+			// publish article
+			await sendRequest({
+				uri: JianshuPostNoteAPI(createNoteResp.id),
+				method: 'post',
+				gzip: true,
+				body: {},
+				header: JianshuDefaultHeader
+			})
+			Output('简书文章发布成功！', 'info')
+
 		}
 	}
 

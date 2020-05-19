@@ -123,6 +123,10 @@
 				}
 			},
 			{
+				"command": "zhihu.jianshuPublish",
+				"title": "Jianshu: Publish"
+			},
+			{
 				"command": "zhihu.collect",
 				"title": "Zhihu: Collect",
 				"icon": {
@@ -232,6 +236,11 @@
 					"command": "zhihu.uploadImageFromExplorer",
 					"when": "resourceLangId == markdown",
 					"group": "zhihu@2"
+				},
+				{
+					"command": "zhihu.jianshuPublish",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@3"
 				}
 			],
 			"editor/title": [

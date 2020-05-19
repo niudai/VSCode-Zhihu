@@ -144,6 +144,24 @@ export function JianshuWeixinLoginRedirectAPI(): string {
 	return "https://www.jianshu.com/users/auth/wechat"
 }
 
+export const JianshuGetNotebooksAPI = "https://www.jianshu.com/author/notebooks"
+
+export function JianshuGetNotesAPI(notebookid: number): string {
+	return `https://www.jianshu.com/author/notebooks/${notebookid}/notes`
+}
+
+export function JianshuCreateNoteAPI(): string {
+	return 'https://www.jianshu.com/author/notes';
+}
+
+export function JianshuPutNoteAPI(noteId: number): string {
+	return `https://www.jianshu.com/author/notes/${noteId}`;
+}
+
+export function JianshuPostNoteAPI(noteId: number): string {
+	return `https://www.jianshu.com/author/notes/${noteId}/publicize`
+}
+
 /**
  *  get sms
  */
