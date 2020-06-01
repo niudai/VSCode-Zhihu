@@ -2,7 +2,7 @@ out
 node_modules
 # login.js
 /zhihu_login/*
-cookie.*
+cookie.json
 captcha.jpg
 /tmp_test
 collection.json
