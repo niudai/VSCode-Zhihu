@@ -94,7 +94,7 @@ export class PublishService {
 		// get rid of shebang line
 		if (url) text = text.slice(text.indexOf('\n') + 1);
 
-		text = ">本文使用 [Zhihu On VSCode](https://zhuanlan.zhihu.com/p/106057556) 创作并发布\n\n" + text;
+		text = text + "\n\n>本文使用 [Zhihu On VSCode](https://zhuanlan.zhihu.com/p/106057556) 创作并发布";
 		// let html = this.zhihuMdParser.render(text);
 		let tokens = this.zhihuMdParser.parse(text, {});
 		// convert local and outer link to zhihu link
