@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    include css.pug
+    style
+      include css/captcha.css
+    title= title
+  body
+    div(class = 'header')
+      include header.pug
+    div(class = 'container')
+      img(src= captchaSrc, class= 'captcha')

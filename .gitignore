@@ -1,0 +1,19 @@
+out
+node_modules
+# login.js
+/zhihu_login/*
+cookie.json
+captcha.jpg
+/tmp_test
+collection.json
+qrcode.png
+image.png 
+release_notes/images
+*.vsix
+dist
+README.pdf
+events.json
+cache.json
+**/images
+.vscode-test
+*.log

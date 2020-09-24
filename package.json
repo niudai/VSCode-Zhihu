@@ -1,0 +1,390 @@
+{
+	"name": "vscode-zhihu",
+	"displayName": "Zhihu On VSCode",
+	"description": "Zhihu VSCode Extension",
+	"version": "0.4.0",
+	"publisher": "niudai",
+	"enableProposedApi": false,
+	"engines": {
+		"vscode": "^1.41.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:zhihu.refreshFeed",
+		"onCommand:zhihu.refreshHotstories",
+		"onCommand:zhihu.refreshCollection",
+		"onCommand:zhihu.openWebView",
+		"onCommand:zhihu.publish",
+		"onCommand:zhihu.jianshuPublish",
+		"onCommand:zhihu.preview",
+		"onCommand:zhihu.search",
+		"onCommand:zhihu.login",
+		"onCommand:zhihu.logout",
+		"onCommand:zhihu.previousPage",
+		"onCommand:zhihu.nextPage",
+		"onCommand:zhihu.uploadImageFromClipboard",
+		"onCommand:zhihu.uploadImageFromPath",
+		"onCommand:zhihu.uploadImageFromExplorer",
+		"onCommand:zhihu.atPeople",
+		"onCommand:zhihu.jianshuLogin",
+		"onView:zhihu-explorer",
+		"onLanguage:markdown"
+	],
+	"keywords": [
+		"zhihu",
+		"feed",
+		"entertainment"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/niudai/VSCode-Zhihu"
+	},
+	"icon": "res/media/extension.png",
+	"main": "./dist/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "zhihu-explorer",
+					"title": "知乎",
+					"icon": "res/media/zhihu-logo-fluent.svg"
+				}
+			]
+		},
+		"views": {
+			"zhihu-explorer": [
+				{
+					"id": "zhihu-feed",
+					"name": "推荐"
+				},
+				{
+					"id": "zhihu-hotStories",
+					"name": "热榜"
+				},
+				{
+					"id": "zhihu-collection",
+					"name": "收藏"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "zhihu.refreshFeed",
+				"title": "Zhihu: Refresh Feed",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "zhihu.refreshHotstories",
+				"title": "Zhihu: Refresh HotStories",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "zhihu.jianshuLogin",
+				"title": "Jianshu: Login"
+			},
+			{
+				"command": "zhihu.refreshCollection",
+				"title": "Zhihu: Refresh Collection",
+				"icon": {
+					"light": "res/media/light/refresh.svg",
+					"dark": "res/media/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "zhihu.openWebView",
+				"title": "Zhihu: openWebView"
+			},
+			{
+				"command": "zhihu.clearCache",
+				"title": "Zhihu: Clear Cache"
+			},
+			{
+				"command": "zhihu.search",
+				"title": "Zhihu: Search Items",
+				"icon": {
+					"light": "res/media/light/search.svg",
+					"dark": "res/media/dark/search.svg"
+				}
+			},
+			{
+				"command": "zhihu.publish",
+				"title": "Zhihu: Publish",
+				"icon": {
+					"light": "res/media/light/publish.svg",
+					"dark": "res/media/dark/publish.svg"
+				}
+			},
+			{
+				"command": "zhihu.collect",
+				"title": "Zhihu: Collect",
+				"icon": {
+					"light": "res/media/light/collect.svg",
+					"dark": "res/media/dark/collect.svg"
+				}
+			},
+			{
+				"command": "zhihu.deleteCollectionItem",
+				"title": "Zhihu: Delete Collection Item",
+				"icon": {
+					"light": "res/media/light/delete.svg",
+					"dark": "res/media/dark/delete.svg"
+				}
+			},
+			{
+				"command": "zhihu.deleteEventItem",
+				"title": "Zhihu: Delete Event Item",
+				"icon": {
+					"light": "res/media/light/delete.svg",
+					"dark": "res/media/dark/delete.svg"
+				}
+			},
+			{
+				"command": "zhihu.preview",
+				"title": "Zhihu: Preview",
+				"icon": {
+					"light": "res/media/light/preview.svg",
+					"dark": "res/media/dark/preview.svg"
+				}
+			},
+			{
+				"command": "zhihu.uploadImageFromClipboard",
+				"title": "Zhihu: Paste Image From Clipboard"
+			},
+			{
+				"command": "zhihu.uploadImageFromPath",
+				"title": "Zhihu: Upload Image From Path"
+			},
+			{
+				"command": "zhihu.uploadImageFromExplorer",
+				"title": "Zhihu: Upload Image From Explorer"
+			},
+			{
+				"command": "zhihu.atPeople",
+				"title": "Zhihu: @ Zhihuer"
+			},
+			{
+				"command": "zhihu.login",
+				"title": "Zhihu: Login",
+				"icon": {
+					"light": "res/media/light/login.svg",
+					"dark": "res/media/dark/login.svg"
+				}
+			},
+			{
+				"command": "zhihu.logout",
+				"title": "Zhihu: Logout"
+			},
+			{
+				"command": "zhihu.previousPage",
+				"title": "Zhihu: PreviousPage"
+			},
+			{
+				"command": "zhihu.nextPage",
+				"title": "Zhihu: NextPage",
+				"icon": {
+					"light": "res/media/light/right-arrow.svg",
+					"dark": "res/media/dark/right-arrow.svg"
+				}
+			},
+			{
+				"command": "zhihu.getLink",
+				"title": "Zhihu: Get Link"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "zhihu.uploadImageFromClipboard",
+				"key": "ctrl+alt+p",
+				"mac": "cmd+alt+p"
+			},
+			{
+				"command": "zhihu.uploadImageFromPath",
+				"key": "ctrl+alt+q",
+				"mac": "cmd+alt+p"
+			},
+			{
+				"command": "zhihu.uploadImageFromExplorer",
+				"key": "ctrl+alt+f",
+				"mac": "cmd+alt+e"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"command": "zhihu.publish",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@0"
+				},
+				{
+					"command": "zhihu.preview",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@1"
+				},
+				{
+					"command": "zhihu.uploadImageFromExplorer",
+					"when": "resourceLangId == markdown",
+					"group": "zhihu@2"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "zhihu.publish",
+					"when": "resourceLangId == markdown",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.preview",
+					"when": "resourceLangId == markdown",
+					"group": "navigation@1"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "zhihu.uploadImageFromPath",
+					"group": "extension",
+					"when": "resourceExtname == .png || resourceExtname == .gif || resourceExtname == .jpg"
+				}
+			],
+			"view/title": [
+				{
+					"command": "zhihu.refreshFeed",
+					"when": "view == zhihu-feed",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.refreshHotstories",
+					"when": "view == zhihu-hotStories",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.refreshCollection",
+					"when": "view == zhihu-collection",
+					"group": "navigation@0"
+				},
+				{
+					"command": "zhihu.login",
+					"when": "view == zhihu-feed",
+					"group": "navigation"
+				},
+				{
+					"command": "zhihu.logout",
+					"when": "view == zhihu-feed",
+					"group": "secondary"
+				},
+				{
+					"command": "zhihu.search",
+					"when": "view == zhihu-feed",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "zhihu.previousPage",
+					"when": "view == zhihu-feed && viewItem == feed",
+					"group": "more"
+				},
+				{
+					"command": "zhihu.nextPage",
+					"when": "view == zhihu-feed && viewItem == feed",
+					"group": "inline"
+				},
+				{
+					"command": "zhihu.deleteCollectionItem",
+					"when": "view == zhihu-collection && viewItem == collect-item",
+					"group": "inline"
+				},
+				{
+					"command": "zhihu.deleteEventItem",
+					"when": "view == zhihu-feed && viewItem == event",
+					"group": "inline"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Zhihu",
+			"properties": {
+				"zhihu.useVSTheme": {
+					"type": "boolean",
+					"default": true,
+					"description": "Use VSCode default theme color, set false to disable"
+				},
+				"zhihu.isTitleImageFullScreen": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set true to enable full-sized background image"
+				},
+				"zhihu.useWaterMark": {
+					"type": "boolean",
+					"default": false,
+					"description": "Set true to enable watermark"
+				}
+			}
+		},
+		"markdown.markdownItPlugins": true,
+		"markdown.previewStyles": [
+			"./node_modules/katex/dist/katex.min.css"
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "webpack --mode production",
+		"develop": "webpack --mode development --watch",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"test": "npm run compile && node ./out/test/runTest.js",
+		"lint": "eslint -c .eslintrc.js --ext .ts ./src/**/*.ts"
+	},
+	"devDependencies": {
+		"@types/ali-oss": "^6.0.4",
+		"@types/cookie": "^0.3.3",
+		"@types/form-urlencoded": "^2.0.1",
+		"@types/markdown-it": "0.0.9",
+		"@types/md5": "^2.1.33",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^10.17.14",
+		"@types/on-change": "^1.1.0",
+		"@types/pug": "^2.0.4",
+		"@types/request": "^2.48.4",
+		"@types/request-promise": "^4.1.45",
+		"@types/vscode": "^1.39.0",
+		"@typescript-eslint/eslint-plugin": "^2.23.0",
+		"@typescript-eslint/eslint-plugin-tslint": "^2.23.0",
+		"@typescript-eslint/parser": "^2.23.0",
+		"eslint": "^6.8.0",
+		"mocha": "^7.0.1",
+		"ts-loader": "^6.2.1",
+		"tslint": "^6.1.0",
+		"typescript": "^3.7.5",
+		"uglifyjs-webpack-plugin": "^2.2.0",
+		"vscode-test": "^1.3.0",
+		"webpack": "^4.41.5",
+		"webpack-cli": "^3.3.10"
+	},
+	"dependencies": {
+		"@types/cheerio": "^0.22.17",
+		"Base64": "^1.1.0",
+		"ali-oss": "^6.5.1",
+		"cheerio": "^1.0.0-rc.3",
+		"crypto": "^1.0.1",
+		"form-urlencoded": "^4.1.1",
+		"markdown-it": "^10.0.0",
+		"markdown-it-katex": "^2.0.3",
+		"markdown-it-zhihu": "^2.0.10",
+		"md5": "^2.2.1",
+		"on-change": "^1.6.2",
+		"pug": "^2.0.4",
+		"request": "^2.88.0",
+		"request-promise": "^4.2.5",
+		"tough-cookie": "^3.0.1",
+		"tough-cookie-filestore": "0.0.1",
+		"zhihu-encrypt": "^1.0.0",
+		"zhihu-markdown": "^1.0.3"
+	}
+}

@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    include css.pug
+    style
+      //- include css/captcha.css
+      include css/qrcode.css
+    title= title
+  body
+    div(class = 'header')
+      include header.pug
+    div(class = 'qr-container')
+      img(src= qrcodeSrc, class= 'qrcode')

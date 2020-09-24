@@ -1,0 +1,53 @@
+// A launch configuration that compiles the extension and then opens it inside a new window
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "launch script",
+            "program": "${file}"
+            // "args": ["${file}"]
+        },
+        {
+            "name": "Launch Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+            ],
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            // "outFiles": [
+            //     "${workspaceRoot}/dist/**"
+            // ],
+            "preLaunchTask": "Run Develop"
+        },
+        {
+			"name": "Run Extension Tests",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+            ],
+            "stopOnEntry": false,
+			// "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+			"preLaunchTask": "npm: compile"
+		},
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Extension Host",
+            "protocol": "inspector",
+            "port": 5870,
+            "restart": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+src
+out
+# login.js
+/zhihu_login/*
+node_modules/
+cookie.*
+captcha.jpg
+tmp_test
+collection.json
+.vscode
+qrcode.png
+image.png 
+*.vsix
+package.cmd
+out/test/**
+**/*.map
+.gitignore
+tsconfig.json
+tslint.json
+release_notes/images
+**/*.pdf
