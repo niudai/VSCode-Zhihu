@@ -379,7 +379,7 @@
 		"markdown-it-zhihu": "^2.0.10",
 		"md5": "^2.2.1",
 		"on-change": "^1.6.2",
-		"pug": "^2.0.4",
+		"pug": "^3.0.1",
 		"request": "^2.88.0",
 		"request-promise": "^4.2.5",
 		"tough-cookie": "^3.0.1",
