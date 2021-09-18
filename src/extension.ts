@@ -26,6 +26,7 @@ import { setContext } from "./global/globa-var";
 import { Output } from "./global/logger";
 import * as CacheManager from "./global/cache"
 import { ZhihuCompletionProvider, AtPeople } from "./lang/completion-provider";
+import { mermaiSupport } from "./util/mermai-support";
 
 export async function activate(context: vscode.ExtensionContext) {
 	Output('Extension Activated')
@@ -92,9 +93,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
 		publishService.publish(textEditor, edit);
 	})
-	vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
-		vscode.commands.executeCommand('markdown.showPreviewToSide');
-	})
+	// vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
+	// 	vscode.commands.executeCommand('markdown.showPreviewToSide');
+	// })
 	vscode.commands.registerCommand('zhihu.uploadImageFromClipboard', async () => {
 		pasteService.uploadImageFromClipboard()
 	})
@@ -156,7 +157,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	return {
         extendMarkdownIt(md: any) {
-            return md.use(require('markdown-it-katex'));
+			return mermaiSupport(md)
         }
     }
 }
