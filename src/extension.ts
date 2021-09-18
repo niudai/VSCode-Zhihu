@@ -36,6 +36,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Dependency Injection
 	showReleaseNote()
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
+	zhihuMdParser.renderer.rules.thead_open = () => "<tbody>\n";
+	zhihuMdParser.renderer.rules.thead_close = () => "";
+	zhihuMdParser.renderer.rules.tbody_open = () => "";
 	const defualtMdParser = new MarkdownIt();
 	const accountService = new AccountService();
 	const profileService = new ProfileService(accountService);
@@ -58,20 +61,20 @@ export async function activate(context: vscode.ExtensionContext) {
 			await webviewService.openWebview(object);
 		}
 		));
-	vscode.commands.registerCommand("zhihu.search", async () => 
+	vscode.commands.registerCommand("zhihu.search", async () =>
 		await searchService.getSearchItems()
 	);
 	vscode.commands.registerCommand("zhihu.clearCache", () => {
 		clearCache()
 		CacheManager.clearCache()
 	})
-	vscode.commands.registerCommand("zhihu.login", () => 
+	vscode.commands.registerCommand("zhihu.login", () =>
 		authenticateService.login()
 	);
 	vscode.commands.registerCommand("zhihu.jianshuLogin", () => {
 		authenticateService.jianshuLogin()
 	});
-	vscode.commands.registerCommand("zhihu.logout", () => 
+	vscode.commands.registerCommand("zhihu.logout", () =>
 		authenticateService.logout()
 	);
 	vscode.window.registerTreeDataProvider(
@@ -116,7 +119,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.atPeople", () => {
 		AtPeople()
 	})
-	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('markdown', new ZhihuCompletionProvider 
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('markdown', new ZhihuCompletionProvider
 	, '@'));
 
 	vscode.commands.registerCommand(
