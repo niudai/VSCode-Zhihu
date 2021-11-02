@@ -306,6 +306,16 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Set true to enable watermark"
+				},
+				"zhihu.enableMermaidToPng":{
+					"type":"boolean",
+					"default":false,
+					"description":"enable mermaid png upload to zhihu"
+				},
+				"zhihu.mermaidTheme":{
+					"type":"string",
+					"default":"default",
+					"description": "mermaid png theme setting, such as: dark"
 				}
 			}
 		},

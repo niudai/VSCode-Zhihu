@@ -1,5 +1,6 @@
 import { Base64 } from "js-base64";
 import { PasteService } from "../service/paste.service";
+import * as vscode from "vscode";
 const preUrl = `https://mermaid.ink/img/`;
 
 const mermaidType = [
@@ -48,11 +49,13 @@ function getImageNameAndRemove(data): MermaidDateStruct {
     } else {
         picData = data;
     }
-
+    const theme = vscode.workspace
+        .getConfiguration("zhihu")
+        .get("mermaidTheme");
     const targetData = JSON.stringify({
         code: picData,
         mermaid: {
-            theme: "dark",
+            theme: theme,
         },
     });
     const picurl = preUrl + Base64.encodeURI(targetData);
@@ -84,7 +87,6 @@ export const uploadMermaidToZhihu = async (text: string) => {
         const item = matchData[i];
         const dataItem = mermaidArr[i];
         if (dataItem.isMermaid) {
-            // TODO 上传至知乎
             dataItem.zhihuUrl = await new PasteService().uploadImageFromLink(
                 dataItem.picurl,
                 false,
