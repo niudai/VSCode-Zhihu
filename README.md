@@ -6,10 +6,10 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/vscode-zhihu.png" alt="vscode-zhihu logo" width="200px" /></a>
 </p>
- 
+
 <p align="center">
 <a href="https://github.com/niudai/VSCode-Zhihu">打一颗 ⭐，世界更亮。</a>
-</p> 
+</p>
 
 
 # 👽 Zhihu On VSCode
@@ -25,7 +25,7 @@
   - [内容发布](#📩-内容发布)
   - [一键上传图片](#📊-上传图片)
   - [定时发布](#🕐-定时发布)
-- 浏览  
+- 浏览
   - [个性推荐](#🎭-个性推荐)
   - [实时热榜](#hot-story)
   - [搜索全站](#🔎-搜索 )
@@ -40,7 +40,7 @@
 
 ---
 
-## 🔑 登录 
+## 🔑 登录
 
 
 <a name = "login"></a>
@@ -68,7 +68,7 @@
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-20-32-09.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
-    
+
 
 ---
 
@@ -94,7 +94,7 @@ ___
 
 ---
 
-## 🔎 搜索 
+## 🔎 搜索
 
 <a name = "search"></a>
 点击搜索按钮，或搜索命令 `Zhihu: Search Items`，搜索全站知乎内容：
@@ -292,7 +292,7 @@ $$
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-09-17-38-39.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
---- 
+---
 
 ## 😀 图标按钮
 
@@ -322,14 +322,15 @@ $$
 | 命令        | Windows           | Mac   |
 | :-------------: |:-------------:| :-----:|
 | Zhihu: Paste Image From Clipboard | ctrl+alt+p | cmd+alt+p |
-|Zhihu: Upload Image From Path     | ctrl+alt+q     |   cmd+alt+q 
-| Zhihu: Upload Image From Explorer | ctrl+alt+f     |  cmd+alt+f 
+|Zhihu: Upload Image From Path     | ctrl+alt+q     |   cmd+alt+q
+| Zhihu: Upload Image From Explorer | ctrl+alt+f     |  cmd+alt+f
 
 ## ⚙ 配置项
 
 
-| 配置        | 效果           | 
-| :-------------: |:-------------:| 
+| 配置        | 效果           |
+| :-------------: |:-------------:|
 | Zhihu: Use VSTheme  | 打勾开启知乎默认主题样式 |
-|Zhihu: Is Title Image Full Screen    | 打勾开让文章背景图片变成全屏    | 
-
+|Zhihu: Is Title Image Full Screen    | 打勾开让文章背景图片变成全屏    |
+| zhihu.enableMermaidToPng | 启动mermaid图片上传至知乎 |
+| zhihu.mermaidTheme | 设置mermaid的主题，`dark`和`default`  |

@@ -26,6 +26,7 @@ import { setContext } from "./global/globa-var";
 import { Output } from "./global/logger";
 import * as CacheManager from "./global/cache"
 import { ZhihuCompletionProvider, AtPeople } from "./lang/completion-provider";
+import { mermaiSupport } from "./util/mermai-support";
 
 export async function activate(context: vscode.ExtensionContext) {
 	Output('Extension Activated')
@@ -36,6 +37,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Dependency Injection
 	showReleaseNote()
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
+	zhihuMdParser.renderer.rules.thead_open = () => "<tbody>\n";
+	zhihuMdParser.renderer.rules.thead_close = () => "";
+	zhihuMdParser.renderer.rules.tbody_open = () => "";
 	const defualtMdParser = new MarkdownIt();
 	const accountService = new AccountService();
 	const profileService = new ProfileService(accountService);
@@ -58,20 +62,20 @@ export async function activate(context: vscode.ExtensionContext) {
 			await webviewService.openWebview(object);
 		}
 		));
-	vscode.commands.registerCommand("zhihu.search", async () => 
+	vscode.commands.registerCommand("zhihu.search", async () =>
 		await searchService.getSearchItems()
 	);
 	vscode.commands.registerCommand("zhihu.clearCache", () => {
 		clearCache()
 		CacheManager.clearCache()
 	})
-	vscode.commands.registerCommand("zhihu.login", () => 
+	vscode.commands.registerCommand("zhihu.login", () =>
 		authenticateService.login()
 	);
 	vscode.commands.registerCommand("zhihu.jianshuLogin", () => {
 		authenticateService.jianshuLogin()
 	});
-	vscode.commands.registerCommand("zhihu.logout", () => 
+	vscode.commands.registerCommand("zhihu.logout", () =>
 		authenticateService.logout()
 	);
 	vscode.window.registerTreeDataProvider(
@@ -89,9 +93,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerTextEditorCommand('zhihu.publish', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
 		publishService.publish(textEditor, edit);
 	})
-	vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
-		vscode.commands.executeCommand('markdown.showPreviewToSide');
-	})
+	// vscode.commands.registerTextEditorCommand('zhihu.preview', (textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) => {
+	// 	vscode.commands.executeCommand('markdown.showPreviewToSide');
+	// })
 	vscode.commands.registerCommand('zhihu.uploadImageFromClipboard', async () => {
 		pasteService.uploadImageFromClipboard()
 	})
@@ -116,7 +120,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand("zhihu.atPeople", () => {
 		AtPeople()
 	})
-	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('markdown', new ZhihuCompletionProvider 
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider('markdown', new ZhihuCompletionProvider
 	, '@'));
 
 	vscode.commands.registerCommand(
@@ -153,7 +157,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	return {
         extendMarkdownIt(md: any) {
-            return md.use(require('markdown-it-katex'));
+			return mermaiSupport(md)
         }
     }
 }
