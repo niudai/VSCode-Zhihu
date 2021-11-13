@@ -37,9 +37,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Dependency Injection
 	showReleaseNote()
 	const zhihuMdParser = new MarkdownIt({ html: true }).use(markdown_it_zhihu);
-	zhihuMdParser.renderer.rules.thead_open = () => "<tbody>\n";
+	zhihuMdParser.renderer.rules.table_open = () => `<table data-draft-node="block" data-draft-type="table" data-size="normal" data-row-style="striped"><tbody>`;
+	zhihuMdParser.renderer.rules.table_close = () => "</tbody></table>";
+	zhihuMdParser.renderer.rules.thead_open = () => "";
 	zhihuMdParser.renderer.rules.thead_close = () => "";
 	zhihuMdParser.renderer.rules.tbody_open = () => "";
+	zhihuMdParser.renderer.rules.tbody_close = () => "";
 	const defualtMdParser = new MarkdownIt();
 	const accountService = new AccountService();
 	const profileService = new ProfileService(accountService);

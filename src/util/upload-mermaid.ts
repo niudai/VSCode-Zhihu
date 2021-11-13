@@ -77,25 +77,29 @@ function getImageNameAndRemove(data): MermaidDateStruct {
 export const uploadMermaidToZhihu = async (text: string) => {
     const matchData = text.match(/```mermaid(.|\r\n)*?```/gm);
     const mermaidArr: MermaidDateStruct[] = [];
-    matchData.map((item) => {
-        item = item.replace("```mermaid", "").replace("```", "");
-        const data = getImageNameAndRemove(item);
-        mermaidArr.push(data);
-    });
     let changeMd = text;
-    for (let i = 0; i < matchData.length; i++) {
-        const item = matchData[i];
-        const dataItem = mermaidArr[i];
-        if (dataItem.isMermaid) {
-            dataItem.zhihuUrl = await new PasteService().uploadImageFromLink(
-                dataItem.picurl,
-                false,
-                "mermaid"
-            );
-            changeMd = changeMd.replace(
-                item,
-                `![${dataItem.picName}](${dataItem.zhihuUrl})`
-            );
+    if (Array.isArray(matchData)) {
+        matchData.map((item) => {
+            item = item.replace("```mermaid", "").replace("```", "");
+            const data = getImageNameAndRemove(item);
+            mermaidArr.push(data);
+        });
+
+        for (let i = 0; i < matchData.length; i++) {
+            const item = matchData[i];
+            const dataItem = mermaidArr[i];
+            if (dataItem.isMermaid) {
+                dataItem.zhihuUrl =
+                    await new PasteService().uploadImageFromLink(
+                        dataItem.picurl,
+                        false,
+                        "mermaid"
+                    );
+                changeMd = changeMd.replace(
+                    item,
+                    `![${dataItem.picName}](${dataItem.zhihuUrl})`
+                );
+            }
         }
     }
     return changeMd;
