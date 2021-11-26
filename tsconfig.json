@@ -5,6 +5,7 @@
 		"outDir": "out",
 		"sourceMap": true,
 		// "strict": true   /* enable all strict type-checking options */
+		"allowJs": true
 	},
 	"include": [
 		"test/**/*",
