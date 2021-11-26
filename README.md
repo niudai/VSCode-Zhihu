@@ -144,8 +144,22 @@ $$
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-22-47-18.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
->由于知乎服务端的限制，表格暂不支持，答案中的表格会被服务端过滤。
+### 支持mermaid 转化为图片
 
+```json
+{
+    "zhihu.enableMermaidToPng": true, // 设置开启才能生效
+    "zhihu.mermaidTheme": "dark" // 支持设置 mermaid 图片主题，默认值是 "default"
+}
+```
+
+### 支持知乎表格
+直接在本地书写 markdown 表格即可，`row-style` 默认使用"striped"，行首，列首是灰色，隔行是灰色 。
+
+| 知乎表格 row-style | 效果|
+| --- | --- |
+| normal | 行首是灰色|
+| striped | 行首，列首是灰色，隔行是灰色 |
 ## 📩 内容发布
 <a name = "publish"></a>
 
