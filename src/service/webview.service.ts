@@ -11,6 +11,8 @@ import { CollectionTreeviewProvider } from "../treeview/collection-treeview-prov
 import { CollectionService, ICollectionItem } from "./collection.service";
 import { HttpService, sendRequest } from "./http.service";
 import { getExtensionPath, getSubscriptions } from "../global/globa-var";
+import { getCookieJar } from "../global/cookie";
+import { genXZse96 } from "../util/genXZse96";
 
 export interface IWebviewPugRender {
 	viewType?: string,
@@ -79,7 +81,7 @@ export class WebviewService {
 					"questions-answers.pug"
 				),
 				pugObjects: {
-					answers: body.data.map(t => {  
+					answers: body.data.map(t => {
 						t.content = this.actualSrcNormalize(t.content);
 						return t;
 					}),
@@ -140,6 +142,8 @@ export class WebviewService {
 	}
 
 	private registerEvent(panel: vscode.WebviewPanel, c: ICollectionItem, link?: string) {
+		const cookie = getCookieJar().getCookieStringSync(AnswerAPI);
+
 		panel.webview.onDidReceiveMessage(e => {
 			if (e.command == WebviewEvents.collect) {
 				if (this.collectService.addItem(c)) {
@@ -155,20 +159,32 @@ export class WebviewService {
 					vscode.window.showInformationMessage('链接已复制至粘贴板。');
 				})
 			} else if (e.command == WebviewEvents.upvoteAnswer) {
+				const tempApi = `/api/v4/answers/${e.id}/voters`
 				sendRequest({
 					uri: `${AnswerAPI}/${e.id}/voters`,
 					method: 'post',
-					headers: {},
+					headers: {
+						"x-requested-with": "fetch",
+						"x-zse-93": "101_3_2.0",
+						"x-zse-96": genXZse96(tempApi,cookie,['{"type":"up"}']),
+						cookie
+					},
 					json: true,
 					body: { type: "up" },
 					resolveWithFullResponse: true
 				}).then(r => {if(r.statusCode == 200) vscode.window.showInformationMessage('点赞成功！')
 				else if(r.statusCode == 403) vscode.window.showWarningMessage('你已经投过票了！')})
 			} else if (e.command == WebviewEvents.upvoteArticle) {
+				const tempApi = `/api/v4/articles/${e.id}/voters`
 				sendRequest({
 					uri: `${ArticleAPI}/${e.id}/voters`,
 					method: 'post',
-					headers: {},
+					headers: {
+						"x-requested-with": "fetch",
+						"x-zse-93": "101_3_2.0",
+						"x-zse-96": genXZse96(tempApi,cookie,['{"voting":1}']),
+						cookie
+					},
 					json: true,
 					body: { voting: 1 },
 					resolveWithFullResponse: true
