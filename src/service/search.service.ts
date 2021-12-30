@@ -6,8 +6,8 @@ import { SearchTypes } from "../const/ENUM";
 import { SearchAPI } from "../const/URL";
 import axios from "axios";
 import { getCookieJar } from "../global/cookie";
-import { b } from '../util/g_encrypt'
-import * as md5 from 'md5';
+import { genXZse96 } from "../util/genXZse96";
+
 export const SearchDict = [
 	{ value: SearchTypes.general, ch: '综合' },
 	{ value: SearchTypes.question, ch: '问题' },
@@ -30,18 +30,15 @@ export class SearchService {
             search_source: "Normal",
         };
 		const cookie = getCookieJar().getCookieStringSync(SearchAPI);
-		let cookieData = cookie.split("d_c0=")[1].split(';')[0];
-		const str = `101_3_2.0+/api/v4/search_v3?t=${searchType}&q=${keyword}&correction=1&offset=0&limit=20&filter_fields=&lc_idx=0&show_all_topics=0&search_source=Normal+${cookieData}`
-		console.log({str})
-		const data = md5(str);
-		const x_zse_96 = "2.0_" + b(data)
+		const api = `/api/v4/search_v3?t=${searchType}&q=${encodeURIComponent(keyword)}&correction=1&offset=0&limit=20&filter_fields=&lc_idx=0&show_all_topics=0&search_source=Normal`
+
         const result = await axios({
             url: `https://www.zhihu.com/api/v4/search_v3`,
 			params,
 			method: "GET",
 			headers: {
 				"x-zse-93": "101_3_2.0",
-				"x-zse-96": x_zse_96,
+				"x-zse-96": genXZse96(api, cookie),
 				cookie
 			},
         });
