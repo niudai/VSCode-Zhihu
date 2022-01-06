@@ -382,7 +382,7 @@
 		"markdown-it-container": "^3.0.0",
 		"markdown-it-zhihu": "^2.0.10",
 		"md5": "^2.2.1",
-		"mermaid": "^8.12.1",
+		"mermaid": "^8.13.8",
 		"on-change": "^1.6.2",
 		"pug": "^2.0.4",
 		"request": "^2.88.0",
