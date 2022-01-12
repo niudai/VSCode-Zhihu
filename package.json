@@ -378,7 +378,7 @@
 		"form-urlencoded": "^4.1.1",
 		"js-base64": "^3.7.2",
 		"jsdom": "^18.1.1",
-		"markdown-it": "^10.0.0",
+		"markdown-it": "^12.3.2",
 		"markdown-it-container": "^3.0.0",
 		"markdown-it-zhihu": "^2.0.10",
 		"md5": "^2.2.1",
