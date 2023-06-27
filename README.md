@@ -14,7 +14,7 @@
 
 # 👽 Zhihu On VSCode
 
-基于 VSCode 的知乎客户端提供包括阅读，搜索，创作，发布等一站式服务，内容加载速度比 Web 端更快，创新的 Markdown-Latex 混合语法让内容创作者更方便地插入代码块，数学公式，并一键发布至知乎平台。项目由 [牛岱](https://www.zhihu.com/people/niu-dai-68-44) 独立设计开发，喜欢的话请献出你的 [⭐](https://github.com/niudai/VSCode-Zhihu '给一个Star')。
+基于 VSCode 的知乎客户端提供包括阅读、搜索、创作、发布等一站式服务，内容加载速度比 Web 端更快，创新的 Markdown-Latex 混合语法让内容创作者更方便地插入代码块，数学公式，并一键发布至知乎平台。项目由 [牛岱](https://www.zhihu.com/people/niu-dai-68-44) 独立设计开发，喜欢的话请献出你的 [⭐](https://github.com/niudai/VSCode-Zhihu '给一个Star')。
 
 ## ⚡ Features
 
@@ -79,7 +79,7 @@
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-20-30-27.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
-内容可能为答案，问题，或文章，点击条目，就会打开VSCode知乎页面：
+内容可能为答案、问题或文章，点击条目，就会打开 VSCode 知乎页面：
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-21-02-30.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
@@ -122,12 +122,12 @@ $$
 $$
 ```
 
-用 `$$` 包围的部分会被当做 latex 语言进行解析，生成知乎的数学公式，比如上方的数学公式发布至知乎会生成如下公式:
+用 `$$` 包围的部分会被当做 Latex 语言进行解析，生成知乎的数学公式，比如上方的数学公式发布至知乎会生成如下公式:
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-22-42-21.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
-行内 latex 也同样支持，语法举例：`$\sqrt6$`，一个dollar符号包裹公式即可。
+行内 Latex 也同样支持，语法举例：`$\sqrt6$`，一个dollar符号包裹公式即可。
 
 代码块：
 
@@ -144,7 +144,7 @@ $$
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-08-22-47-18.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
 
-### 支持mermaid 转化为图片
+### 支持 mermaid 转化为图片
 
 ```json
 {
@@ -154,7 +154,7 @@ $$
 ```
 
 ### 支持知乎表格
-直接在本地书写 markdown 表格即可，`row-style` 默认使用"striped"，行首，列首是灰色，隔行是灰色 。
+直接在本地书写 Markdown 表格即可，`row-style` 默认使用"striped"，行首，列首是灰色，隔行是灰色 。
 
 | 知乎表格 row-style | 效果|
 | --- | --- |
@@ -249,7 +249,7 @@ $$
 
 ![](https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-16-15-56-31.png)
 
->发布事件采用 md5 完整性校验，不允许用户同时预发两篇内容一摸一样的答案或文章。
+>发布事件采用 md5 完整性校验，不允许用户同时预发两篇内容一模一样的答案或文章。
 ---
 
 ## 🎫 收藏夹
@@ -292,7 +292,7 @@ $$
 
 ### 工作区中右键上传
 
-在当前VSCode打开的文件夹内部，将鼠标放在你想上传的图片上，右键单击即可上传+生成链接：
+在当前 VSCode 打开的文件夹内部，将鼠标放在你想上传的图片上，右键单击即可上传+生成链接：
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/niudai/ImageHost/master/zhihu/2020-02-09-17-33-26.png" style="box-shadow: 2px 2px 8px 0px #5dd8fd;border-radius: 6px;"/></p>
